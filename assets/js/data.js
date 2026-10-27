@@ -11,7 +11,7 @@ const SITE = {
   contactName: 'Nadia',
   phone: '061 512 9208',
   whatsapp: '27615129208',          // international format, no + or spaces
-  email: '',                        // TODO: bookings email — "Book via email" opens the mail app with an empty "To" until this is set
+  email: 'whndistributors@gmail.com',
   location: 'Marloth Park, Mpumalanga, South Africa',
   // GitHub repository that hosts the site (used by the admin dashboard)
   repo: { owner: 'obsidianstudiodesigns', name: 'Kruger-Marloth-Services-Bookings', branch: 'main' },

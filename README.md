@@ -26,8 +26,7 @@ Every stay in `data.js` has a `draft` list naming the fields that are still dumm
 - **Nightly rates** for every property except Tarentaal (R1 980 out of season / R3 300 school holidays).
 - **House rules** — check-in/out times, minimum nights and deposit terms are dummy values in `DEFAULT_RULES`.
 - **Sleeps / bedrooms / bathrooms** where marked in `draft` (no flyer for Afrika Safari Gastehuis, Buffalo Chalets, Bushfire Mongoose).
-- **Bookings email address** (`SITE.email`) — until it's set, "Book via email" opens the guest's mail app with the request filled in but no address in the To field.
-- **Privacy notice** (`privacy.html`): registered name and address, Information Officer, contact email and retention period are placeholders. It's a starting template — have the owner check it.
+- **Privacy notice** (`privacy.html`): registered name and address, Information Officer and retention period are placeholders. It's a starting template — have the owner check it.
 - **Spelling check:** the folder says "Phai *Thong* Hide Away", the flyer says "Phai *Tong*".
 - **Service categories with no providers yet:** Game Rides, Activities, Shuttles, Restaurants, Butcheries, Private Chefs, House Cleaning (shown as "Coming soon").
 
