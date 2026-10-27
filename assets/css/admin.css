@@ -154,9 +154,6 @@ details.adv[open] summary{margin-bottom:10px}
 .b-completed{background:#eeeae3;color:#6f675c}
 .b-cancelled{background:var(--danger-bg);color:var(--danger)}
 .b-block{background:var(--warn-bg);color:var(--sun-dark)}
-.pay{font-size:.72rem;font-weight:600;color:var(--muted)}
-.pay.paid{color:var(--ok)}
-.pay.unpaid{color:var(--danger)}
 
 /* ---------- Planner calendar ---------- */
 .planner-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -293,10 +290,6 @@ code{background:var(--sand);padding:1px 6px;border-radius:5px;font-size:.82rem}
 .check.need{color:var(--danger)}
 .check.need input{outline:2px solid var(--danger);outline-offset:1px}
 .confirm-card .field{gap:4px}
-.inv-view{position:fixed;inset:0;z-index:75;background:#ece7df;display:flex;flex-direction:column}
-.inv-bar{display:flex;align-items:center;gap:8px;padding:10px 16px calc(10px) 16px;background:#fff;border-bottom:1px solid var(--line)}
-.inv-bar strong{flex:1;display:flex;align-items:center;gap:8px;font-size:.95rem}
-.inv-view iframe{flex:1;width:100%;border:0}
 
 /* ---------- Mobile ---------- */
 .bottom-nav{display:none}

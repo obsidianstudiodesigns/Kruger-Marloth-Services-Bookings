@@ -77,7 +77,7 @@ function uid() { return 'bk_' + Date.now().toString(36) + Math.random().toString
 function enrich(b) {
   return { ...b, stay: stayById(b.stayId) || { name: b.stayId, id: b.stayId, price: 0 }, status: bookingStatus(b, TODAY), nights: nightsBetween(b.checkin, b.checkout) };
 }
-const STATUS_LABEL = { pending: 'Pending payment', upcoming: 'Upcoming', 'in-house': 'Staying now', completed: 'Completed', expired: 'Expired request', cancelled: 'Cancelled' };
+const STATUS_LABEL = { pending: 'Pending', upcoming: 'Upcoming', 'in-house': 'Staying now', completed: 'Completed', expired: 'Expired request', cancelled: 'Cancelled' };
 function statusLabel(b) {
   if (b.type === 'block' && b.status !== 'cancelled') return 'Blocked';
   if (b.status === 'cancelled' && b.declined) return 'Declined';
@@ -88,21 +88,12 @@ function statusBadge(b) {
   return `<span class="badge b-${cls}">${statusLabel(b)}</span>`;
 }
 function pendingCount() { return app.bookings.filter(b => bookingStatus(b, TODAY) === 'pending').length; }
-function hoursSince(iso) { return iso ? (Date.now() - new Date(iso).getTime()) / 3600000 : 0; }
-function nextInvoiceNo() {
-  const year = TODAY.slice(0, 4);
-  const max = app.bookings.reduce((m, b) => {
-    const hit = (b.invoiceNo || '').match(new RegExp(`^KMS-${year}-(\\d+)$`));
-    return hit ? Math.max(m, Number(hit[1])) : m;
-  }, 0);
-  return `KMS-${year}-${String(max + 1).padStart(4, '0')}`;
+function sinceLabel(iso) {
+  if (!iso) return '';
+  const h = Math.floor((Date.now() - new Date(iso).getTime()) / 3600000);
+  return h < 1 ? 'just now' : h < 24 ? `${h}h ago` : `${Math.floor(h / 24)}d ago`;
 }
 function guestLabel(b) { return b.type === 'block' ? 'Blocked — ' + (b.notes || 'owner use') : (b.name || 'Guest'); }
-function payLabel(b) {
-  if (b.type === 'block') return '';
-  const map = { paid: 'Paid in full', deposit: 'Deposit paid', unpaid: 'Not paid' };
-  return `<span class="pay ${b.payment}">${map[b.payment] || ''}</span>`;
-}
 function thumb(id) { return stayImg(id, 1, true); }
 
 /* ---------- Encoding & encryption ---------- */
@@ -250,31 +241,31 @@ async function commit(mutate, message, okText) {
 function demoBookings() {
   const mk = (stayId, checkin, checkout, f) => ({
     id: uid() + Math.random().toString(36).slice(2, 4), stayId, checkin, checkout, type: 'guest', status: 'confirmed',
-    adults: 2, children: 0, payment: 'deposit', source: 'Direct / WhatsApp', cancelled: false,
+    adults: 2, children: 0, source: 'Direct / WhatsApp', cancelled: false,
     createdAt: new Date(parseISO(checkin).getTime() - 20 * 86400000).toISOString(),
     log: [{ at: new Date(parseISO(checkin).getTime() - 20 * 86400000).toISOString(), text: 'Booking created' }], ...f,
   });
   return [
-    mk('kruger-naledi', '2026-10-27', '2026-10-29', { name: 'Henry Kruger', phone: '082 555 0147', email: 'henry.kruger@example.com', idNumber: '8001015009087', address: 'Nelspruit, Mpumalanga', vehicle: 'Toyota Fortuner · CA 123-456', total: 3300, deposit: 1650, notes: 'Arriving around 15:00. Anniversary trip — would love a bottle of bubbly in the fridge.' }),
-    mk('cheetah', '2026-10-24', '2026-10-31', { name: 'Marius van der Merwe', phone: '083 555 0192', email: 'marius.vdm@example.com', adults: 8, children: 4, total: 24500, deposit: 24500, payment: 'paid', source: 'Returning guest', vehicle: '2 vehicles', notes: 'Family reunion. Extra braai wood requested.' }),
-    mk('phai-thong', '2026-10-26', '2026-10-28', { name: 'Sipho Dlamini', phone: '071 555 0133', email: 'sipho.d@example.com', total: 4400, deposit: 4400, payment: 'paid', source: 'Website' }),
-    mk('waterpeer', '2026-10-29', '2026-11-02', { name: 'Anna Botha', phone: '072 555 0170', email: 'anna.botha@example.com', adults: 2, children: 2, total: 6000, deposit: 3000 }),
-    mk('tarentaal', '2026-10-30', '2026-11-03', { name: 'Johan Pretorius', phone: '084 555 0116', email: 'johan.p@example.com', adults: 4, total: 7920, deposit: 0, payment: 'unpaid', source: 'LekkeSlaap' }),
-    mk('porcupine', '2026-11-02', '2026-11-05', { type: 'block', name: '', notes: 'Pool pump service', payment: 'unpaid', total: 0, deposit: 0, adults: 0 }),
-    mk('my-africa-chalet', '2026-11-06', '2026-11-09', { name: 'Elize Smit', phone: '079 555 0158', email: 'elize.smit@example.com', adults: 6, children: 2, total: 7500, deposit: 3750 }),
-    mk('moepel', '2026-11-13', '2026-11-16', { name: 'Mark Taylor', phone: '082 555 0124', email: 'mark.taylor@example.com', total: 4800, deposit: 2400, source: 'Booking.com', notes: 'Visiting from the UK. Late arrival ~19:00.' }),
-    mk('salamah', '2026-12-15', '2026-12-22', { name: 'Thandi Nkosi', phone: '073 555 0181', email: 'thandi.nkosi@example.com', adults: 4, children: 3, total: 15400, deposit: 7700 }),
-    mk('indabush', '2026-12-18', '2026-12-27', { name: 'Kobus Steyn', phone: '076 555 0109', email: 'kobus.steyn@example.com', adults: 4, children: 2, total: 21600, deposit: 10800, source: 'Returning guest' }),
-    mk('kruger-naledi', '2026-10-16', '2026-10-19', { name: 'Pieter de Wet', phone: '083 555 0141', email: 'pieter.dewet@example.com', total: 4950, deposit: 4950, payment: 'paid' }),
-    mk('tarentaal', '2026-10-02', '2026-10-05', { name: 'Liezel Joubert', phone: '082 555 0163', email: 'liezel.j@example.com', adults: 5, total: 5940, deposit: 5940, payment: 'paid', source: 'Website' }),
-    mk('elephant-bush-house', '2026-09-25', '2026-09-28', { name: 'Coetzee family', phone: '071 555 0187', email: 'coetzee@example.com', adults: 4, children: 3, total: 6900, deposit: 6900, payment: 'paid' }),
-    mk('bosgenade', '2026-10-09', '2026-10-12', { name: 'Ruan Venter', phone: '084 555 0122', email: 'ruan.venter@example.com', adults: 6, total: 7800, deposit: 7800, payment: 'paid', source: 'Phone call' }),
-    mk('shingwedzi', '2026-11-20', '2026-11-23', { name: 'Grant Wilson', phone: '072 555 0195', email: 'grant.w@example.com', adults: 4, total: 6900, deposit: 0, payment: 'unpaid', cancelled: true, cancelledAt: '2026-10-21T09:12:00.000Z', notes: 'Cancelled — change of travel plans.' }),
-    // Requests awaiting payment — their dates are on hold
-    { ...mk('bushfire-mongoose', '2026-11-20', '2026-11-23', { name: 'Zanele Mokoena', phone: '061 555 0175', email: 'zanele.m@example.com', adults: 4, total: 5850, deposit: 0, payment: 'unpaid', source: 'Website', notes: 'Asked whether the pool is heated.' }),
+    mk('kruger-naledi', '2026-10-27', '2026-10-29', { name: 'Henry Kruger', phone: '082 555 0147', email: 'henry.kruger@example.com', idNumber: '8001015009087', address: 'Nelspruit, Mpumalanga', vehicle: 'Toyota Fortuner · CA 123-456', notes: 'Arriving around 15:00. Anniversary trip — would love a bottle of bubbly in the fridge.' }),
+    mk('cheetah', '2026-10-24', '2026-10-31', { name: 'Marius van der Merwe', phone: '083 555 0192', email: 'marius.vdm@example.com', adults: 8, children: 4, source: 'Returning guest', vehicle: '2 vehicles', notes: 'Family reunion. Extra braai wood requested.' }),
+    mk('phai-thong', '2026-10-26', '2026-10-28', { name: 'Sipho Dlamini', phone: '071 555 0133', email: 'sipho.d@example.com', source: 'Website' }),
+    mk('waterpeer', '2026-10-29', '2026-11-02', { name: 'Anna Botha', phone: '072 555 0170', email: 'anna.botha@example.com', adults: 2, children: 2 }),
+    mk('tarentaal', '2026-10-30', '2026-11-03', { name: 'Johan Pretorius', phone: '084 555 0116', email: 'johan.p@example.com', adults: 4, source: 'LekkeSlaap' }),
+    mk('porcupine', '2026-11-02', '2026-11-05', { type: 'block', name: '', notes: 'Pool pump service', adults: 0 }),
+    mk('my-africa-chalet', '2026-11-06', '2026-11-09', { name: 'Elize Smit', phone: '079 555 0158', email: 'elize.smit@example.com', adults: 6, children: 2 }),
+    mk('moepel', '2026-11-13', '2026-11-16', { name: 'Mark Taylor', phone: '082 555 0124', email: 'mark.taylor@example.com', source: 'Booking.com', notes: 'Visiting from the UK. Late arrival ~19:00.' }),
+    mk('salamah', '2026-12-15', '2026-12-22', { name: 'Thandi Nkosi', phone: '073 555 0181', email: 'thandi.nkosi@example.com', adults: 4, children: 3 }),
+    mk('indabush', '2026-12-18', '2026-12-27', { name: 'Kobus Steyn', phone: '076 555 0109', email: 'kobus.steyn@example.com', adults: 4, children: 2, source: 'Returning guest' }),
+    mk('kruger-naledi', '2026-10-16', '2026-10-19', { name: 'Pieter de Wet', phone: '083 555 0141', email: 'pieter.dewet@example.com' }),
+    mk('tarentaal', '2026-10-02', '2026-10-05', { name: 'Liezel Joubert', phone: '082 555 0163', email: 'liezel.j@example.com', adults: 5, source: 'Website' }),
+    mk('elephant-bush-house', '2026-09-25', '2026-09-28', { name: 'Coetzee family', phone: '071 555 0187', email: 'coetzee@example.com', adults: 4, children: 3 }),
+    mk('bosgenade', '2026-10-09', '2026-10-12', { name: 'Ruan Venter', phone: '084 555 0122', email: 'ruan.venter@example.com', adults: 6, source: 'Phone call' }),
+    mk('shingwedzi', '2026-11-20', '2026-11-23', { name: 'Grant Wilson', phone: '072 555 0195', email: 'grant.w@example.com', adults: 4, cancelled: true, cancelledAt: '2026-10-21T09:12:00.000Z', notes: 'Cancelled — change of travel plans.' }),
+    // Requests waiting for confirmation — their dates are on hold
+    { ...mk('bushfire-mongoose', '2026-11-20', '2026-11-23', { name: 'Zanele Mokoena', phone: '061 555 0175', email: 'zanele.m@example.com', adults: 4, source: 'Website', notes: 'Asked whether the pool is heated.' }),
       status: 'pending', createdAt: new Date(Date.now() - 3 * 3600000).toISOString(), log: [{ at: new Date(Date.now() - 3 * 3600000).toISOString(), text: 'Request received — dates on hold' }] },
-    { ...mk('phai-thong', '2026-12-24', '2026-12-27', { name: 'Daniel Fourie', phone: '082 555 0119', email: 'daniel.fourie@example.com', total: 6600, deposit: 0, payment: 'unpaid', source: 'Direct / WhatsApp', notes: 'Proposal trip — please keep it a surprise!' }),
-      status: 'pending', invoiceNo: 'KMS-2026-0001', createdAt: new Date(Date.now() - 52 * 3600000).toISOString(), log: [{ at: new Date(Date.now() - 52 * 3600000).toISOString(), text: 'Request received — dates on hold' }, { at: new Date(Date.now() - 50 * 3600000).toISOString(), text: 'Invoice KMS-2026-0001 issued' }] },
+    { ...mk('phai-thong', '2026-12-24', '2026-12-27', { name: 'Daniel Fourie', phone: '082 555 0119', email: 'daniel.fourie@example.com', source: 'Direct / WhatsApp', notes: 'Proposal trip — please keep it a surprise!' }),
+      status: 'pending', createdAt: new Date(Date.now() - 52 * 3600000).toISOString(), log: [{ at: new Date(Date.now() - 52 * 3600000).toISOString(), text: 'Request received — dates on hold' }] },
   ];
 }
 
@@ -445,7 +436,7 @@ function renderDashboard() {
   const arriveToday = guests.filter(b => b.checkin === TODAY);
   const departToday = guests.filter(b => b.checkout === TODAY);
 
-  // Occupancy & revenue for the current month
+  // Occupancy for the current month
   const mStart = toISO(new Date(now.getFullYear(), now.getMonth(), 1));
   const mEnd = toISO(new Date(now.getFullYear(), now.getMonth() + 1, 1));
   const daysInMonth = nightsBetween(mStart, mEnd);
@@ -455,7 +446,7 @@ function renderDashboard() {
     if (s < e) nightsBooked += nightsBetween(s, e);
   }
   const occupancy = Math.round((nightsBooked / (STAYS.length * daysInMonth)) * 100);
-  const revenue = guests.filter(b => b.checkin >= mStart && b.checkin < mEnd).reduce((t, b) => t + (Number(b.total) || 0), 0);
+  const upcomingCount = guests.filter(b => b.status === 'upcoming').length;
   const occupiedTonight = new Set(active.filter(b => b.checkin <= TODAY && b.checkout > TODAY).map(b => b.stayId));
   const freeTonight = STAYS.filter(s => !occupiedTonight.has(s.id));
 
@@ -469,19 +460,16 @@ function renderDashboard() {
     <div class="page-head"><div><h1>${greet}, ${esc(SITE.contactName)}</h1><p>${fmtDate(TODAY)} · ${STAYS.length} properties</p></div>
       <div class="page-actions"><button class="btn btn-sun" data-new>${icon('plus')}New booking</button></div></div>
     <div class="stats">
-      <div class="panel stat ${pending.length ? 'attn' : ''}" data-view-pending style="cursor:pointer"><span class="label">${icon('hourglass')}Pending requests</span><strong>${pending.length}</strong><small>${pending.length ? 'dates on hold · awaiting payment' : 'nothing waiting'}</small></div>
+      <div class="panel stat ${pending.length ? 'attn' : ''}" data-view-pending style="cursor:pointer"><span class="label">${icon('hourglass')}Pending requests</span><strong>${pending.length}</strong><small>${pending.length ? 'dates on hold · confirm or decline' : 'nothing waiting'}</small></div>
       <div class="panel stat"><span class="label">${icon('home')}Staying now</span><strong>${inHouse.length}</strong><small>${inHouse.reduce((t, b) => t + (+b.adults || 0) + (+b.children || 0), 0)} guests · ${departToday.length} leaving today</small></div>
       <div class="panel stat"><span class="label">${icon('calendar')}Arrivals · 7 days</span><strong>${arrivals.length}</strong><small>${arriveToday.length} arriving today</small></div>
       <div class="panel stat"><span class="label">${icon('grid')}Occupancy · ${MONTHS[now.getMonth()]}</span><strong>${occupancy}%</strong><small>${nightsBooked} of ${STAYS.length * daysInMonth} nights</small></div>
-      <div class="panel stat"><span class="label">${icon('star')}Bookings value · ${MONTHS[now.getMonth()].slice(0, 3)}</span><strong>${money(revenue)}</strong><small>by check-in date</small></div>
+      <div class="panel stat"><span class="label">${icon('star')}Upcoming bookings</span><strong>${upcomingCount}</strong><small>confirmed, not yet arrived</small></div>
     </div>
     <div class="dash-grid">
       <div class="dash-col">
         ${pending.length ? `<div class="panel panel-attn"><div class="panel-head"><h2>${icon('hourglass')} Pending requests · ${pending.length}</h2><button class="link" data-view-pending>View all</button></div>
-          <ul class="mini-list">${pending.map(b => {
-            const overdue = hoursSince(b.createdAt) > BUSINESS.holdHours;
-            return row(b, `<strong>${fmtRange(b.checkin, b.checkout)}</strong><span class="${overdue ? 'overdue' : ''}">${overdue ? `Hold over ${BUSINESS.holdHours}h — follow up` : b.invoiceNo ? 'Invoice sent · awaiting payment' : 'Send invoice'}</span>`);
-          }).join('')}</ul>
+          <ul class="mini-list">${pending.map(b => row(b, `<strong>${fmtRange(b.checkin, b.checkout)}</strong><span>Requested ${sinceLabel(b.createdAt)}</span>`)).join('')}</ul>
         </div>` : ''}
         <div class="panel"><div class="panel-head"><h2>Staying now</h2><button class="link" data-view="calendar">Open calendar</button></div>
           ${inHouse.length ? `<ul class="mini-list">${inHouse.map(b => row(b, `<strong>Out ${fmtDate(b.checkout, false)}</strong>${b.nights} nights`)).join('')}</ul>` : '<div class="empty">No guests in house tonight.</div>'}
@@ -548,7 +536,7 @@ function renderCalendar() {
       </div>
     </div>
     <div class="legend">
-      <span><i style="background:#fbefdc;border:1.5px dashed #c98a3c"></i>Pending payment (on hold)</span><span><i style="background:#3c6e9b"></i>Upcoming</span><span><i style="background:var(--bush)"></i>Staying now</span>
+      <span><i style="background:#fbefdc;border:1.5px dashed #c98a3c"></i>Pending (on hold)</span><span><i style="background:#3c6e9b"></i>Upcoming</span><span><i style="background:var(--bush)"></i>Staying now</span>
       <span><i style="background:#a39a8c"></i>Completed (dates released)</span><span><i style="background:repeating-linear-gradient(-45deg,#c98a3c 0 3px,#b97b30 3px 6px)"></i>Blocked</span>
     </div>`;
 }
@@ -615,21 +603,20 @@ function renderBookings() {
 }
 function renderListBody() {
   const list = filteredBookings();
-  const total = list.filter(b => b.type !== 'block' && b.status !== 'cancelled').reduce((t, b) => t + (Number(b.total) || 0), 0);
+  const nights = list.filter(b => b.status !== 'cancelled').reduce((t, b) => t + b.nights, 0);
   $('#listBody').innerHTML = list.length ? `
     <table class="btable">
-      <thead><tr><th>Dates</th><th>Property</th><th>Guest</th><th>Party</th><th class="num">Amount</th><th>Status</th></tr></thead>
+      <thead><tr><th>Dates</th><th>Property</th><th>Guest</th><th>Party</th><th>Status</th></tr></thead>
       <tbody>${list.map(b => `
         <tr data-booking="${b.id}">
           <td class="c-dates"><strong>${fmtRange(b.checkin, b.checkout)}</strong><span class="sub">${b.nights} night${b.nights === 1 ? '' : 's'}</span></td>
           <td class="c-prop"><div class="prop"><img src="${thumb(b.stayId)}" alt="" /><span>${esc(b.stay.name)}</span></div></td>
           <td class="c-guest"><strong>${esc(guestLabel(b))}</strong><span class="sub">${esc(b.phone || '')}</span></td>
           <td class="c-guests">${b.type === 'block' ? '—' : `${b.adults || 0} adult${b.adults == 1 ? '' : 's'}${+b.children ? `, ${b.children} child${b.children == 1 ? '' : 'ren'}` : ''}`}</td>
-          <td class="num">${b.type === 'block' ? '' : `<strong>${money(b.total)}</strong><span class="sub">${payLabel(b)}</span>`}</td>
-          <td>${statusBadge(b)}</td>
+          <td class="num">${statusBadge(b)}</td>
         </tr>`).join('')}</tbody>
     </table>
-    <div class="list-foot"><span>${list.length} booking${list.length === 1 ? '' : 's'}</span><span>Total value ${money(total)}</span></div>`
+    <div class="list-foot"><span>${list.length} booking${list.length === 1 ? '' : 's'}</span><span>${nights} night${nights === 1 ? '' : 's'}</span></div>`
     : `<div class="empty">${app.list.q || app.list.stay ? 'No bookings match your search.' : 'Nothing here yet.'}</div>`;
 }
 function afterBookings() {
@@ -654,11 +641,7 @@ function closeDrawer() {
   document.body.classList.remove('locked');
 }
 $('#scrim').onclick = closeDrawer;
-document.addEventListener('keydown', e => {
-  if (e.key !== 'Escape' || $('#confirmRoot').innerHTML) return;
-  if ($('#invoiceRoot').innerHTML) $('#invoiceRoot').innerHTML = '';
-  else closeDrawer();
-});
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#confirmRoot').innerHTML) closeDrawer(); });
 
 function openDetail(id) {
   const raw = app.bookings.find(x => x.id === id);
@@ -675,9 +658,7 @@ function openDetail(id) {
         <div class="nights">${icon('right')}${b.nights} night${b.nights === 1 ? '' : 's'}</div>
         <div><small>Check-out</small><strong>${fmtDate(b.checkout)}</strong></div>
       </div>
-      ${b.status === 'pending' ? (hoursSince(b.createdAt) > BUSINESS.holdHours
-        ? `<div class="alert warn" style="margin:-6px 0 18px">${icon('hourglass')}<span><b>The ${BUSINESS.holdHours}-hour hold has passed.</b> Follow up with the guest, then confirm the payment or decline to release the dates.</span></div>`
-        : `<div class="alert warn" style="margin:-6px 0 18px">${icon('hourglass')}<span><b>Awaiting payment</b> — these dates show as on hold on the website. ${b.invoiceNo ? `Invoice ${esc(b.invoiceNo)} issued.` : 'Send the invoice next.'} Confirm once the money is in the account.</span></div>`) : ''}
+      ${b.status === 'pending' ? `<div class="alert warn" style="margin:-6px 0 18px">${icon('hourglass')}<span><b>Pending</b> (requested ${sinceLabel(b.createdAt)}) — these dates show as on hold on the website. Confirm the booking once it’s finalised with the guest, or decline to release the dates.</span></div>` : ''}
       ${b.status === 'expired' ? `<div class="alert bad" style="margin:-6px 0 18px">${icon('hourglass')}<span>This request was never confirmed and its dates have passed.</span></div>` : ''}
       ${b.status === 'completed' ? `<div class="alert good" style="margin:-6px 0 18px">${icon('check')}<span>Stay completed — these dates were released automatically after check-out.</span></div>` : ''}
       ${b.status === 'cancelled' ? `<div class="alert bad" style="margin:-6px 0 18px">${icon('ban')}<span>${b.declined ? 'Request declined' : 'Cancelled'}${b.cancelledAt ? ' on ' + fmtDate(b.cancelledAt.slice(0, 10)) : ''} — the dates are open for new bookings.</span></div>` : ''}
@@ -691,24 +672,13 @@ function openDetail(id) {
           ['Address', esc(b.address || '')],
           ['Vehicle', esc(b.vehicle || '')],
           ['Party', `${b.adults || 0} adult${b.adults == 1 ? '' : 's'}, ${b.children || 0} child${b.children == 1 ? '' : 'ren'}`],
+          ['Booked via', esc(b.source || '')],
         ])}
         <div class="contact-row">
           ${b.phone ? `<a class="btn btn-wa btn-sm" target="_blank" rel="noopener" href="${waHref(b.phone, `Hi ${b.name.split(' ')[0]}, this is ${SITE.contactName} from Kruger Marloth Bookings regarding your stay at ${b.stay.name} (${fmtRange(b.checkin, b.checkout)}).`)}">${icon('whatsapp')}WhatsApp</a>
           <a class="btn btn-ghost btn-sm" href="${telHref(b.phone)}">${icon('phone')}Call</a>` : ''}
           ${b.email ? `<a class="btn btn-ghost btn-sm" href="mailto:${esc(b.email)}">${icon('mail')}Email</a>` : ''}
         </div>
-        ${b.phone && b.payment !== 'paid' && ['pending', 'upcoming', 'in-house'].includes(b.status) ? `
-        <div class="contact-row"><a class="btn btn-ghost btn-sm" target="_blank" rel="noopener" href="${waHref(b.phone, paymentMessage(b))}">${icon('money')}WhatsApp payment details</a></div>` : ''}
-      </div>
-      <div class="fsec"><h3>${icon('star')}Payment</h3>
-        ${dl([
-          ['Invoice no.', esc(b.invoiceNo || '')],
-          ['Total', `<strong>${money(b.total)}</strong>`],
-          ['Deposit received', money(b.deposit)],
-          ['Balance due', money(Math.max(0, (Number(b.total) || 0) - (Number(b.deposit) || 0)))],
-          ['Status', payLabel(b)],
-          ['Booked via', esc(b.source || '')],
-        ])}
       </div>` : ''}
       ${b.notes ? `<div class="fsec"><h3>${icon('file')}${guest ? 'Notes' : 'Reason'}</h3><p style="font-size:.9rem;white-space:pre-wrap">${esc(b.notes)}</p></div>` : ''}
       <div class="fsec"><h3>${icon('history')}History</h3>
@@ -719,13 +689,11 @@ function openDetail(id) {
       ${b.status === 'cancelled'
         ? `<button class="btn btn-ghost" data-act="restore">${icon('refresh')}Restore</button><span class="spacer"></span><button class="btn btn-danger" data-act="delete">${icon('trash')}Delete permanently</button>`
         : b.status === 'pending'
-        ? `<button class="btn btn-primary" data-act="confirm">${icon('check')}Confirm payment</button>
-           <button class="btn btn-ghost" data-act="invoice">${icon('invoice')}Invoice</button>
-           <button class="btn btn-ghost" data-act="edit" aria-label="Edit">${icon('edit')}</button>
+        ? `<button class="btn btn-primary" data-act="confirm">${icon('check')}Confirm booking</button>
+           <button class="btn btn-ghost" data-act="edit">${icon('edit')}Edit</button>
            <span class="spacer"></span>
            <button class="btn btn-danger" data-act="decline">${icon('ban')}Decline</button>`
         : `<button class="btn btn-primary" data-act="edit">${icon('edit')}Edit</button>
-           ${guest ? `<button class="btn btn-ghost" data-act="invoice">${icon('invoice')}Invoice</button>` : ''}
            <span class="spacer"></span>
            ${b.status === 'completed' || b.status === 'expired' ? `<button class="btn btn-danger" data-act="delete">${icon('trash')}Delete</button>`
              : `<button class="btn btn-danger" data-act="cancel">${icon('ban')}${guest ? 'Cancel booking' : 'Remove block'}</button>`}`}
@@ -737,48 +705,31 @@ function openDetail(id) {
     if (!act) return;
     const a = act.dataset.act;
     if (a === 'edit') return openForm(raw);
-    if (a === 'invoice') return openInvoice(raw);
     if (a === 'confirm') {
-      const total = Number(b.total) || b.stay.price * b.nights;
-      const suggested = Number(b.deposit) || Math.round(total * BUSINESS.depositPercent / 100);
-      const res = await confirmDialog({
-        title: 'Confirm payment received',
-        text: `${esc(b.name)} · ${esc(b.stay.name)} · ${fmtRange(b.checkin, b.checkout)}. Only confirm once the money shows in the bank account.`,
-        body: `<div class="grid2" style="margin-bottom:18px">
-            <div class="field"><label for="cpKind">Payment</label><select id="cpKind"><option value="deposit">Deposit</option><option value="paid">Paid in full</option></select></div>
-            <div class="field"><label for="cpAmt">Amount received (R)</label><input id="cpAmt" type="number" min="0" step="10" value="${suggested}" /></div>
-          </div>`,
-        ok: 'Confirm & book dates',
-        collect: root => {
-          const kind = root.querySelector('#cpKind').value;
-          const amt = kind === 'paid' ? total : Number(root.querySelector('#cpAmt').value);
-          if (!(amt > 0)) { root.querySelector('#cpAmt').focus(); return false; }
-          return { kind, amt };
-        },
+      const ok = await confirmDialog({
+        title: 'Confirm this booking?',
+        text: `${esc(b.name)} · ${esc(b.stay.name)} · ${fmtRange(b.checkin, b.checkout)}.<br><br>The dates change from “on hold” to booked on the website.`,
+        ok: 'Confirm booking',
       });
-      if (!res) return;
+      if (!ok) return;
       const saved = await commit(() => {
-        Object.assign(raw, { status: 'confirmed', payment: res.kind, deposit: res.amt, total: raw.total || total, confirmedAt: new Date().toISOString() });
-        (raw.log = raw.log || []).push({ at: raw.confirmedAt, text: `Payment confirmed — ${money(res.amt)} received (${res.kind === 'paid' ? 'paid in full' : 'deposit'}). Dates booked.` });
+        Object.assign(raw, { status: 'confirmed', confirmedAt: new Date().toISOString() });
+        (raw.log = raw.log || []).push({ at: raw.confirmedAt, text: 'Booking confirmed — dates booked' });
       }, `confirm ${b.stay.name} ${b.checkin}`, `Confirmed — ${b.stay.name} is booked for ${fmtRange(b.checkin, b.checkout)}.`);
       if (saved) openDetail(id);
     }
     if (a === 'cancel' || a === 'decline') {
       const decline = a === 'decline';
-      const paid = Number(b.deposit) || 0;
-      const res = await confirmDialog({
+      const ok = await confirmDialog({
         title: decline ? 'Decline this request?' : guest ? 'Cancel this booking?' : 'Remove this block?',
         text: `${esc(guestLabel(b))} · ${esc(b.stay.name)} · ${fmtRange(b.checkin, b.checkout)}.<br><br>The dates are released immediately and the ${decline ? 'request' : 'booking'} stays in history.`,
-        body: guest ? refundCheckHtml(paid) : '',
         ok: decline ? 'Decline request' : guest ? 'Cancel booking' : 'Remove block', danger: true,
-        collect: guest ? refundCollect(paid) : null,
       });
-      if (!res) return;
+      if (!ok) return;
       const saved = await commit(() => {
         raw.cancelled = true; raw.cancelledAt = new Date().toISOString();
         if (decline) raw.declined = true;
-        const refund = res.refund ? ` ${res.refund}.` : '';
-        (raw.log = raw.log || []).push({ at: raw.cancelledAt, text: (decline ? 'Request declined — dates released.' : guest ? 'Booking cancelled — dates released.' : 'Block removed — dates released.') + refund });
+        (raw.log = raw.log || []).push({ at: raw.cancelledAt, text: decline ? 'Request declined — dates released' : guest ? 'Booking cancelled — dates released' : 'Block removed — dates released' });
       }, `${decline ? 'decline' : 'cancel'} ${b.stay.name} ${b.checkin}`, decline ? 'Request declined — the dates are open again.' : 'Cancelled — the dates are open again.');
       if (saved) openDetail(id);
     }
@@ -799,159 +750,6 @@ function openDetail(id) {
   };
 }
 
-/* ---------- Refund reminder ----------
-   Declining or cancelling never moves money. If anything was paid, the
-   refund has to be done by hand (EFT), so the owner must tick it off. */
-function refundCheckHtml(paid) {
-  return `${paid > 0 ? `<div class="alert warn" style="margin:-6px 0 12px">${icon('money')}<span><b>${money(paid)} was recorded as received.</b> Refund whatever is due under the cancellation policy by EFT — the dashboard doesn't send money back.</span></div>` : ''}
-    <label class="check" style="margin-bottom:18px"><input type="checkbox" id="rfOk" />
-      <span>${paid > 0 ? 'The refund is paid, or no refund is due under the cancellation policy' : 'I’ve checked that no payment was received from the guest'}</span></label>`;
-}
-function refundCollect(paid) {
-  return root => {
-    const box = root.querySelector('#rfOk');
-    if (!box.checked) { box.closest('label').classList.add('need'); return false; }
-    return { refund: paid > 0 ? `Refund checked (${money(paid)} had been received)` : 'No payment had been received' };
-  };
-}
-
-/* ---------- Payment details & invoice ---------- */
-function bookingAmounts(b) {
-  const nights = nightsBetween(b.checkin, b.checkout);
-  const stay = stayById(b.stayId);
-  const total = Number(b.total) || (stay ? stay.price * nights : 0);
-  const received = b.payment === 'paid' ? total : Number(b.deposit) || 0;
-  const deposit = Math.round(total * BUSINESS.depositPercent / 100);
-  return { nights, total, received, deposit, balance: Math.max(0, total - received), stay };
-}
-function paymentMessage(b) {
-  const { total, received, deposit, balance, stay } = bookingAmounts(b);
-  const ref = b.invoiceNo || b.name;
-  const due = received > 0 ? `Balance due: ${money(balance)} by ${fmtDate(addDays(b.checkin, -BUSINESS.balanceDaysBefore))}` : `Deposit to secure the booking: ${money(deposit)} (${BUSINESS.depositPercent}%) within ${BUSINESS.holdHours} hours`;
-  const k = BUSINESS.bank;
-  return [
-    `Hi ${b.name.split(' ')[0]}, thank you for booking *${stay.name}* for ${fmtRange(b.checkin, b.checkout)}.`, '',
-    `Total: ${money(total)}`, due, '',
-    '*Banking details*', `Bank: ${k.bank}`, `Account name: ${k.accountName}`, `Account no: ${k.accountNumber}`, `Branch code: ${k.branchCode}`, `Reference: ${ref}`, '',
-    'Please send proof of payment to this number. Your dates are held until then.', `— ${SITE.contactName}, ${SITE.name}`,
-  ].join('\n');
-}
-
-/* Shown in an in-page viewer (pop-ups are often blocked on phones).
-   Placeholder business/bank details are highlighted on the invoice itself. */
-async function openInvoice(raw) {
-  if (!raw.invoiceNo) {
-    const no = nextInvoiceNo();
-    const ok = await commit(() => {
-      raw.invoiceNo = no; raw.invoicedAt = new Date().toISOString();
-      (raw.log = raw.log || []).push({ at: raw.invoicedAt, text: `Invoice ${no} issued` });
-    }, `invoice ${no}`);
-    if (!ok) return;
-    openDetail(raw.id);
-  }
-  const root = $('#invoiceRoot');
-  root.innerHTML = `<div class="inv-view" role="dialog" aria-modal="true" aria-label="Invoice ${esc(raw.invoiceNo)}">
-    <div class="inv-bar"><strong>${icon('invoice')}Invoice ${esc(raw.invoiceNo)}</strong>
-      <button class="btn btn-ghost btn-sm" data-inv="close">Close</button>
-      <button class="btn btn-primary btn-sm" data-inv="print">${icon('printer')}Print / Save as PDF</button></div>
-    <iframe id="invFrame" title="Invoice"></iframe></div>`;
-  $('#invFrame').srcdoc = invoiceHtml(raw);
-  root.onclick = e => {
-    const b = e.target.closest('[data-inv]');
-    if (!b) return;
-    if (b.dataset.inv === 'print') $('#invFrame').contentWindow.print();
-    else root.innerHTML = '';
-  };
-}
-
-function invoiceHtml(b) {
-  const { nights, total, received, deposit, balance, stay } = bookingAmounts(b);
-  const k = BUSINESS.bank;
-  const issued = (b.invoicedAt || new Date().toISOString()).slice(0, 10);
-  const status = b.payment === 'paid' ? 'Paid in full' : received > 0 ? 'Deposit received' : 'Awaiting payment';
-  const logo = new URL('logo.jpg', location.href).href;
-  const ph = v => /\[[^\]]+\]/.test(v) ? `<span class="ph">${esc(v)}</span>` : esc(v);
-  return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Invoice ${esc(b.invoiceNo)} — ${esc(b.name)}</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Inter,system-ui,sans-serif;color:#26221d;background:#ece7df;font-size:13px;line-height:1.5}
-.page{max-width:820px;margin:24px auto;background:#fff;padding:44px 48px;box-shadow:0 10px 40px rgba(0,0,0,.12)}
-.bar{max-width:820px;margin:16px auto 0;display:flex;gap:10px;justify-content:flex-end}
-.bar button{font:600 14px Inter,sans-serif;padding:10px 18px;border-radius:10px;border:none;cursor:pointer;background:#3b5d3a;color:#fff}
-.bar button.ghost{background:#fff;color:#26221d;border:1px solid #ddd5c8}
-.warn{max-width:820px;margin:12px auto 0;background:#fbefdc;color:#8a5a1e;padding:10px 14px;border-radius:10px;font-size:13px}
-header{display:flex;justify-content:space-between;gap:24px;align-items:flex-start;padding-bottom:24px;border-bottom:2px solid #3b5d3a}
-header img{height:84px}
-.biz{font-size:12px;color:#5d564c}.biz strong{display:block;font-size:15px;color:#26221d}
-.title{text-align:right}
-.title h1{font-family:'Playfair Display',serif;font-size:30px;color:#2a4429;letter-spacing:.02em}
-.status{display:inline-block;margin-top:6px;padding:4px 12px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:${b.payment === 'paid' ? '#e3f1e5;color:#2f7a3d' : received > 0 ? '#e3edf7;color:#2c5d8a' : '#fbefdc;color:#a86f2b'}}
-.meta{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin:26px 0}
-.meta h4{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#8a8175;margin-bottom:6px}
-.meta p{font-size:13px}
-table{width:100%;border-collapse:collapse;margin-top:6px}
-th{text-align:left;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8a8175;padding:10px 8px;border-bottom:1px solid #e7e1d7;background:#faf7f2}
-td{padding:12px 8px;border-bottom:1px solid #f0ebe3;vertical-align:top}
-.r{text-align:right;white-space:nowrap}
-.totals{margin-left:auto;width:300px;margin-top:14px}
-.totals div{display:flex;justify-content:space-between;padding:6px 8px}
-.totals .grand{border-top:2px solid #26221d;margin-top:4px;padding-top:10px;font-weight:700;font-size:15px}
-.totals .due{background:#2a4429;color:#fff;border-radius:8px;font-weight:700;font-size:15px;padding:10px 12px;margin-top:8px}
-.boxes{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:30px}
-.box{border:1px solid #e7e1d7;border-radius:10px;padding:16px}
-.box h4{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#a86f2b;margin-bottom:10px}
-.kv{display:grid;grid-template-columns:110px 1fr;gap:4px 10px}
-.kv span:nth-child(odd){color:#8a8175}
-.terms{margin-top:26px;font-size:11.5px;color:#5d564c;display:grid;gap:5px}
-footer{margin-top:30px;padding-top:16px;border-top:1px solid #e7e1d7;text-align:center;font-size:11px;color:#8a8175}
-.ph{background:#fff3cd;color:#8a5a1e;padding:0 3px;border-radius:3px}
-@media print{body{background:#fff}.page{box-shadow:none;margin:0;padding:24px 28px;max-width:none}.bar,.warn{display:none}.ph{background:none}}
-@media (max-width:640px){.page{padding:24px 18px;margin:0}.meta,.boxes{grid-template-columns:1fr}header{flex-direction:column}.title{text-align:left}.totals{width:100%}}
-</style></head><body>
-${businessPlaceholders() ? '<div class="warn">Placeholder business or banking details are highlighted — do not send this invoice until they are filled in.</div>' : ''}
-<div class="page">
-  <header>
-    <div style="display:flex;gap:16px;align-items:center"><img src="${logo}" alt="">
-      <div class="biz"><strong>${esc(BUSINESS.legalName)}</strong>${ph(BUSINESS.address)}<br>${esc(SITE.phone)}${SITE.email ? ' · ' + esc(SITE.email) : ''}
-        ${BUSINESS.regNumber ? `<br>Reg. no. ${esc(BUSINESS.regNumber)}` : ''}${BUSINESS.vatNumber ? `<br>VAT no. ${esc(BUSINESS.vatNumber)}` : ''}</div></div>
-    <div class="title"><h1>${BUSINESS.vatNumber ? 'Tax Invoice' : 'Invoice'}</h1><div><b>${esc(b.invoiceNo)}</b></div><span class="status">${status}</span></div>
-  </header>
-  <div class="meta">
-    <div><h4>Billed to</h4><p><b>${esc(b.name)}</b><br>${esc(b.phone || '')}${b.email ? '<br>' + esc(b.email) : ''}${b.address ? '<br>' + esc(b.address) : ''}</p></div>
-    <div><h4>Stay</h4><p><b>${esc(stay.name)}</b><br>Marloth Park<br>${b.adults || 0} adult${b.adults == 1 ? '' : 's'}${+b.children ? `, ${b.children} child${b.children == 1 ? '' : 'ren'}` : ''}</p></div>
-    <div><h4>Dates</h4><p>Issued: ${fmtDate(issued)}<br>Check-in: ${fmtDate(b.checkin)}, from ${DEFAULT_RULES.checkIn}<br>Check-out: ${fmtDate(b.checkout)}, by ${DEFAULT_RULES.checkOut}</p></div>
-  </div>
-  <table>
-    <thead><tr><th>Description</th><th class="r">Nights</th><th class="r">Rate</th><th class="r">Amount</th></tr></thead>
-    <tbody><tr><td><b>Accommodation — ${esc(stay.name)}</b><br><span style="color:#8a8175">${fmtRange(b.checkin, b.checkout)} · self-catering</span></td>
-      <td class="r">${nights}</td><td class="r">${money(nights ? total / nights : total)}</td><td class="r">${money(total)}</td></tr></tbody>
-  </table>
-  <div class="totals">
-    <div class="grand"><span>Total</span><span>${money(total)}</span></div>
-    ${received > 0 ? `<div><span>Less: received</span><span>− ${money(received)}</span></div>` : `<div><span>Deposit required (${BUSINESS.depositPercent}%)</span><span>${money(deposit)}</span></div>`}
-    <div class="due"><span>${received > 0 ? 'Balance due' : 'Deposit due now'}</span><span style="float:right">${money(received > 0 ? balance : deposit)}</span></div>
-  </div>
-  <div class="boxes">
-    <div class="box"><h4>Banking details</h4><div class="kv">
-      <span>Bank</span><span>${ph(k.bank)}</span><span>Account name</span><span>${ph(k.accountName)}</span>
-      <span>Account no.</span><span>${ph(k.accountNumber)}</span><span>Branch code</span><span>${ph(k.branchCode)}</span>
-      <span>Account type</span><span>${ph(k.accountType)}</span><span>Reference</span><span><b>${esc(b.invoiceNo)}</b></span></div></div>
-    <div class="box"><h4>Payment terms</h4><div class="kv">
-      <span>Deposit</span><span>${money(deposit)} (${BUSINESS.depositPercent}%) within ${BUSINESS.holdHours} hours</span>
-      <span>Balance</span><span>${money(total - deposit)} by ${fmtDate(addDays(b.checkin, -BUSINESS.balanceDaysBefore))}</span>
-      <span>Proof of payment</span><span>WhatsApp ${esc(SITE.phone)}</span></div></div>
-  </div>
-  <div class="terms">
-    <div>• Your dates are held for ${BUSINESS.holdHours} hours. The booking is confirmed once the deposit reflects in our account.</div>
-    <div>• Cancellations: ${ph(BUSINESS.cancellationPolicy)}</div>
-    <div>• Your personal information is used only to manage this booking, in line with POPIA and our privacy notice.</div>
-  </div>
-  <footer>Thank you for choosing ${esc(SITE.name)} — we look forward to welcoming you to Marloth Park.</footer>
-</div></body></html>`;
-}
-
 /* ---------- New / edit booking ---------- */
 function findConflict(stayId, checkin, checkout, ignoreId) {
   return app.bookings.find(b => b.id !== ignoreId && b.stayId === stayId && !b.cancelled && rangesOverlap(checkin, checkout, b.checkin, b.checkout));
@@ -960,7 +758,7 @@ function findConflict(stayId, checkin, checkout, ignoreId) {
 function openForm(existing, preset = {}) {
   const b = existing ? { ...existing } : {
     stayId: preset.stayId || STAYS[0].id, type: 'guest', status: 'pending', checkin: preset.checkin || TODAY, checkout: preset.checkout || addDays(TODAY, 2),
-    adults: 2, children: 0, payment: 'unpaid', source: SOURCES[0], total: '', deposit: '',
+    adults: 2, children: 0, source: SOURCES[0],
   };
   const opt = (v, cur, label = v) => `<option value="${esc(v)}" ${v === cur ? 'selected' : ''}>${esc(label)}</option>`;
   openDrawer(`
@@ -971,8 +769,8 @@ function openForm(existing, preset = {}) {
         <div class="field" style="margin-top:12px"><span class="label">Type</span>
           <div class="seg" id="fType"><button type="button" data-type="guest" class="${b.type !== 'block' ? 'on' : ''}">Guest booking</button><button type="button" data-type="block" class="${b.type === 'block' ? 'on' : ''}">Block dates</button></div></div>
         <div class="field guest-only" style="margin-top:12px"><span class="label">Status</span>
-          <div class="seg" id="fStatus"><button type="button" data-status="pending" class="${b.status === 'pending' ? 'on' : ''}">Pending — awaiting payment</button><button type="button" data-status="confirmed" class="${b.status !== 'pending' ? 'on' : ''}">Confirmed</button></div>
-          <span class="hint">Pending dates show as “on hold” on the website until you confirm payment.</span></div>
+          <div class="seg" id="fStatus"><button type="button" data-status="pending" class="${b.status === 'pending' ? 'on' : ''}">Pending</button><button type="button" data-status="confirmed" class="${b.status !== 'pending' ? 'on' : ''}">Confirmed</button></div>
+          <span class="hint">Pending dates show as “on hold” on the website until you confirm the booking.</span></div>
         <div class="grid2" style="margin-top:12px">
           <div class="field"><label for="fIn">Check-in</label><input type="date" id="fIn" value="${b.checkin}" required /></div>
           <div class="field"><label for="fOut">Check-out</label><input type="date" id="fOut" value="${b.checkout}" required /></div>
@@ -990,18 +788,9 @@ function openForm(existing, preset = {}) {
           <div class="field"><label for="fVehicle">Vehicle & registration</label><input id="fVehicle" value="${esc(b.vehicle || '')}" placeholder="For the Marloth gate" /></div>
         </div>
         <div class="field" style="margin-top:12px"><label for="fAddress">Home town / address</label><input id="fAddress" value="${esc(b.address || '')}" /></div>
-        <div class="grid2" style="margin-top:12px">
+        <div class="grid3" style="margin-top:12px">
           <div class="field"><label for="fAdults">Adults</label><input id="fAdults" type="number" min="0" max="30" value="${b.adults ?? 2}" /></div>
           <div class="field"><label for="fKids">Children</label><input id="fKids" type="number" min="0" max="30" value="${b.children ?? 0}" /></div>
-        </div>
-      </div>
-      <div class="fsec guest-only"><h3>${icon('star')}Payment</h3>
-        <div class="grid2">
-          <div class="field"><label for="fTotal">Total amount (R)</label><input id="fTotal" type="number" min="0" step="10" value="${b.total ?? ''}" /><span class="hint" id="fSuggest"></span></div>
-          <div class="field"><label for="fDeposit">Deposit received (R)</label><input id="fDeposit" type="number" min="0" step="10" value="${b.deposit ?? ''}" /></div>
-        </div>
-        <div class="grid2" style="margin-top:12px">
-          <div class="field"><label for="fPay">Payment status</label><select id="fPay">${opt('unpaid', b.payment, 'Not paid')}${opt('deposit', b.payment, 'Deposit paid')}${opt('paid', b.payment, 'Paid in full')}</select></div>
           <div class="field"><label for="fSource">Booked via</label><select id="fSource">${SOURCES.map(s => opt(s, b.source)).join('')}</select></div>
         </div>
       </div>
@@ -1029,7 +818,7 @@ function openForm(existing, preset = {}) {
     const stayId = $('#fStay').value, ci = $('#fIn').value, co = $('#fOut').value;
     const s = stayById(stayId);
     const nights = nightsBetween(ci, co);
-    let html = `<div class="stay-strip"><img src="${thumb(stayId)}" alt="" /><div><strong>${esc(s.name)}</strong><span>Sleeps ${s.sleeps} · ${money(s.price)}/night${nights ? ` · ${nights} night${nights === 1 ? '' : 's'}` : ''}</span></div></div>`;
+    let html = `<div class="stay-strip"><img src="${thumb(stayId)}" alt="" /><div><strong>${esc(s.name)}</strong><span>Sleeps ${s.sleeps}${nights ? ` · ${nights} night${nights === 1 ? '' : 's'}` : ''}</span></div></div>`;
     let ok = true;
     if (!ci || !co || co <= ci) { html += `<div class="alert bad">${icon('info')}<span>Check-out must be after check-in.</span></div>`; ok = false; }
     else {
@@ -1040,10 +829,6 @@ function openForm(existing, preset = {}) {
       } else html += `<div class="alert good">${icon('check')}<span>Available — ${fmtRange(ci, co)} is free.</span></div>`;
     }
     $('#fAvail').innerHTML = html;
-    const sug = nights > 0 ? s.price * nights : 0;
-    $('#fSuggest').innerHTML = sug ? `Standard rate: <a href="#" id="fUseSug" style="color:var(--sun-dark);font-weight:600">${money(sug)}</a> (${nights} × ${money(s.price)})` : '';
-    const use = $('#fUseSug');
-    if (use) use.onclick = e => { e.preventDefault(); $('#fTotal').value = sug; };
     $('#fSave').disabled = !ok;
     return ok;
   };
@@ -1061,9 +846,8 @@ function openForm(existing, preset = {}) {
       stayId: $('#fStay').value, type, status: type === 'block' ? 'confirmed' : status, checkin: $('#fIn').value, checkout: $('#fOut').value, notes: $('#fNotes').value.trim(),
       ...(type === 'guest' ? {
         name, phone, email: $('#fEmail').value.trim(), idNumber: $('#fId').value.trim(), vehicle: $('#fVehicle').value.trim(), address: $('#fAddress').value.trim(),
-        adults: Number($('#fAdults').value) || 0, children: Number($('#fKids').value) || 0,
-        total: Number($('#fTotal').value) || 0, deposit: Number($('#fDeposit').value) || 0, payment: $('#fPay').value, source: $('#fSource').value,
-      } : { name: '', phone: '', email: '', total: 0, deposit: 0, payment: 'unpaid', adults: 0, children: 0 }),
+        adults: Number($('#fAdults').value) || 0, children: Number($('#fKids').value) || 0, source: $('#fSource').value,
+      } : { name: '', phone: '', email: '', adults: 0, children: 0 }),
     };
     const stamp = new Date().toISOString();
     const stayName = stayById(fields.stayId).name;
@@ -1076,7 +860,6 @@ function openForm(existing, preset = {}) {
         const changes = [];
         if (target.checkin !== fields.checkin || target.checkout !== fields.checkout) changes.push(`dates ${fmtRange(target.checkin, target.checkout)} → ${fmtRange(fields.checkin, fields.checkout)}`);
         if (target.stayId !== fields.stayId) changes.push(`moved to ${stayName}`);
-        if (target.payment !== fields.payment && type === 'guest') changes.push(`payment: ${fields.payment}`);
         if ((target.status || 'confirmed') !== fields.status) changes.push(fields.status === 'pending' ? 'set to pending (on hold)' : 'confirmed');
         Object.assign(target, fields, { updatedAt: stamp });
         (target.log = target.log || []).push({ at: stamp, text: 'Edited' + (changes.length ? ' — ' + changes.join('; ') : '') });
@@ -1087,7 +870,7 @@ function openForm(existing, preset = {}) {
       }
     }, `${existing ? 'update' : type === 'block' ? 'block' : 'add'} ${stayName} ${fields.checkin}–${fields.checkout}`,
     existing ? 'Changes saved.' : type === 'block' ? 'Dates blocked.' : fields.status === 'pending'
-      ? `On hold — ${stayName}, ${fmtRange(fields.checkin, fields.checkout)}. Send the invoice next.`
+      ? `On hold — ${stayName}, ${fmtRange(fields.checkin, fields.checkout)}. Confirm it once it’s finalised.`
       : `Booked — ${stayName} is now closed for ${fmtRange(fields.checkin, fields.checkout)}.`);
     if (ok) openDetail(id);
     else { $('#fSave').disabled = false; $('#fSave').innerHTML = icon('check') + 'Save'; }
@@ -1136,13 +919,6 @@ function renderSettings() {
             <button class="btn btn-ghost" id="sCsv">${icon('download')}Export spreadsheet (.csv)</button>
             <label class="btn btn-ghost">${icon('upload')}Restore backup<input type="file" id="sImport" accept="application/json,.json" hidden /></label>
           </div>
-        </div>
-      </div>
-      <div class="panel"><div class="panel-head"><h2>Invoices & banking</h2>${businessPlaceholders() ? '<span class="badge b-pending">Needs details</span>' : '<span class="badge b-in-house">Ready</span>'}</div>
-        <div class="set-body">
-          <div class="kv"><span>Bank</span><span>${esc(BUSINESS.bank.bank)}</span><span>Account</span><span>${esc(BUSINESS.bank.accountNumber)}</span>
-            <span>Deposit</span><span>${BUSINESS.depositPercent}% · dates held ${BUSINESS.holdHours} hours</span><span>Balance due</span><span>${BUSINESS.balanceDaysBefore} days before arrival</span></div>
-          <p>${businessPlaceholders() ? 'Placeholder details are shown in [brackets] and highlighted on invoices — don’t send invoices to guests until they are replaced.' : 'Invoices use these details.'} They are edited in <code>assets/js/data.js</code> (BUSINESS).</p>
         </div>
       </div>
       ${live ? `
@@ -1211,9 +987,9 @@ function download(name, text, type) {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 function exportCSV(list) {
-  const cols = [['Property', b => b.stay.name], ['Status', statusLabel], ['Invoice', b => b.invoiceNo], ['Check-in', b => b.checkin], ['Check-out', b => b.checkout], ['Nights', b => b.nights],
+  const cols = [['Property', b => b.stay.name], ['Status', statusLabel], ['Check-in', b => b.checkin], ['Check-out', b => b.checkout], ['Nights', b => b.nights],
     ['Guest', b => b.name], ['Phone', b => b.phone], ['Email', b => b.email], ['ID / passport', b => b.idNumber], ['Address', b => b.address], ['Vehicle', b => b.vehicle],
-    ['Adults', b => b.adults], ['Children', b => b.children], ['Total', b => b.total], ['Deposit', b => b.deposit], ['Payment', b => b.payment], ['Booked via', b => b.source], ['Notes', b => b.notes]];
+    ['Adults', b => b.adults], ['Children', b => b.children], ['Booked via', b => b.source], ['Notes', b => b.notes]];
   const cell = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
   const csv = [cols.map(c => cell(c[0])).join(','), ...list.map(b => cols.map(c => cell(c[1](b))).join(','))].join('\r\n');
   download(`kruger-marloth-bookings-${TODAY}.csv`, '﻿' + csv, 'text/csv');

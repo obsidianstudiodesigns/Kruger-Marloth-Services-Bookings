@@ -250,8 +250,11 @@ function openStay(id, push = true) {
             <div class="quote" id="quote"></div>
             <label class="consent"><input type="checkbox" id="bConsent" />
               <span>I agree that my details may be used to process this booking request, as set out in the <a href="privacy.html" target="_blank" rel="noopener">privacy notice</a> (POPIA).</span></label>
-            <button class="btn btn-wa btn-block" type="submit">${icon('whatsapp')}Request to book</button>
-            <p class="form-note">${icon('info')}<span>No payment now. ${SITE.contactName} confirms availability and sends an invoice — your dates are then held for ${BUSINESS.holdHours} hours while you pay the ${BUSINESS.depositPercent}% deposit.</span></p>
+            <div class="book-actions">
+              <button class="btn btn-wa" type="submit">${icon('whatsapp')}Book via WhatsApp</button>
+              <button class="btn btn-ghost" type="button" data-book-email>${icon('mail')}Book via email</button>
+            </div>
+            <p class="form-note">${icon('info')}<span>No payment now. Your request opens in WhatsApp or your email app, ready to send. ${SITE.contactName} then confirms availability and the booking details with you.</span></p>
           </form>
         </aside>
       </div>
@@ -270,6 +273,7 @@ function openStay(id, push = true) {
     const t = e.target;
     if (t.closest('[data-close]')) return closeStay();
     if (t.closest('[data-share]')) return shareStay(s);
+    if (t.closest('[data-book-email]')) return sendRequest('email');
     if (t.closest('[data-jump]')) return $('#bookCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
     if (t.closest('[data-flyer]')) return openLightbox([{ src: `images/stays/${s.id}/flyer.jpg` }], 0, s.name + ' flyer');
     const p = t.closest('[data-photo]');
@@ -279,7 +283,7 @@ function openStay(id, push = true) {
     const nav = t.closest('[data-month]');
     if (nav) { shiftMonth(Number(nav.dataset.month)); }
   };
-  $('#bookForm').addEventListener('submit', submitBooking);
+  $('#bookForm').addEventListener('submit', e => { e.preventDefault(); sendRequest('whatsapp'); });
 
   sheet.scrollTop = 0;
   sheet.classList.add('open');
@@ -381,8 +385,8 @@ function updateQuote() {
     <small>Indicative rate — ${SITE.contactName} confirms the final price${stay.peakPrice ? ' (school-holiday rates may apply)' : ''}.</small>` : '';
 }
 
-function submitBooking(e) {
-  e.preventDefault();
+/* Send the booking request to the owner via 'whatsapp' or 'email' */
+function sendRequest(channel) {
   const { stay, ci, co } = cal;
   const nights = nightsBetween(ci, co);
   const name = $('#bName').value.trim(), phone = $('#bPhone').value.trim();
@@ -391,8 +395,9 @@ function submitBooking(e) {
   if (!name || !phone) { toast('Please add your name and phone number.'); (name ? $('#bPhone') : $('#bName')).focus(); return; }
   if (!$('#bConsent').checked) { toast('Please tick the box to agree to the privacy notice.'); $('#bConsent').closest('label').classList.add('need'); return; }
   const adults = $('#bAdults').value, kids = $('#bKids').value, notes = $('#bNotes').value.trim();
+  const viaEmail = channel === 'email';
   const text = [
-    `Hi ${SITE.contactName}, I'd like to book *${stay.name}*.`,
+    `Hi ${SITE.contactName}, I'd like to book ${viaEmail ? stay.name : `*${stay.name}*`}.`,
     '',
     `Check-in: ${fmtDate(ci)}`,
     `Check-out: ${fmtDate(co)} (${nights} nights)`,
@@ -403,8 +408,14 @@ function submitBooking(e) {
     '',
     `Estimated total: ${money(stay.price * nights)}`,
   ].filter(l => l !== null).join('\n');
-  window.open(waHref(SITE.whatsapp, text), '_blank', 'noopener');
-  toast(`WhatsApp opened with your request — ${SITE.contactName} will confirm and send deposit details.`, 6000);
+  if (viaEmail) {
+    const subject = `Booking request — ${stay.name}, ${fmtRange(ci, co)}`;
+    location.href = `mailto:${SITE.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
+    toast(`Your email app opened with the request — press send and ${SITE.contactName} will confirm your booking.`, 6000);
+  } else {
+    window.open(waHref(SITE.whatsapp, text), '_blank', 'noopener');
+    toast(`WhatsApp opened with your request — press send and ${SITE.contactName} will confirm your booking.`, 6000);
+  }
 }
 
 /* ---------- Lightbox ---------- */

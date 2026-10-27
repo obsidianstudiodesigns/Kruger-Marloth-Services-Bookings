@@ -11,43 +11,18 @@ const SITE = {
   contactName: 'Nadia',
   phone: '061 512 9208',
   whatsapp: '27615129208',          // international format, no + or spaces
-  email: '',                        // TODO: add the bookings email when available
+  email: '',                        // TODO: bookings email — "Book via email" opens the mail app with an empty "To" until this is set
   location: 'Marloth Park, Mpumalanga, South Africa',
   // GitHub repository that hosts the site (used by the admin dashboard)
   repo: { owner: 'obsidianstudiodesigns', name: 'Kruger-Marloth-Services-Bookings', branch: 'main' },
 };
-
-/* Details printed on invoices. Values in [square brackets] are PLACEHOLDERS —
-   the dashboard warns while any are left, so never send an invoice before
-   the real banking details are filled in. */
-const BUSINESS = {
-  legalName: 'Kruger Marloth Services & Bookings',
-  regNumber: '',                    // e.g. 2024/123456/07 — leave empty to hide
-  vatNumber: '',                    // only if VAT registered — leave empty to hide
-  address: '[Street address], Marloth Park, 1321',
-  bank: {
-    bank: '[Bank name]',
-    accountName: '[Account holder]',
-    accountNumber: '[Account number]',
-    branchCode: '[Branch code]',
-    accountType: '[Cheque / Savings]',
-  },
-  depositPercent: 50,               // DUMMY — deposit required to secure a booking
-  holdHours: 48,                    // DUMMY — how long dates are held while awaiting payment
-  balanceDaysBefore: 7,             // DUMMY — balance due this many days before arrival
-  cancellationPolicy: '[Cancellation policy to be confirmed by the owner — e.g. deposit refundable up to 30 days before arrival.]',
-};
-function businessPlaceholders() {
-  const vals = [BUSINESS.address, ...Object.values(BUSINESS.bank), BUSINESS.cancellationPolicy];
-  return vals.some(v => /^\[|\[[^\]]+\]/.test(v));
-}
 
 /* Default house rules — DUMMY until the owner confirms per property */
 const DEFAULT_RULES = {
   checkIn: '14:00',
   checkOut: '10:00',
   minNights: 2,
-  deposit: '50% deposit secures the booking, balance due 7 days before arrival. Dates are held for 48 hours while we wait for the deposit',
+  deposit: '50% deposit secures the booking, balance due 7 days before arrival.',
 };
 
 /* amenity icon keys: pool, wifi, snow, flame, tv, washer, dish, zap, sun, lock, paw, river,
