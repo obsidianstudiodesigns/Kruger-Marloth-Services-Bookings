@@ -3,16 +3,18 @@
    ---------------------------------------------------------
    Two ways to store bookings:
    • Demo mode — bookings live in this browser only (try it out).
-   • Live mode — bookings are encrypted with the owner's passphrase
-     and saved to data/bookings.vault.json in the GitHub repo. Booked
-     date ranges (no guest details) are published to
-     data/availability.json, which the public calendar reads.
+   • Live mode — everything is saved in a separate bookings repository
+     (SITE.dataRepo), so the dashboard's token can't touch the website:
+       bookings.vault.json  all bookings, encrypted with the owner's password
+       availability.json    booked date ranges only, read by the public calendar
+       access.json          the GitHub token, encrypted with the same password
    A booking's dates are released automatically once check-out has
    passed or when it is cancelled; it stays in History either way.
    ========================================================= */
 
-const VAULT_PATH = 'data/bookings.vault.json';
-const AVAIL_PATH = 'data/availability.json';
+const VAULT_PATH = 'bookings.vault.json';
+const AVAIL_PATH = 'availability.json';
+const ACCESS_PATH = 'access.json';
 const PBKDF2_ITERATIONS = 250000;
 const SOURCES = ['Direct / WhatsApp', 'Phone call', 'Website', 'LekkeSlaap', 'Booking.com', 'Airbnb', 'Returning guest', 'Other'];
 
@@ -20,7 +22,7 @@ const $ = s => document.querySelector(s);
 const now = new Date();
 const app = {
   mode: null,           // 'demo' | 'github'
-  settings: {},         // { owner, repo, branch, token, passphrase, remember }
+  settings: {},         // { owner, repo, branch, token, remember } — the bookings repository
   passphrase: null,
   bookings: [],
   shas: {},
@@ -129,7 +131,7 @@ async function decryptVault(vault, passphrase) {
     const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64ToBytes(vault.iv) }, key, b64ToBytes(vault.data));
     return JSON.parse(new TextDecoder().decode(plain));
   } catch (e) {
-    const err = new Error('Wrong passphrase — the bookings could not be unlocked.');
+    const err = new Error('Wrong password — the bookings could not be unlocked.');
     err.code = 'passphrase';
     throw err;
   }
@@ -148,9 +150,9 @@ async function ghError(res) {
   let detail = '';
   try { detail = (await res.json()).message || ''; } catch (e) { /* no body */ }
   const msg = {
-    401: 'GitHub rejected the access token — it may be wrong or expired.',
-    403: 'The access token is not allowed to change this repository (it needs Contents: Read and write).',
-    404: 'Repository not found — check the owner/name, and that the token has access to it.',
+    401: 'GitHub rejected the access token — it may be wrong or expired. Henry needs to set up a new one.',
+    403: 'The access token is not allowed to change the bookings repository (it needs Contents: Read and write).',
+    404: 'Bookings repository not found — check its name, and that the token has access to it.',
     409: 'The bookings were changed somewhere else at the same time.',
     422: 'The bookings were changed somewhere else at the same time.',
   }[res.status] || `GitHub error ${res.status}${detail ? ': ' + detail : ''}`;
@@ -275,93 +277,134 @@ function demoBookings() {
   ];
 }
 
-/* ---------- Sign-in / setup ---------- */
-function renderAuth(step = 'start', error = '') {
+/* ---------- Sign-in / setup ----------
+   The owner signs in with one password. It unlocks access.json (the GitHub
+   token, encrypted) and the bookings file. Henry does a one-time setup
+   that stores the token there; the token only has access to the bookings
+   repository, never to the website itself. */
+function repoDefaults() {
+  const saved = lsGet(LS.settings, {});
+  return {
+    owner: saved.owner || SITE.dataRepo.owner,
+    repo: saved.repo || SITE.dataRepo.name,
+    branch: saved.branch || SITE.dataRepo.branch,
+  };
+}
+
+/* access.json is public (encrypted), so it can be read before signing in */
+async function readAccess(settings) {
+  const { owner, repo, branch } = settings;
+  const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${ACCESS_PATH}?ref=${encodeURIComponent(branch)}`, {
+    cache: 'no-store', headers: { Accept: 'application/vnd.github.raw+json' },
+  });
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error('Could not reach GitHub — check your internet connection and try again.');
+  return res.json();
+}
+async function writeAccess(password) {
+  const current = await ghRead(ACCESS_PATH);
+  const locked = await encryptVault({ token: app.settings.token, savedAt: new Date().toISOString() }, password);
+  await ghWrite(ACCESS_PATH, JSON.stringify(locked) + '\n', current && current.sha, 'Update dashboard sign-in');
+}
+
+async function signIn(password, remember) {
+  const settings = repoDefaults();
+  const access = await readAccess(settings);
+  if (!access) {
+    const err = new Error('Live bookings aren’t set up yet. Henry needs to do the first-time setup (link below).');
+    err.code = 'nosetup';
+    throw err;
+  }
+  let secret;
+  try { secret = await decryptVault(access, password); }
+  catch (e) { const err = new Error('Wrong password.'); err.code = 'passphrase'; throw err; }
+  app.settings = { ...settings, token: secret.token, remember };
+  app.passphrase = password;
+  app.mode = 'github';
+  await loadData();
+  saveLocalSettings();
+}
+
+function renderAuth(step = 'login', error = '') {
   $('#shell').classList.add('hidden');
   const auth = $('#auth');
   auth.classList.remove('hidden');
-  const s = { owner: SITE.repo.owner, repo: SITE.repo.name, branch: SITE.repo.branch, ...lsGet(LS.settings, {}) };
-  const unlockOnly = step === 'unlock';
-  const confirmNew = step === 'confirm';
+  const s = { ...repoDefaults(), remember: lsGet(LS.settings, {}).remember };
+  const setup = step === 'setup';
   auth.innerHTML = `
     <div class="auth-card">
       <img class="logo" src="logo.jpg" alt="" />
-      <h1 class="serif">Owner dashboard</h1>
-      <p>${confirmNew ? 'No bookings saved yet. Confirm your passphrase to create the secure bookings file.'
-        : unlockOnly ? 'Enter your passphrase to unlock the bookings.' : 'Manage bookings, blocked dates and guest history.'}</p>
+      <h1 class="serif">${setup ? 'First-time setup' : 'Owner dashboard'}</h1>
+      <p>${setup ? 'For Henry: connect the bookings repository once. After this, the owner signs in with the password only.'
+        : 'Manage bookings, blocked dates and guest history.'}</p>
       ${error ? `<div class="err" style="margin-bottom:14px">${esc(error)}</div>` : ''}
       <form id="authForm" autocomplete="off">
-        ${unlockOnly || confirmNew ? '' : `
+        ${setup ? `
         <div class="field"><label for="aToken">GitHub access token</label>
-          <input id="aToken" type="password" value="${esc(s.token || '')}" placeholder="github_pat_…" required />
-          <span class="hint">A fine-grained token with <b>Contents: Read and write</b> on the website repository.</span></div>`}
-        <div class="field"><label for="aPass">${confirmNew ? 'Passphrase' : 'Bookings passphrase'}</label>
-          <input id="aPass" type="password" value="${confirmNew ? esc(app.passphrase || '') : ''}" required minlength="8" autocomplete="current-password" />
-          ${unlockOnly ? '' : '<span class="hint">Encrypts guest details. Use at least 8 characters — if it is lost, the bookings cannot be recovered.</span>'}</div>
-        ${confirmNew ? `<div class="field"><label for="aPass2">Type the passphrase again</label><input id="aPass2" type="password" required /></div>` : ''}
-        ${unlockOnly || confirmNew ? '' : `
+          <input id="aToken" type="password" placeholder="github_pat_…" required />
+          <span class="hint">Fine-grained token for <b>${esc(s.owner)}/${esc(s.repo)}</b> only, with <b>Contents: Read and write</b>.</span></div>` : ''}
+        <div class="field"><label for="aPass">${setup ? 'Owner password' : 'Password'}</label>
+          <input id="aPass" type="password" required autocomplete="${setup ? 'new-password' : 'current-password'}" ${setup ? '' : 'autofocus'} />
+          ${setup ? '<span class="hint">At least 12 characters. It also encrypts guest details — if it is lost, the bookings cannot be recovered. If bookings already exist, enter their current password.</span>' : ''}</div>
+        ${setup ? `<div class="field"><label for="aPass2">Type the password again</label><input id="aPass2" type="password" autocomplete="new-password" required /></div>` : ''}
         <label class="check"><input type="checkbox" id="aRemember" ${s.remember === false ? '' : 'checked'} /> Keep me signed in on this device</label>
-        <details class="adv"><summary>Repository settings</summary>
+        ${setup ? `
+        <details class="adv"><summary>Bookings repository</summary>
           <div class="grid3">
             <div class="field"><label for="aOwner">Owner</label><input id="aOwner" value="${esc(s.owner)}" /></div>
             <div class="field"><label for="aRepo">Repository</label><input id="aRepo" value="${esc(s.repo)}" /></div>
             <div class="field"><label for="aBranch">Branch</label><input id="aBranch" value="${esc(s.branch)}" /></div>
           </div>
-        </details>`}
-        <button class="btn btn-primary btn-block" type="submit" id="aSubmit">${icon(confirmNew ? 'check' : 'lock')}${confirmNew ? 'Create & open dashboard' : unlockOnly ? 'Unlock' : 'Connect & sign in'}</button>
-        ${unlockOnly || confirmNew ? `<button class="btn btn-ghost btn-block" type="button" id="aReset">Use a different token</button>` : ''}
+        </details>` : ''}
+        <button class="btn btn-primary btn-block" type="submit" id="aSubmit">${icon('lock')}${setup ? 'Save & open dashboard' : 'Sign in'}</button>
       </form>
-      ${unlockOnly || confirmNew ? '' : `
+      ${setup ? `<button class="btn btn-ghost btn-block" style="margin-top:10px" id="aBack">Back to sign in</button>` : `
       <div class="auth-or">or</div>
       <button class="btn btn-ghost btn-block" id="aDemo">${icon('star')}Try the demo (no setup)</button>
-      <p class="auth-note">Demo mode keeps sample bookings in this browser only, so you can try everything safely. Switch to live mode later from Settings.</p>`}
+      <p class="auth-note">Demo mode keeps sample bookings in this browser only, so you can try everything safely.
+        <br><a href="#" id="aSetup" style="color:var(--sun-dark);font-weight:600">First-time setup (Henry)</a></p>`}
     </div>`;
 
-  const form = $('#authForm');
-  form.addEventListener('submit', async e => {
+  $('#authForm').addEventListener('submit', async e => {
     e.preventDefault();
     const btn = $('#aSubmit');
-    btn.disabled = true;
-    btn.innerHTML = icon('refresh') + 'Connecting…';
     const pass = $('#aPass').value;
-    if (confirmNew) {
-      if (pass !== $('#aPass2').value) { renderAuth('confirm', 'The passphrases do not match.'); return; }
-      app.passphrase = pass;
-      saveLocalSettings();
-      try { await persist('create secure bookings file'); enterShell(); } catch (err) { renderAuth('confirm', err.message); }
-      return;
-    }
-    if (!unlockOnly) {
-      app.settings = {
-        token: $('#aToken').value.trim(),
-        owner: $('#aOwner').value.trim(), repo: $('#aRepo').value.trim(), branch: $('#aBranch').value.trim() || 'main',
-        remember: $('#aRemember').checked,
-      };
-    }
-    app.passphrase = pass;
-    app.mode = 'github';
+    const remember = $('#aRemember').checked;
+    btn.disabled = true;
+    btn.innerHTML = icon('refresh') + (setup ? 'Saving…' : 'Signing in…');
     try {
-      await loadData();
-      if (!app.vaultExists) { renderAuth('confirm'); return; }
-      saveLocalSettings();
+      if (setup) await runSetup($('#aToken').value.trim(), pass, $('#aPass2').value, remember,
+        { owner: $('#aOwner').value.trim(), repo: $('#aRepo').value.trim(), branch: $('#aBranch').value.trim() || 'main' });
+      else await signIn(pass, remember);
       enterShell();
+      if (setup) toast('Live bookings are set up. The owner now signs in with the password only.', false, 6000);
     } catch (err) {
-      if (err.code === 'passphrase') renderAuth(unlockOnly ? 'unlock' : 'start', err.message);
-      else renderAuth(unlockOnly ? 'unlock' : 'start', err.message || 'Could not connect to GitHub.');
+      renderAuth(step, err.message || 'Could not connect to GitHub.');
     }
   });
-  const reset = $('#aReset');
-  if (reset) reset.onclick = () => { forgetDevice(); renderAuth('start'); };
-  const demo = $('#aDemo');
-  if (demo) demo.onclick = enterDemo;
+  const on = (id, fn) => { const el = $('#' + id); if (el) el.onclick = e => { e.preventDefault(); fn(); }; };
+  on('aDemo', enterDemo);
+  on('aSetup', () => renderAuth('setup'));
+  on('aBack', () => renderAuth('login'));
+}
+
+async function runSetup(token, password, password2, remember, repo) {
+  if (password !== password2) throw new Error('The passwords do not match.');
+  app.settings = { ...repo, token, remember };
+  app.passphrase = password;
+  app.mode = 'github';
+  await loadData();   // checks the token, and that an existing bookings file opens with this password
+  if (!app.vaultExists && password.length < 12) throw new Error('Use at least 12 characters for the password.');
+  await writeAccess(password);
+  if (!app.vaultExists) await persist('create bookings file');
+  saveLocalSettings();
 }
 
 function saveLocalSettings() {
-  const { token, owner, repo, branch, remember } = app.settings;
+  const { owner, repo, branch, remember } = app.settings;
   lsSet(LS.mode, 'github');
-  lsSet(LS.settings, remember
-    ? { token, owner, repo, branch, remember, passphrase: app.passphrase }
-    : { owner, repo, branch, remember });
+  // The token is never stored on the device; it is unlocked from access.json at each sign-in
+  lsSet(LS.settings, remember ? { owner, repo, branch, remember, password: app.passphrase } : { owner, repo, branch, remember });
 }
 function forgetDevice() {
   const s = lsGet(LS.settings, {});
@@ -901,20 +944,21 @@ function openForm(existing, preset = {}) {
 function renderSettings() {
   const s = app.settings;
   const live = app.mode === 'github';
+  const dr = SITE.dataRepo;
   return `
     <div class="page-head"><div><h1>Settings</h1><p>Storage, backups and security.</p></div></div>
     <div class="set-grid">
       <div class="panel"><div class="panel-head"><h2>Storage</h2>${live ? '<span class="badge b-in-house">Live · GitHub</span>' : '<span class="badge b-upcoming">Demo</span>'}</div>
         <div class="set-body">
           ${live ? `
-            <div class="kv"><span>Repository</span><span>${esc(s.owner)}/${esc(s.repo)}</span><span>Branch</span><span>${esc(s.branch)}</span>
+            <div class="kv"><span>Repository</span><span>${esc(s.owner)}/${esc(s.repo)}</span>
               <span>Guest data</span><span><code>${VAULT_PATH}</code> (encrypted)</span><span>Public dates</span><span><code>${AVAIL_PATH}</code></span></div>
-            <p>Bookings are encrypted with your passphrase before they leave this device. The website only receives the booked date ranges — never guest names or contact details.</p>
+            <p>Bookings are encrypted with your password before they leave this device. The website only receives the booked date ranges — never guest names or contact details.</p>
             <div class="page-actions"><button class="btn btn-ghost" id="sReload">${icon('refresh')}Reload from GitHub</button><button class="btn btn-ghost" id="sPublish">${icon('cloud')}Republish website dates</button></div>`
           : `
             <p>You're in <b>demo mode</b>: bookings are stored in this browser only and the public website shows them only on this device.</p>
-            <p>To go live, connect the GitHub repository that hosts the website. Bookings are then saved online, work from any phone or computer, and block dates on the public calendar automatically.</p>
-            <div class="page-actions"><button class="btn btn-primary" id="sGoLive">${icon('cloud')}Connect to GitHub</button><button class="btn btn-ghost" id="sResetDemo">${icon('refresh')}Reset demo data</button></div>`}
+            <p>In live mode bookings are saved online, work from any phone or computer, and block dates on the public calendar automatically.</p>
+            <div class="page-actions"><button class="btn btn-primary" id="sGoLive">${icon('lock')}Sign in to live bookings</button><button class="btn btn-ghost" id="sResetDemo">${icon('refresh')}Reset demo data</button></div>`}
         </div>
       </div>
       <div class="panel"><div class="panel-head"><h2>Backup</h2></div>
@@ -928,29 +972,37 @@ function renderSettings() {
         </div>
       </div>
       ${live ? `
-      <div class="panel"><div class="panel-head"><h2>Change passphrase</h2></div>
+      <div class="panel"><div class="panel-head"><h2>Change password</h2></div>
         <form class="set-body" id="sPassForm">
-          <div class="grid2"><div class="field"><label for="sP1">New passphrase</label><input id="sP1" type="password" minlength="8" required /></div>
-          <div class="field"><label for="sP2">Repeat</label><input id="sP2" type="password" minlength="8" required /></div></div>
-          <div><button class="btn btn-primary" type="submit">${icon('lock')}Re-encrypt & save</button></div>
+          <div class="grid2"><div class="field"><label for="sP1">New password</label><input id="sP1" type="password" minlength="12" autocomplete="new-password" required /></div>
+          <div class="field"><label for="sP2">Repeat</label><input id="sP2" type="password" minlength="12" autocomplete="new-password" required /></div></div>
+          <p>At least 12 characters. Other signed-in devices will ask for the new password.</p>
+          <div><button class="btn btn-primary" type="submit">${icon('lock')}Change password</button></div>
+        </form>
+      </div>
+      <div class="panel"><div class="panel-head"><h2>Replace access token</h2></div>
+        <form class="set-body" id="sTokenForm">
+          <p>For Henry, when the GitHub token expires or needs replacing. The password stays the same.</p>
+          <div class="field"><label for="sTok">New token</label><input id="sTok" type="password" placeholder="github_pat_…" required /></div>
+          <div><button class="btn btn-ghost" type="submit">${icon('refresh')}Save new token</button></div>
         </form>
       </div>` : ''}
-      <div class="panel"><div class="panel-head"><h2>Setting up live mode</h2></div>
+      <div class="panel"><div class="panel-head"><h2>Setting up live mode (Henry)</h2></div>
         <div class="set-body">
           <ol class="steps">
             <li>On GitHub, open <b>Settings → Developer settings → Personal access tokens → Fine-grained tokens</b> and click <b>Generate new token</b>.</li>
-            <li>Repository access: <b>Only select repositories</b> → <code>${esc(SITE.repo.owner)}/${esc(SITE.repo.name)}</code>.</li>
+            <li>Repository access: <b>Only select repositories</b> → <code>${esc(dr.owner)}/${esc(dr.name)}</code> (the bookings repository — not the website).</li>
             <li>Permissions → Repository → <b>Contents: Read and write</b>. Set an expiry you're happy with.</li>
-            <li>Copy the token, then sign in here and choose a strong bookings passphrase.</li>
+            <li>On the sign-in screen choose <b>First-time setup</b>, paste the token and choose the owner's password.</li>
           </ol>
-          <p>Use the same token and passphrase on each phone or computer you manage bookings from.</p>
+          <p>The owner then signs in on any device with the password only.</p>
         </div>
       </div>
     </div>`;
 }
 function afterSettings() {
   const on = (id, fn) => { const el = $('#' + id); if (el) el.onclick = fn; };
-  on('sGoLive', () => renderAuth('start'));
+  on('sGoLive', () => renderAuth('login'));
   on('sResetDemo', async () => {
     if (!await confirmDialog({ title: 'Reset demo data?', text: 'All demo bookings in this browser are replaced with the original sample bookings.', ok: 'Reset' })) return;
     app.bookings = demoBookings(); await persist('reset'); render(); toast('Demo data reset.');
@@ -976,12 +1028,34 @@ function afterSettings() {
   if (pf) pf.onsubmit = async e => {
     e.preventDefault();
     const p1 = $('#sP1').value, p2 = $('#sP2').value;
-    if (p1.length < 8) return toast('Use at least 8 characters.', true);
-    if (p1 !== p2) return toast('The passphrases do not match.', true);
+    if (p1.length < 12) return toast('Use at least 12 characters.', true);
+    if (p1 !== p2) return toast('The passwords do not match.', true);
     const old = app.passphrase;
     app.passphrase = p1;
-    if (await commit(() => {}, 're-encrypt with new passphrase', 'Passphrase changed. Use the new one on your other devices.')) saveLocalSettings();
-    else app.passphrase = old;
+    // Re-encrypt the bookings first, then the sign-in file
+    if (!await commit(() => {}, 're-encrypt with new password')) { app.passphrase = old; return; }
+    try {
+      await writeAccess(p1);
+      saveLocalSettings();
+      toast('Password changed. Use the new one on your other devices.');
+      pf.reset();
+    } catch (err) {
+      toast('Bookings use the new password, but the sign-in file could not be updated: ' + err.message, true, 8000);
+    }
+  };
+  const tf = $('#sTokenForm');
+  if (tf) tf.onsubmit = async e => {
+    e.preventDefault();
+    const old = app.settings.token;
+    app.settings.token = $('#sTok').value.trim();
+    try {
+      await writeAccess(app.passphrase);   // also proves the new token can write
+      toast('New access token saved.');
+      tf.reset();
+    } catch (err) {
+      app.settings.token = old;
+      toast(err.message, true, 6000);
+    }
   };
 }
 
@@ -1003,10 +1077,10 @@ function exportCSV(list) {
 
 /* ---------- Sign out ---------- */
 $('#signOutSide').onclick = async () => {
-  if (app.mode === 'demo') { lsDel(LS.mode); app.mode = null; renderAuth('start'); return; }
-  if (!await confirmDialog({ title: 'Sign out on this device?', text: 'Your access token and passphrase are removed from this browser. Bookings stay safely saved on GitHub.', ok: 'Sign out' })) return;
+  if (app.mode === 'demo') { lsDel(LS.mode); app.mode = null; renderAuth('login'); return; }
+  if (!await confirmDialog({ title: 'Sign out on this device?', text: 'Your password is removed from this browser. Bookings stay safely saved online.', ok: 'Sign out' })) return;
   forgetDevice();
-  renderAuth('start');
+  renderAuth('login');
 };
 
 /* ---------- Boot ---------- */
@@ -1014,16 +1088,17 @@ $('#signOutSide').onclick = async () => {
   const mode = lsGet(LS.mode);
   const saved = lsGet(LS.settings, {});
   if (mode === 'demo') return enterDemo();
-  if (mode === 'github' && saved.token) {
-    app.mode = 'github';
-    app.settings = { owner: SITE.repo.owner, repo: SITE.repo.name, branch: SITE.repo.branch, ...saved };
-    if (!saved.passphrase) return renderAuth('unlock');
-    app.passphrase = saved.passphrase;
+  if (mode === 'github' && saved.password) {
     $('#auth').classList.add('hidden');
     $('#shell').classList.remove('hidden');
-    try { await loadData(); render(); }
-    catch (e) { renderAuth(e.code === 'passphrase' ? 'unlock' : 'start', e.message); }
+    setSync('busy', 'Signing in…');
+    try { await signIn(saved.password, true); render(); }
+    catch (e) {
+      // e.g. the password was changed on another device
+      if (e.code === 'passphrase') forgetDevice();
+      renderAuth('login', e.code === 'passphrase' ? 'Your password was changed — please sign in again.' : e.message);
+    }
     return;
   }
-  renderAuth('start');
+  renderAuth('login');
 })();

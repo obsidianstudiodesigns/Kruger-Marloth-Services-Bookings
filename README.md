@@ -8,14 +8,21 @@ https://obsidianstudiodesigns.github.io/Kruger-Marloth-Services-Bookings/
 | Path | What it is |
 |---|---|
 | `index.html` | Public website — stays, services, experiences, contact |
-| `admin.html` | Owner dashboard — bookings, calendar, guest history (not linked from menus; "Owner login" in the footer) |
+| `admin.html` | Owner dashboard — bookings, calendar, guest history ("Owner login" in the footer; also opens at `/admin` and `/admin/`) |
 | `assets/js/data.js` | **All listing and service content.** Edit this to change names, prices, descriptions, amenities and providers |
 | `assets/js/common.js` | Shared helpers (icons, dates, availability) |
 | `assets/js/site.js` / `admin.js` | Public site and dashboard logic |
 | `images/stays/<id>/` | Property photos (`01.jpg` is the cover), `thumb/` versions and `flyer.jpg` |
 | `images/services/` | Service provider flyers |
-| `data/availability.json` | Booked date ranges shown on the public calendars (no guest details). Written by the dashboard |
-| `data/bookings.vault.json` | All bookings and guest details, **encrypted** with the owner's passphrase. Created by the dashboard |
+| `tools/` | Scripts that regenerate link-preview images, property pages and the sitemap (see below) |
+
+Bookings are **not** stored in this repository. The dashboard saves them to a separate repository, [`obsidianstudiodesigns/Kruger-Marloth-Bookings-Data`](https://github.com/obsidianstudiodesigns/Kruger-Marloth-Bookings-Data) (`SITE.dataRepo` in `data.js`):
+
+| File (bookings repository) | What it is |
+|---|---|
+| `availability.json` | Booked and on-hold date ranges per property (no guest details). Read by the public calendars |
+| `bookings.vault.json` | All bookings and guest details, **encrypted** with the owner's password |
+| `access.json` | The dashboard's GitHub token, **encrypted** with the owner's password, so she signs in with the password only |
 
 The raw source folder (`kruger marloth services and bookings data files/`) is git-ignored and never published.
 
@@ -51,13 +58,15 @@ The dashboard is a **booking calendar only** (entry-level package): no invoices,
 
 ### Demo mode vs live mode
 - **Demo mode** (no setup): sample bookings live in that browser only. Good for trying it out.
-- **Live mode**: bookings are saved to this GitHub repository so they work from any device. Setup:
-  1. GitHub → Settings → Developer settings → Personal access tokens → **Fine-grained tokens** → Generate new token.
-  2. Repository access: only `obsidianstudiodesigns/Kruger-Marloth-Services-Bookings`. Permission: **Contents → Read and write**.
-  3. Open `admin.html`, paste the token, choose a strong **bookings passphrase** (it encrypts guest details), confirm it.
-  4. Use the same token + passphrase on every device. **If the passphrase is lost, the bookings cannot be recovered** — keep regular backups (Settings → Download backup).
+- **Live mode**: bookings are saved online and work from any device. The owner signs in with **one password**.
 
-Because this repository is public (required for free GitHub Pages), guest details are only ever stored encrypted (AES-256-GCM, key derived from the passphrase with PBKDF2). The public availability file contains dates only.
+**One-time setup (Henry):**
+1. The bookings repository `obsidianstudiodesigns/Kruger-Marloth-Bookings-Data` must exist (public, can be empty).
+2. GitHub → Settings → Developer settings → Personal access tokens → **Fine-grained tokens** → Generate new token. Repository access: **only** `Kruger-Marloth-Bookings-Data` (not the website). Permission: **Contents → Read and write**. Pick an expiry.
+3. Open the dashboard → **First-time setup (Henry)** → paste the token, choose the owner's password (12+ characters).
+4. Give Nadia the dashboard link and the password. She ticks "Keep me signed in" on her phone/laptop.
+
+**Why it's built this way:** the token can only change the bookings repository, never the website. It is stored encrypted with the owner's password and never saved on a device. Guest details are encrypted too (AES-256-GCM, key from the password via PBKDF2). The public availability file has dates only. **If the password is lost, the bookings cannot be recovered** — keep regular backups (Settings → Download backup). When the token expires, Henry creates a new one and saves it under Settings → Replace access token.
 
 ## Link previews (WhatsApp, Facebook) and Google
 
@@ -72,6 +81,15 @@ Because this repository is public (required for free GitHub Pages), guest detail
 - **Google:** add the site in [Google Search Console](https://search.google.com/search-console) as a URL-prefix property, verify it (send me the verification meta tag and I'll add it), then submit `sitemap.xml`. Indexing usually takes days to a few weeks.
 - `robots.txt` only takes effect at the root of a domain, so it starts working once the site has its own domain; until then the sitemap is submitted through Search Console.
 - WhatsApp caches previews per link. If an old preview shows, add something like `?v=2` to the end of the link.
+
+## Moving to your own domain (e.g. www.krugermarlothservicesbookings.co.za)
+GitHub Pages hosts custom domains for free, with HTTPS:
+1. Register the domain at a South African registrar.
+2. In this repository: **Settings → Pages → Custom domain** → enter `www.krugermarlothservicesbookings.co.za` (GitHub adds a `CNAME` file). Tick **Enforce HTTPS** once it's available.
+3. At the registrar's DNS: a `CNAME` record for `www` → `obsidianstudiodesigns.github.io`, and the four GitHub `A` records for the bare domain (listed in GitHub's Pages docs) so it redirects to `www`.
+4. In `data.js`, set `SITE.url` to `https://www.krugermarlothservicesbookings.co.za/` and run `node tools/build-pages.cjs`, then push.
+
+The dashboard then lives at `https://www.krugermarlothservicesbookings.co.za/admin`. Bookings, the password and the token don't change — but each device has to sign in once more on the new address, because browsers keep sign-ins per website address.
 
 ## Going live later
 When the site moves to its own domain and a real database (Supabase + Vercel, as discussed), `data.js` can seed the listings table and the dashboard's backup JSON can seed bookings. Things that need that server-side step and are **not** in this version:

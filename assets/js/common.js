@@ -182,9 +182,13 @@ async function loadAvailability() {
   const today = todayISO();
   let ranges = {};
   try {
-    const res = await fetch('data/availability.json?t=' + Date.now(), { cache: 'no-store' });
+    // Published by the owner dashboard to the bookings repository. The minute
+    // stamp keeps it fresh without bypassing GitHub's cache on every visit.
+    const { owner, name, branch } = SITE.dataRepo;
+    const minute = Math.floor(Date.now() / 60000);
+    const res = await fetch(`https://raw.githubusercontent.com/${owner}/${name}/${branch}/availability.json?m=${minute}`);
     if (res.ok) ranges = (await res.json()).ranges || {};
-  } catch (e) { /* offline or opened from disk — fall through */ }
+  } catch (e) { /* offline or not set up yet — fall through */ }
   if (lsGet(LS.mode) === 'demo') {
     const demo = computeAvailability(lsGet(LS.demoBookings, []), today).ranges;
     for (const k in demo) ranges[k] = (ranges[k] || []).concat(demo[k]);

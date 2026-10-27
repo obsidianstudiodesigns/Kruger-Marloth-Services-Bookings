@@ -5,7 +5,7 @@
 const state = {
   filter: 'all',
   search: null,          // { checkin, checkout, guests }
-  ranges: {},            // booked nights per stay, from data/availability.json
+  ranges: {},            // booked nights per stay, from the bookings repository's availability.json
   serviceCat: (SERVICE_CATEGORIES.find(c => c.providers.length) || SERVICE_CATEGORIES[0]).id,
 };
 const $ = sel => document.querySelector(sel);
