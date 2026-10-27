@@ -138,13 +138,25 @@ async function decryptVault(vault, passphrase) {
 }
 
 /* ---------- GitHub storage ---------- */
+/* fetch() only rejects when the request never reached GitHub — offline, or
+   blocked by an ad blocker, privacy extension, antivirus or network filter */
+function networkError() {
+  const err = new Error('Couldn’t reach GitHub (api.github.com). Check the internet connection. If it keeps happening, an ad blocker, privacy extension or antivirus web filter is probably blocking it — allow api.github.com, or try a private/incognito window or another browser.');
+  err.code = 'network';
+  return err;
+}
 async function gh(path, opts = {}) {
   const { owner, repo, token } = app.settings;
-  return fetch(`https://api.github.com/repos/${owner}/${repo}/${path}`, {
-    cache: 'no-store',
-    ...opts,
-    headers: { Accept: 'application/vnd.github+json', Authorization: `Bearer ${token}`, 'X-GitHub-Api-Version': '2022-11-28', ...(opts.headers || {}) },
-  });
+  const url = `https://api.github.com/repos/${owner}/${repo}${path ? '/' + path : ''}`;
+  try {
+    return await fetch(url, {
+      cache: 'no-store',
+      ...opts,
+      headers: { Accept: 'application/vnd.github+json', Authorization: `Bearer ${token}`, 'X-GitHub-Api-Version': '2022-11-28', ...(opts.headers || {}) },
+    });
+  } catch (e) {
+    throw networkError();
+  }
 }
 async function ghError(res) {
   let detail = '';
@@ -294,11 +306,14 @@ function repoDefaults() {
 /* access.json is public (encrypted), so it can be read before signing in */
 async function readAccess(settings) {
   const { owner, repo, branch } = settings;
-  const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${ACCESS_PATH}?ref=${encodeURIComponent(branch)}`, {
-    cache: 'no-store', headers: { Accept: 'application/vnd.github.raw+json' },
-  });
+  let res;
+  try {
+    res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${ACCESS_PATH}?ref=${encodeURIComponent(branch)}`, {
+      cache: 'no-store', headers: { Accept: 'application/vnd.github.raw+json' },
+    });
+  } catch (e) { throw networkError(); }
   if (res.status === 404) return null;
-  if (!res.ok) throw new Error('Could not reach GitHub — check your internet connection and try again.');
+  if (!res.ok) throw new Error(`GitHub error ${res.status} — please try again in a minute.`);
   return res.json();
 }
 async function writeAccess(password) {
@@ -388,7 +403,15 @@ function renderAuth(step = 'login', error = '') {
   on('aBack', () => renderAuth('login'));
 }
 
+/* GitHub tokens are letters, digits and underscores (github_pat_… or ghp_…) */
+function checkToken(token) {
+  if (!/^(github_pat_|ghp_)[A-Za-z0-9_]+$/.test(token)) {
+    throw new Error('That doesn’t look like a GitHub token. Copy it again from GitHub — it starts with “github_pat_” and has no spaces.');
+  }
+}
+
 async function runSetup(token, password, password2, remember, repo) {
+  checkToken(token);
   if (password !== password2) throw new Error('The passwords do not match.');
   app.settings = { ...repo, token, remember };
   app.passphrase = password;
@@ -1047,8 +1070,9 @@ function afterSettings() {
   if (tf) tf.onsubmit = async e => {
     e.preventDefault();
     const old = app.settings.token;
-    app.settings.token = $('#sTok').value.trim();
     try {
+      checkToken($('#sTok').value.trim());
+      app.settings.token = $('#sTok').value.trim();
       await writeAccess(app.passphrase);   // also proves the new token can write
       toast('New access token saved.');
       tf.reset();
