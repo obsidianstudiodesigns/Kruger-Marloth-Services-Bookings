@@ -138,6 +138,7 @@ details.adv[open] summary{margin-bottom:10px}
 .mini-list li:hover{background:#fcfaf7}
 .mini-list img{width:46px;height:46px;border-radius:10px;object-fit:cover;flex-shrink:0}
 .mini-list .who{flex:1;min-width:0}
+.mini-list .who span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mini-list .who strong{display:block;font-size:.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mini-list .who span{font-size:.8rem;color:var(--muted)}
 .mini-list .when{text-align:right;font-size:.8rem;color:var(--muted);white-space:nowrap}
@@ -311,7 +312,10 @@ code{background:var(--sand);padding:1px 6px;border-radius:5px;font-size:.82rem}
   .bottom-nav button .ic{width:22px;height:22px}
   .bottom-nav button.on{color:var(--bush)}
   .bottom-nav .add span.plus{width:44px;height:44px;border-radius:50%;background:var(--sun);color:#fff;display:grid;place-items:center;margin-top:-20px;box-shadow:0 6px 16px rgba(201,138,60,.45)}
-  .dash-grid,.set-grid{grid-template-columns:1fr}
+  /* minmax(0,…) lets columns shrink below their longest unbreakable line */
+  .dash-grid,.set-grid{grid-template-columns:minmax(0,1fr)}
+  .dash-col,.panel,.view{min-width:0}
+  .view{max-width:100vw;overflow-x:clip}
   .page-head h1{font-size:1.35rem}
   .planner{max-height:calc(100vh - 230px)}
   .toast{bottom:calc(88px + env(safe-area-inset-bottom))}

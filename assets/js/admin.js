@@ -93,6 +93,12 @@ function sinceLabel(iso) {
   const h = Math.floor((Date.now() - new Date(iso).getTime()) / 3600000);
   return h < 1 ? 'just now' : h < 24 ? `${h}h ago` : `${Math.floor(h / 24)}d ago`;
 }
+/* Compact dates for narrow lists, e.g. "24–27 Dec" or "30 Oct – 3 Nov" */
+function shortRange(a, b) {
+  const da = parseISO(a), db = parseISO(b);
+  const m = d => MONTHS[d.getMonth()].slice(0, 3);
+  return da.getMonth() === db.getMonth() ? `${da.getDate()}–${db.getDate()} ${m(db)}` : `${da.getDate()} ${m(da)} – ${db.getDate()} ${m(db)}`;
+}
 function guestLabel(b) { return b.type === 'block' ? 'Blocked — ' + (b.notes || 'owner use') : (b.name || 'Guest'); }
 function thumb(id) { return stayImg(id, 1, true); }
 
@@ -469,7 +475,7 @@ function renderDashboard() {
     <div class="dash-grid">
       <div class="dash-col">
         ${pending.length ? `<div class="panel panel-attn"><div class="panel-head"><h2>${icon('hourglass')} Pending requests · ${pending.length}</h2><button class="link" data-view-pending>View all</button></div>
-          <ul class="mini-list">${pending.map(b => row(b, `<strong>${fmtRange(b.checkin, b.checkout)}</strong><span>Requested ${sinceLabel(b.createdAt)}</span>`)).join('')}</ul>
+          <ul class="mini-list">${pending.map(b => row(b, `<strong>${shortRange(b.checkin, b.checkout)}</strong><span>Requested ${sinceLabel(b.createdAt)}</span>`)).join('')}</ul>
         </div>` : ''}
         <div class="panel"><div class="panel-head"><h2>Staying now</h2><button class="link" data-view="calendar">Open calendar</button></div>
           ${inHouse.length ? `<ul class="mini-list">${inHouse.map(b => row(b, `<strong>Out ${fmtDate(b.checkout, false)}</strong>${b.nights} nights`)).join('')}</ul>` : '<div class="empty">No guests in house tonight.</div>'}
