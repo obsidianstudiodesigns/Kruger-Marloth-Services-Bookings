@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /Kruger-Marloth-Services-Bookings/admin.html
+
+Sitemap: https://obsidianstudiodesigns.github.io/Kruger-Marloth-Services-Bookings/sitemap.xml

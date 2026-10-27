@@ -59,6 +59,20 @@ The dashboard is a **booking calendar only** (entry-level package): no invoices,
 
 Because this repository is public (required for free GitHub Pages), guest details are only ever stored encrypted (AES-256-GCM, key derived from the passphrase with PBKDF2). The public availability file contains dates only.
 
+## Link previews (WhatsApp, Facebook) and Google
+
+- Every property has its own page, e.g. `stays/kruger-naledi/`. Shared links show that property's photo, name and description; the home page shows a collage with the logo. The share button and the property cards use these addresses.
+- Each page has its own title, description, canonical link and schema.org data (TravelAgency for the business, LodgingBusiness per property), and `sitemap.xml` lists every page with its photos.
+- These are **generated** — after changing listings in `data.js`, a cover photo, or the site address (`SITE.url`, e.g. a new domain), run:
+  ```bash
+  python tools/make_og_images.py
+  node tools/build-pages.cjs
+  ```
+  Don't hand-edit the `SEO:START … SEO:END` block in `index.html` or the files in `stays/`.
+- **Google:** add the site in [Google Search Console](https://search.google.com/search-console) as a URL-prefix property, verify it (send me the verification meta tag and I'll add it), then submit `sitemap.xml`. Indexing usually takes days to a few weeks.
+- `robots.txt` only takes effect at the root of a domain, so it starts working once the site has its own domain; until then the sitemap is submitted through Search Console.
+- WhatsApp caches previews per link. If an old preview shows, add something like `?v=2` to the end of the link.
+
 ## Going live later
 When the site moves to its own domain and a real database (Supabase + Vercel, as discussed), `data.js` can seed the listings table and the dashboard's backup JSON can seed bookings. Things that need that server-side step and are **not** in this version:
 - Guest requests landing in the dashboard (and holding dates) automatically, instead of Nadia entering them from WhatsApp.

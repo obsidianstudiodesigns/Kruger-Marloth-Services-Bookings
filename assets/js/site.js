@@ -141,7 +141,7 @@ function renderStays() {
     const ok = stayAvailable(s);
     const flag = state.search ? `<span class="avail-flag ${ok ? '' : 'no'}">${icon(ok ? 'check' : 'x')}${ok ? 'Available' : s.sleeps < state.search.guests ? 'Too small' : 'Unavailable'}</span>` : '';
     return `
-    <article class="stay-card ${state.search && !ok ? 'is-unavailable' : ''}" data-stay="${s.id}" tabindex="0" aria-label="${esc(s.name)}">
+    <a class="stay-card ${state.search && !ok ? 'is-unavailable' : ''}" href="stays/${s.id}/" data-stay="${s.id}">
       <div class="stay-media">
         <img src="${stayImg(s.id, 1, true)}" alt="${esc(s.name)}" loading="lazy" />
         <span class="badge">${esc(s.tag)}</span>
@@ -158,7 +158,7 @@ function renderStays() {
           ${s.filters.includes('pool') ? `<li>${icon('pool')}Pool</li>` : ''}
         </ul>
       </div>
-    </article>`;
+    </a>`;
   }).join('');
 }
 
@@ -169,21 +169,36 @@ function initStayGrid() {
     state.filter = b.dataset.filter;
     renderStays();
   });
-  const open = e => {
+  // Cards are real links to each property's page (for Google and for
+  // opening in a new tab); a plain click opens the property in place.
+  $('#stayGrid').addEventListener('click', e => {
     const card = e.target.closest('[data-stay]');
-    if (card && (e.type === 'click' || e.key === 'Enter')) openStay(card.dataset.stay);
-  };
-  $('#stayGrid').addEventListener('click', open);
-  $('#stayGrid').addEventListener('keydown', open);
+    if (!card || e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0) return;
+    e.preventDefault();
+    openStay(card.dataset.stay);
+  });
 }
 
-/* ---------- Stay detail ---------- */
+/* ---------- Stay detail ----------
+   Each property has its own address, stays/<id>/ (built by
+   tools/build-pages.cjs), so shared links show that property's photo and
+   description in WhatsApp and Google. The <base> tag keeps relative links
+   pointing at the site root while the address bar shows the property. */
+const SITE_ROOT = document.baseURI;
+const HOME_TITLE = 'Kruger Marloth Services & Bookings — Self-catering stays in Marloth Park';
+function stayUrl(id) { return new URL(`stays/${id}/`, SITE_ROOT).href; }
+function stayFromUrl() {
+  const rel = location.href.startsWith(SITE_ROOT) ? location.href.slice(SITE_ROOT.length) : '';
+  const m = rel.match(/^stays\/([\w-]+)/) || location.hash.match(/^#stay\/([\w-]+)/);
+  return m ? m[1] : null;
+}
+
 let cal = null;   // calendar state for the open stay
 
 function openStay(id, push = true) {
   const s = stayById(id);
   if (!s) return;
-  if (push) history.pushState({ stay: id }, '', '#stay/' + id);
+  if (push) history.pushState({ stay: id }, '', stayUrl(id));
   const photos = Array.from({ length: s.photos }, (_, i) => i + 1);
   const rules = DEFAULT_RULES;
   const sheet = $('#sheet');
@@ -288,25 +303,26 @@ function openStay(id, push = true) {
   sheet.scrollTop = 0;
   sheet.classList.add('open');
   document.body.classList.add('locked');
-  document.title = s.name + ' — Kruger Marloth Services & Bookings';
+  document.title = `${s.name} | Self-catering in Marloth Park`;
 }
 
 function hideStay() {
   $('#sheet').classList.remove('open');
   document.body.classList.remove('locked');
-  document.title = 'Kruger Marloth Services & Bookings — Stays & Local Services in Marloth Park';
+  document.title = HOME_TITLE;
 }
 function closeStay() {
-  if (history.state && history.state.stay) history.back();
-  else { history.replaceState(null, '', '#stays'); hideStay(); }
+  // Opened from the grid: go back. Arrived straight on a property link: show the home page.
+  if (history.state && history.state.stay && !history.state.entry) history.back();
+  else { history.replaceState(null, '', SITE_ROOT + '#stays'); hideStay(); }
 }
 window.addEventListener('popstate', () => {
-  const m = location.hash.match(/^#stay\/([\w-]+)/);
-  if (m) openStay(m[1], false); else hideStay();
+  const id = stayFromUrl();
+  if (id) openStay(id, false); else hideStay();
 });
 
 async function shareStay(s) {
-  const url = location.origin + location.pathname + '#stay/' + s.id;
+  const url = stayUrl(s.id);
   try {
     if (navigator.share) await navigator.share({ title: s.name, text: s.tagline, url });
     else { await navigator.clipboard.writeText(url); toast('Link copied to clipboard'); }
@@ -407,6 +423,7 @@ function sendRequest(channel) {
     notes ? `Notes: ${notes}` : null,
     '',
     `Estimated total: ${money(stay.price * nights)}`,
+    stayUrl(stay.id),
   ].filter(l => l !== null).join('\n');
   if (viaEmail) {
     const subject = `Booking request — ${stay.name}, ${fmtRange(ci, co)}`;
@@ -546,8 +563,9 @@ loadAvailability().then(ranges => {
   if ($('#sheet').classList.contains('open') && cal) renderCal();
 });
 
-const deepLink = location.hash.match(/^#stay\/([\w-]+)/);
-if (deepLink) {
-  history.replaceState(null, '', '#stays');
-  openStay(deepLink[1]);
+// Property pages (stays/<id>/) and older #stay/<id> links open straight on the property
+const entryStay = document.body.dataset.stay || stayFromUrl();
+if (entryStay && stayById(entryStay)) {
+  history.replaceState({ stay: entryStay, entry: true }, '', stayUrl(entryStay));
+  openStay(entryStay, false);
 }

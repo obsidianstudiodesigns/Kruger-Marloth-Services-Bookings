@@ -13,6 +13,9 @@ const SITE = {
   whatsapp: '27615129208',          // international format, no + or spaces
   email: 'whndistributors@gmail.com',
   location: 'Marloth Park, Mpumalanga, South Africa',
+  // Public address of the site — used for link previews, Google and the sitemap.
+  // Change it when the site moves to its own domain, then run: node tools/build-pages.cjs
+  url: 'https://obsidianstudiodesigns.github.io/Kruger-Marloth-Services-Bookings/',
   // GitHub repository that hosts the site (used by the admin dashboard)
   repo: { owner: 'obsidianstudiodesigns', name: 'Kruger-Marloth-Services-Bookings', branch: 'main' },
 };
