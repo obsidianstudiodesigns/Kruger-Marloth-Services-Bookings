@@ -1,0 +1,5 @@
+kruger marloth services and bookings data files/
+.claude/
+*.tmp
+Thumbs.db
+.DS_Store
