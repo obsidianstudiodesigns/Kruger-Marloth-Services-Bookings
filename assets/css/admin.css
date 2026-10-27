@@ -274,6 +274,30 @@ code{background:var(--sand);padding:1px 6px;border-radius:5px;font-size:.82rem}
 .toast.show{transform:translate(-50%,0)}
 .toast.bad{background:var(--danger)}
 
+/* ---------- Pending requests ---------- */
+.nav-count{margin-left:auto;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--sun);color:#fff;font-size:.72rem;font-weight:700;display:inline-grid;place-items:center}
+.bottom-nav button{position:relative}
+.bottom-nav .nav-count{position:absolute;top:0;right:calc(50% - 22px);margin:0;min-width:18px;height:18px;font-size:.66rem}
+.stat.attn{border-color:#ecc58f;background:#fffaf2}
+.stat.attn strong{color:var(--sun-dark)}
+.panel-attn{border-color:#ecc58f}
+.panel-attn .panel-head{background:#fffaf2;border-radius:var(--radius) var(--radius) 0 0}
+.panel-attn .panel-head h2{display:flex;align-items:center;gap:8px;color:var(--sun-dark)}
+.mini-list .when span{display:block}
+.mini-list .when .overdue{color:var(--danger);font-weight:600}
+.b-pending{background:var(--warn-bg);color:var(--sun-dark)}
+.b-expired{background:#eeeae3;color:#8a8175}
+.alert.warn{background:var(--warn-bg);color:#8a5a1e}
+.pl-bar.pending{background:var(--warn-bg);color:#8a5a1e;border:1.5px dashed var(--sun);box-shadow:none}
+.pl-bar.expired{background:#f1ede6;color:#8a8175;border:1px dashed #c8c0b3;box-shadow:none}
+.check.need{color:var(--danger)}
+.check.need input{outline:2px solid var(--danger);outline-offset:1px}
+.confirm-card .field{gap:4px}
+.inv-view{position:fixed;inset:0;z-index:75;background:#ece7df;display:flex;flex-direction:column}
+.inv-bar{display:flex;align-items:center;gap:8px;padding:10px 16px calc(10px) 16px;background:#fff;border-bottom:1px solid var(--line)}
+.inv-bar strong{flex:1;display:flex;align-items:center;gap:8px;font-size:.95rem}
+.inv-view iframe{flex:1;width:100%;border:0}
+
 /* ---------- Mobile ---------- */
 .bottom-nav{display:none}
 @media (max-width:1200px){

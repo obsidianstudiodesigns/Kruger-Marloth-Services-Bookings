@@ -60,7 +60,7 @@ function renderChrome() {
       <div class="cat-icon">${icon(i)}</div><div><strong>${s}</strong><span>${esc(v)}</span></div>
     </${href ? 'a' : 'div'}>`).join('');
   $('#contactBtn').innerHTML = icon('whatsapp') + 'Send via WhatsApp';
-  $('#contactNote').innerHTML = icon('info') + `<span>Your message opens in WhatsApp, addressed to ${SITE.contactName} (${SITE.phone}).</span>`;
+  $('#contactNote').innerHTML = icon('info') + `<span>Your message opens in WhatsApp, addressed to ${SITE.contactName} (${SITE.phone}). See our <a href="privacy.html" style="text-decoration:underline">privacy notice</a> for how we use your details.</span>`;
   $('#contactForm').addEventListener('submit', e => {
     e.preventDefault();
     const text = `Hi ${SITE.contactName}, my name is ${$('#cName').value.trim()}${$('#cPhone').value.trim() ? ' (' + $('#cPhone').value.trim() + ')' : ''}.\n\n${$('#cMsg').value.trim()}`;
@@ -139,7 +139,7 @@ function renderStays() {
 
   $('#stayGrid').innerHTML = list.map(s => {
     const ok = stayAvailable(s);
-    const flag = state.search ? `<span class="avail-flag ${ok ? '' : 'no'}">${icon(ok ? 'check' : 'x')}${ok ? 'Available' : s.sleeps < state.search.guests ? 'Too small' : 'Booked'}</span>` : '';
+    const flag = state.search ? `<span class="avail-flag ${ok ? '' : 'no'}">${icon(ok ? 'check' : 'x')}${ok ? 'Available' : s.sleeps < state.search.guests ? 'Too small' : 'Unavailable'}</span>` : '';
     return `
     <article class="stay-card ${state.search && !ok ? 'is-unavailable' : ''}" data-stay="${s.id}" tabindex="0" aria-label="${esc(s.name)}">
       <div class="stay-media">
@@ -248,8 +248,10 @@ function openStay(id, push = true) {
             <div class="field"><label for="bPhone">Phone / WhatsApp</label><input id="bPhone" type="tel" autocomplete="tel" required /></div>
             <div class="field"><label for="bNotes">Message (optional)</label><textarea id="bNotes" rows="2" style="min-height:64px" placeholder="Arrival time, special requests…"></textarea></div>
             <div class="quote" id="quote"></div>
+            <label class="consent"><input type="checkbox" id="bConsent" />
+              <span>I agree that my details may be used to process this booking request, as set out in the <a href="privacy.html" target="_blank" rel="noopener">privacy notice</a> (POPIA).</span></label>
             <button class="btn btn-wa btn-block" type="submit">${icon('whatsapp')}Request to book</button>
-            <p class="form-note">${icon('info')}<span>No payment now. ${SITE.contactName} confirms availability and sends deposit details on WhatsApp.</span></p>
+            <p class="form-note">${icon('info')}<span>No payment now. ${SITE.contactName} confirms availability and sends an invoice — your dates are then held for ${BUSINESS.holdHours} hours while you pay the ${BUSINESS.depositPercent}% deposit.</span></p>
           </form>
         </aside>
       </div>
@@ -324,15 +326,16 @@ function renderCal() {
     const iso = toISO(new Date(y, m, d));
     const past = iso < TODAY;
     const booked = isNightBooked(ranges, iso);
+    const held = booked && isNightHeld(ranges, iso);
     // A booked night can still be a check-out day if the nights before it are free
     const asCheckout = ci && !co && iso > ci && isRangeFree(ranges, ci, iso);
     const on = !past && (!booked || asCheckout);
     const cls = ['cal-d',
-      past && 'past', booked && !past && 'booked', on && 'on', iso === TODAY && 'today',
+      past && 'past', booked && !past && (held ? 'booked held' : 'booked'), on && 'on', iso === TODAY && 'today',
       iso === ci && 'start', iso === co && 'end', ci && co && iso > ci && iso < co && 'range'].filter(Boolean).join(' ');
-    html += `<div class="${cls}" ${on ? `data-day="${iso}" role="button" tabindex="0"` : ''} aria-label="${fmtDate(iso)}${booked ? ' (booked)' : ''}">${d}</div>`;
+    html += `<div class="${cls}" ${on ? `data-day="${iso}" role="button" tabindex="0"` : ''} aria-label="${fmtDate(iso)}${held ? ' (on hold)' : booked ? ' (booked)' : ''}">${d}</div>`;
   }
-  html += `</div><div class="cal-legend"><span><i style="background:var(--bush)"></i>Your dates</span><span><i style="background:repeating-linear-gradient(-45deg,#eee 0 2px,#e3c4bf 2px 4px)"></i>Booked</span><span><i style="background:var(--sun);border-radius:50%"></i>Today</span></div>`;
+  html += `</div><div class="cal-legend"><span><i style="background:var(--bush)"></i>Your dates</span><span><i style="background:repeating-linear-gradient(-45deg,#eee 0 2px,#e3c4bf 2px 4px)"></i>Booked</span><span><i style="background:repeating-linear-gradient(-45deg,#fdf3e3 0 2px,#ecc58f 2px 4px)"></i>On hold</span><span><i style="background:var(--sun);border-radius:50%"></i>Today</span></div>`;
   $('#cal').innerHTML = html;
   updateQuote();
 }
@@ -386,6 +389,7 @@ function submitBooking(e) {
   if (!ci || !co) { toast('Please select your check-in and check-out dates on the calendar.'); return; }
   if (nights < DEFAULT_RULES.minNights) { toast(`Minimum stay is ${DEFAULT_RULES.minNights} nights.`); return; }
   if (!name || !phone) { toast('Please add your name and phone number.'); (name ? $('#bPhone') : $('#bName')).focus(); return; }
+  if (!$('#bConsent').checked) { toast('Please tick the box to agree to the privacy notice.'); $('#bConsent').closest('label').classList.add('need'); return; }
   const adults = $('#bAdults').value, kids = $('#bKids').value, notes = $('#bNotes').value.trim();
   const text = [
     `Hi ${SITE.contactName}, I'd like to book *${stay.name}*.`,

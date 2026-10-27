@@ -265,6 +265,11 @@ footer a:hover{opacity:1;color:var(--sun)}
 .cal-d.past{color:#cbc3b6}
 .cal-d.booked{color:#c3a9a4;text-decoration:line-through;background:repeating-linear-gradient(-45deg,transparent 0 4px,rgba(179,69,58,.07) 4px 8px);border-radius:8px}
 .cal-d.booked.on{color:var(--charcoal);text-decoration:none;cursor:pointer}
+.cal-d.held{color:#c9a676;background:repeating-linear-gradient(-45deg,transparent 0 4px,rgba(201,138,60,.14) 4px 8px)}
+.consent{display:flex;gap:10px;align-items:flex-start;font-size:.8rem;color:#4d463d;line-height:1.45;margin-top:4px}
+.consent input{width:18px;height:18px;margin-top:1px;flex-shrink:0;accent-color:var(--bush)}
+.consent a{text-decoration:underline;color:var(--bush-dark)}
+.consent.need{color:var(--danger)}
 .cal-d.range{background:var(--sand-2);border-radius:0}
 .cal-d.start,.cal-d.end{background:var(--bush)!important;color:#fff!important;border-radius:50%}
 .cal-d.today::after{content:'';position:absolute;bottom:5px;width:4px;height:4px;border-radius:50%;background:var(--sun)}

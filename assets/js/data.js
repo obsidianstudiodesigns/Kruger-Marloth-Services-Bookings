@@ -17,12 +17,37 @@ const SITE = {
   repo: { owner: 'obsidianstudiodesigns', name: 'Kruger-Marloth-Services-Bookings', branch: 'main' },
 };
 
+/* Details printed on invoices. Values in [square brackets] are PLACEHOLDERS —
+   the dashboard warns while any are left, so never send an invoice before
+   the real banking details are filled in. */
+const BUSINESS = {
+  legalName: 'Kruger Marloth Services & Bookings',
+  regNumber: '',                    // e.g. 2024/123456/07 — leave empty to hide
+  vatNumber: '',                    // only if VAT registered — leave empty to hide
+  address: '[Street address], Marloth Park, 1321',
+  bank: {
+    bank: '[Bank name]',
+    accountName: '[Account holder]',
+    accountNumber: '[Account number]',
+    branchCode: '[Branch code]',
+    accountType: '[Cheque / Savings]',
+  },
+  depositPercent: 50,               // DUMMY — deposit required to secure a booking
+  holdHours: 48,                    // DUMMY — how long dates are held while awaiting payment
+  balanceDaysBefore: 7,             // DUMMY — balance due this many days before arrival
+  cancellationPolicy: '[Cancellation policy to be confirmed by the owner — e.g. deposit refundable up to 30 days before arrival.]',
+};
+function businessPlaceholders() {
+  const vals = [BUSINESS.address, ...Object.values(BUSINESS.bank), BUSINESS.cancellationPolicy];
+  return vals.some(v => /^\[|\[[^\]]+\]/.test(v));
+}
+
 /* Default house rules — DUMMY until the owner confirms per property */
 const DEFAULT_RULES = {
   checkIn: '14:00',
   checkOut: '10:00',
   minNights: 2,
-  deposit: '50% deposit secures the booking, balance due 7 days before arrival',
+  deposit: '50% deposit secures the booking, balance due 7 days before arrival. Dates are held for 48 hours while we wait for the deposit',
 };
 
 /* amenity icon keys: pool, wifi, snow, flame, tv, washer, dish, zap, sun, lock, paw, river,
@@ -368,7 +393,8 @@ const SERVICE_CATEGORIES = [
       },
     ],
   },
-  { id: 'activities', icon: 'compass', name: 'Activities', blurb: 'Horse riding, game drives and guided bush walks.', providers: [] },
+  { id: 'game-rides', icon: 'binoculars', name: 'Game Rides', blurb: 'Open-vehicle game drives into the Kruger and around Marloth.', providers: [] },
+  { id: 'activities', icon: 'compass', name: 'Activities', blurb: 'Horse riding, guided bush walks, river cruises and more.', providers: [] },
   { id: 'shuttles', icon: 'car', name: 'Shuttle Services', blurb: 'Airport transfers and trips to the Kruger gates.', providers: [] },
   { id: 'restaurants', icon: 'utensils', name: 'Restaurants', blurb: 'Bush pubs, cafés and dinner spots in Marloth.', providers: [] },
   { id: 'butcheries', icon: 'flame', name: 'Butcheries', blurb: 'Braai packs, biltong and droëwors.', providers: [] },

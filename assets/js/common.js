@@ -65,6 +65,12 @@ const ICON_PATHS = {
   refresh: '<path d="M21 12a9 9 0 0 1-15.5 6.2L3 16M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5M3 21v-5h5"/>',
   history: '<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l4 2"/>',
   cloud: '<path d="M17.5 19H7a5 5 0 1 1 1-9.9A6 6 0 0 1 19.5 11 4 4 0 0 1 17.5 19z"/>',
+  binoculars: '<circle cx="6" cy="16" r="4"/><circle cx="18" cy="16" r="4"/><path d="M10 16h4M6 12V6a2 2 0 0 1 2-2h1l1 8M18 12V6a2 2 0 0 0-2-2h-1l-1 8"/>',
+  invoice: '<path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 7h6M9 11h6M9 15h4"/>',
+  money: '<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/>',
+  hourglass: '<path d="M6 2h12M6 22h12M7 2v4a5 5 0 0 0 10 0V2M7 22v-4a5 5 0 0 1 10 0v4"/>',
+  shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/>',
+  printer: '<path d="M6 9V2h12v7"/><rect x="2" y="9" width="20" height="9" rx="2"/><path d="M6 14h12v8H6z"/>',
 };
 
 function icon(name, cls = '') {
@@ -124,17 +130,22 @@ function rangesOverlap(a1, b1, a2, b2) { return a1 < b2 && a2 < b1; }
    history — and their dates are released — automatically. */
 function bookingStatus(b, today = todayISO()) {
   if (b.cancelled) return 'cancelled';
+  // Requests awaiting payment hold their dates until confirmed or declined
+  if (b.status === 'pending') return b.checkout <= today ? 'expired' : 'pending';
   if (b.checkout <= today) return 'completed';
   if (b.checkin <= today) return 'in-house';
   return 'upcoming';
 }
 
-/* Public availability: only active, not-yet-finished stays. No guest details. */
+/* Public availability: only active, not-yet-finished stays. No guest details.
+   Each range is [checkin, checkout], plus 'hold' for requests awaiting payment. */
 function computeAvailability(bookings, today = todayISO()) {
   const ranges = {};
   for (const b of bookings) {
     if (b.cancelled || b.checkout <= today) continue;
-    (ranges[b.stayId] = ranges[b.stayId] || []).push([b.checkin, b.checkout]);
+    const r = [b.checkin, b.checkout];
+    if (b.status === 'pending') r.push('hold');
+    (ranges[b.stayId] = ranges[b.stayId] || []).push(r);
   }
   for (const k in ranges) ranges[k].sort((x, y) => x[0].localeCompare(y[0]));
   return { updated: new Date().toISOString(), ranges };
@@ -142,6 +153,9 @@ function computeAvailability(bookings, today = todayISO()) {
 
 function isNightBooked(ranges, date) {
   return (ranges || []).some(([a, b]) => date >= a && date < b);
+}
+function isNightHeld(ranges, date) {
+  return (ranges || []).some(([a, b, kind]) => kind === 'hold' && date >= a && date < b);
 }
 function isRangeFree(ranges, checkin, checkout) {
   return !(ranges || []).some(([a, b]) => rangesOverlap(checkin, checkout, a, b));
