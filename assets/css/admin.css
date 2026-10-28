@@ -75,7 +75,7 @@ h1,h2,h3{line-height:1.2;letter-spacing:-.01em}
 /* ---------- Auth screen ---------- */
 .auth{min-height:100vh;display:grid;place-items:center;padding:24px;background:radial-gradient(1200px 600px at 20% -10%,#2f4a2e 0,transparent 60%),linear-gradient(160deg,var(--bush-deep),#13200f)}
 .auth-card{width:100%;max-width:460px;background:#fff;border-radius:20px;box-shadow:var(--shadow-lg);padding:32px}
-.auth-card .logo{height:72px;margin:0 auto 10px}
+.auth-card .logo{height:96px;width:96px;margin:0 auto 10px}
 .auth-card h1{text-align:center;font-size:1.6rem;margin-bottom:4px}
 .auth-card>p{text-align:center;color:var(--muted);font-size:.92rem;margin-bottom:22px}
 .auth-card form{display:grid;gap:14px}
@@ -90,7 +90,7 @@ details.adv[open] summary{margin-bottom:10px}
 .shell{display:grid;grid-template-columns:var(--side) minmax(0,1fr);min-height:100vh}
 .side{position:sticky;top:0;height:100vh;background:var(--bush-deep);color:#d9d3c7;display:flex;flex-direction:column;padding:20px 14px}
 .side-brand{display:flex;align-items:center;gap:10px;padding:0 6px 20px}
-.side-brand img{width:44px;height:44px;border-radius:10px;object-fit:cover;background:#fff}
+.side-brand img{width:48px;height:48px;border-radius:50%}
 .side-brand strong{display:block;color:#fff;font-size:.95rem;line-height:1.2}
 .side-brand small{font-size:.72rem;color:#a7b3a2}
 .nav{display:grid;gap:4px}
@@ -303,7 +303,7 @@ code{background:var(--sand);padding:1px 6px;border-radius:5px;font-size:.82rem}
   .side{display:none}
   .main{padding:0 0 calc(84px + env(safe-area-inset-bottom))}
   .topbar{display:flex;position:sticky;top:0;z-index:20;align-items:center;gap:10px;padding:10px 16px;background:var(--bush-deep);color:#fff}
-  .topbar img{width:36px;height:36px;border-radius:9px;background:#fff;object-fit:cover}
+  .topbar img{width:38px;height:38px;border-radius:50%}
   .topbar strong{flex:1;font-size:.95rem}
   .topbar .sync{padding:6px 10px;font-size:.72rem;color:#d9d3c7}
   .view{padding:18px 16px}

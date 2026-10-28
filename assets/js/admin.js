@@ -348,7 +348,7 @@ function renderAuth(step = 'login', error = '') {
   const setup = step === 'setup';
   auth.innerHTML = `
     <div class="auth-card">
-      <img class="logo" src="logo.jpg" alt="" />
+      <img class="logo" src="images/logo.png" alt="" />
       <h1 class="serif">${setup ? 'First-time setup' : 'Owner dashboard'}</h1>
       <p>${setup ? 'For Henry: connect the bookings repository once. After this, the owner signs in with the password only.'
         : 'Manage bookings, blocked dates and guest history.'}</p>

@@ -41,14 +41,12 @@ def home_image():
     canvas.paste(cover(HOME_PHOTOS[1], (right_w, half)), (left_w + gap, 0))
     canvas.paste(cover(HOME_PHOTOS[2], (right_w, H - half - gap)), (left_w + gap, half + gap))
 
-    logo = Image.open(os.path.join(SITE, 'logo.jpg')).convert('RGB')
-    logo.thumbnail((300, 170), Image.LANCZOS)
-    pad = 14
-    badge = Image.new('RGB', (logo.width + pad * 2, logo.height + pad * 2), 'white')
-    badge.paste(logo, (pad, pad))
-    mask = Image.new('L', badge.size, 0)
-    ImageDraw.Draw(mask).rounded_rectangle([0, 0, badge.width - 1, badge.height - 1], radius=18, fill=255)
-    canvas.paste(badge, (28, H - badge.height - 28), mask)
+    # Round transparent badge, made from the full-size logo for a crisp result
+    logo = Image.open(os.path.join(SITE, 'logo.jpg')).convert('RGB').resize((250, 250), Image.LANCZOS)
+    mask = Image.new('L', (1000, 1000), 0)
+    ImageDraw.Draw(mask).ellipse([4, 4, 995, 995], fill=255)
+    mask = mask.resize(logo.size, Image.LANCZOS)
+    canvas.paste(logo, (28, H - logo.height - 28), mask)
     return canvas
 
 

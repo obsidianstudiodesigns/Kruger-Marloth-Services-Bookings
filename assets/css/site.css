@@ -51,7 +51,7 @@ input,select,textarea{font:inherit;color:inherit}
 /* ---------- Header ---------- */
 .site-header{position:sticky;top:0;z-index:50;background:rgba(245,239,230,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
 .nav{display:flex;align-items:center;justify-content:space-between;gap:20px;height:76px}
-.logo img{height:58px;width:auto;mix-blend-mode:multiply}
+.logo img{height:62px;width:62px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.18))}
 .nav-links{display:flex;gap:28px;list-style:none;font-size:.93rem;font-weight:500}
 .nav-links a{position:relative;padding:6px 0}
 .nav-links a::after{content:'';position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--sun);transform:scaleX(0);transition:transform .25s var(--ease)}
@@ -194,7 +194,7 @@ section{padding:96px 0}
 /* ---------- Footer ---------- */
 footer{background:var(--charcoal);color:#cfc8bd;padding:56px 0 28px}
 .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px;margin-bottom:36px}
-.footer-logo{height:84px;width:auto;mix-blend-mode:screen;margin-bottom:14px;border-radius:8px}
+.footer-logo{height:120px;width:120px;margin-bottom:14px}
 footer h4{font-family:'Inter';font-size:.95rem;color:#fff;margin-bottom:12px}
 footer ul{list-style:none;display:grid;gap:8px;font-size:.88rem}
 footer a{opacity:.8;transition:.2s}
@@ -333,7 +333,7 @@ footer a:hover{opacity:1;color:var(--sun)}
 @media (max-width:640px){
   .container{padding:0 16px}
   .nav{height:66px}
-  .logo img{height:48px}
+  .logo img{height:52px;width:52px}
   .nav-links{top:66px}
   .nav-cta span{display:none}
   .nav-cta{width:42px;padding:0}
