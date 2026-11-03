@@ -41,7 +41,7 @@ const STAYS = [
     tagline: 'Modern self-catering bush home close to the river',
     description: 'A bright, modern bush home with three en-suite bedrooms, an open-plan living area and a covered patio that opens onto the pool deck. Backup water and power keep everything running during load shedding, so evenings are spent at the boma listening to lions roar and hippos calling from the river.',
     sleeps: 6, bedrooms: 3, bathrooms: 3,
-    price: 1980, peakPrice: 3300, peakLabel: 'School holidays',
+    price: 1950, peakPrice: 3300, peakLabel: 'Peak season',
     photos: 9, flyer: true,
     filters: ['pool', 'river', 'power'],
     amenities: [

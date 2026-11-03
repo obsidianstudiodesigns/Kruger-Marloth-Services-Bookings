@@ -398,7 +398,7 @@ function updateQuote() {
   $('#quote').innerHTML = nights ? `
     <div><span>${money(stay.price)} × ${nights} night${nights > 1 ? 's' : ''}</span><span>${money(stay.price * nights)}</span></div>
     <div class="total"><span>Estimated total</span><span>${money(stay.price * nights)}</span></div>
-    <small>Indicative rate — ${SITE.contactName} confirms the final price${stay.peakPrice ? ' (school-holiday rates may apply)' : ''}.</small>` : '';
+    <small>Indicative rate — ${SITE.contactName} confirms the final price${stay.peakPrice ? ` (${esc(stay.peakLabel)}: ${money(stay.peakPrice)} / night)` : ''}.</small>` : '';
 }
 
 /* Send the booking request to the owner via 'whatsapp' or 'email' */
