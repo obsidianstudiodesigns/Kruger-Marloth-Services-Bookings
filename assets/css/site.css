@@ -156,7 +156,8 @@ section{padding:96px 0}
 .tag-list{display:flex;flex-wrap:wrap;gap:6px}
 .tag{background:var(--sand);padding:4px 10px;border-radius:999px;font-size:.75rem;font-weight:500}
 .provider-meta{display:grid;gap:4px;font-size:.85rem;color:var(--muted)}
-.provider-meta span{display:flex;gap:8px;align-items:center}
+.provider-meta span,.provider-meta a{display:flex;gap:8px;align-items:center}
+.provider-meta a{color:var(--bush);text-decoration:underline;text-underline-offset:2px}
 .provider-actions{display:flex;gap:8px;margin-top:auto;padding-top:6px;flex-wrap:wrap}
 .provider-actions .btn{flex:1;min-height:42px;font-size:.86rem;padding:0 14px}
 .empty-state{background:#fff;border-radius:var(--radius);padding:44px 28px;text-align:center;border:1.5px dashed var(--sand-3)}

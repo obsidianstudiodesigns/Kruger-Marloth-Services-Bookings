@@ -51,7 +51,7 @@ The dashboard is a **booking calendar only** (entry-level package): no invoices,
 ### Dashboard features
 - Pending requests queue with Confirm booking / Decline
 - Dashboard: who's staying now, arrivals, departures today, occupancy, which homes are free tonight
-- Calendar: month planner of all 16 properties — click an empty day to book, click a booking to see the guest
+- Calendar: month planner of all the properties — click an empty day to book, click a booking to see the guest
 - Bookings: Upcoming / Staying now / History / Cancelled, search by guest, phone or property, CSV export
 - Guest booking or "block dates" (owner use, maintenance), double-booking check, guest details, where it was booked
 - Backup download / restore

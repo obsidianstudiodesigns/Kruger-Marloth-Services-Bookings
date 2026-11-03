@@ -149,7 +149,7 @@ function renderStays() {
         <span class="photo-count">${icon('images')}${s.photos}</span>
       </div>
       <div class="stay-info">
-        <div class="stay-title"><h3>${esc(s.name)}</h3><div class="stay-price">${money(s.price)} <small>/night</small></div></div>
+        <div class="stay-title"><h3>${esc(s.name)}</h3><div class="stay-price">${s.priceFrom ? '<small>from</small> ' : ''}${money(s.price)} <small>/night</small></div></div>
         <p class="stay-tagline">${esc(s.tagline)}</p>
         <ul class="facts">
           <li>${icon('users')}${s.sleeps} guests</li>
@@ -243,7 +243,7 @@ function openStay(id, push = true) {
           </button>` : ''}
         </div>
         <aside class="book-card" id="bookCard">
-          <div class="book-price"><strong>${money(s.price)}</strong><span>/ night</span></div>
+          <div class="book-price">${s.priceFrom ? '<span>From</span>' : ''}<strong>${money(s.price)}</strong><span>/ night</span></div>
           ${s.peakPrice ? `<div class="peak-note">${esc(s.peakLabel)}: ${money(s.peakPrice)} / night</div>` : ''}
           ${s.priceNote ? `<div class="peak-note">${esc(s.priceNote)}</div>` : ''}
           <div class="date-boxes">
@@ -275,7 +275,7 @@ function openStay(id, push = true) {
       </div>
     </div></div>
     <div class="mobile-book">
-      <div><strong>${money(s.price)}</strong> <span>per night · indicative</span></div>
+      <div>${s.priceFrom ? '<span>From</span> ' : ''}<strong>${money(s.price)}</strong> <span>per night · indicative</span></div>
       <button class="btn btn-primary" data-jump>${icon('calendar')}Check dates</button>
     </div>`;
 
@@ -525,6 +525,7 @@ function renderServices() {
             ${p.phones.map(ph => `<span>${icon('phone')}${esc(ph)}</span>`).join('')}
             ${p.email ? `<span>${icon('mail')}${esc(p.email)}</span>` : ''}
             ${p.address ? `<span>${icon('pin')}${esc(p.address)}</span>` : p.area ? `<span>${icon('pin')}${esc(p.area)}</span>` : ''}
+            ${p.website ? `<a href="${p.website}" target="_blank" rel="noopener">${icon('globe')}${esc(p.website.replace(/^https?:\/\/(www\.)?/, ''))}</a>` : ''}
           </div>
           <div class="provider-actions">
             <a class="btn btn-primary" href="${telHref(p.phones[0])}">${icon('phone')}Call</a>
