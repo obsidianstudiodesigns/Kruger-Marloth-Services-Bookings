@@ -54,18 +54,19 @@ const STAYS = [
   {
     id: 'afrika-safari',
     name: 'Afrika Safari Gastehuis',
-    tag: 'Guest house',
-    tagline: 'Thatched guest house with a private bush bar',
-    description: 'A characterful thatched guest house with face-brick interiors, a fully stocked-style entertainment bar and a spacious lounge made for long safari evenings. Bedrooms are dressed with safari linen and the bathrooms feature corner baths and walk-in showers.',
-    sleeps: 6, bedrooms: 3, bathrooms: 3,
+    tag: 'Sleeps 10',
+    tagline: 'Thatched guest house — book a room or the whole place',
+    description: 'A characterful thatched guest house with four bedrooms and room for ten guests. Book the whole place on a self-catering basis for your group, or stay as guest-house guests. Face-brick interiors, an entertainment bar and a spacious lounge make for long safari evenings; bedrooms are dressed with safari linen and the bathrooms feature corner baths and walk-in showers.',
+    sleeps: 10, bedrooms: 4, bathrooms: 3,
     price: 2400,
     photos: 11, flyer: false,
     filters: ['groups'],
     amenities: [
-      ['home', 'Thatched guest house'], ['bar', 'Entertainment bar'], ['sofa', 'Spacious lounge'],
+      ['users', 'Sleeps 10'], ['bed', '4 bedrooms'], ['home', 'Whole house self-catering or guest house'],
+      ['bar', 'Entertainment bar'], ['sofa', 'Spacious lounge'],
       ['bath', 'Corner baths & showers'], ['snow', 'Aircons'], ['car', 'Secure parking'],
     ],
-    draft: ['price', 'sleeps', 'bedrooms', 'bathrooms', 'description', 'amenities', 'rules'],
+    draft: ['price', 'bathrooms', 'amenities', 'rules'],
   },
   {
     id: 'bosgenade',
@@ -86,15 +87,15 @@ const STAYS = [
   {
     id: 'buffalo-chalets',
     name: 'Buffalo Chalets',
-    tag: 'Budget friendly',
-    tagline: 'Cosy self-catering chalets around a shared boma',
-    description: 'Comfortable face-brick chalets with thatched roofs, kitchenettes and mosquito-netted beds, set around a shared plunge pool, boma and shaded patio. A great-value base for couples and small families exploring Marloth Park and the Kruger.',
+    tag: '4 chalets',
+    tagline: 'Four cosy self-catering chalets around a shared boma',
+    description: 'Four comfortable face-brick chalets with thatched roofs, kitchenettes and mosquito-netted beds, set around a shared plunge pool, boma and shaded patio. Book one chalet or several — a great-value base for couples, families and groups exploring Marloth Park and the Kruger.',
     sleeps: 2, bedrooms: 1, bathrooms: 1,
     price: 950,
     photos: 10, flyer: false,
     filters: ['pool', 'couples'],
     amenities: [
-      ['home', 'Thatched chalets'], ['bed', 'Mosquito nets'], ['dish', 'Kitchenette'],
+      ['home', '4 thatched chalets'], ['bed', 'Mosquito nets'], ['dish', 'Kitchenette'],
       ['pool', 'Plunge pool'], ['flame', 'Shared boma & braai'], ['snow', 'Aircon'],
     ],
     draft: ['price', 'sleeps', 'bedrooms', 'bathrooms', 'description', 'amenities', 'rules'],
@@ -136,20 +137,20 @@ const STAYS = [
   {
     id: 'cheetah',
     name: 'Cheetah@Marloth',
-    tag: 'Sleeps 12',
+    tag: 'Sleeps 10',
     tagline: 'Very private house for big groups — pool, boma & games',
     description: 'A spacious, very private self-catering house with no neighbours in close proximity. Two air-conditioned bedrooms downstairs, an upstairs bedroom and a large loft with four single and three-quarter beds. The big stoep, boma and pool are perfect for groups, with darts, beer pong and a gas braai for rainy days.',
-    sleeps: 12, bedrooms: 4, bathrooms: 2,
-    price: 3500, priceNote: 'Tariffs depend on group size · off-peak specials',
+    sleeps: 10, bedrooms: 4, bathrooms: 2,
+    price: 1800,
     photos: 28, flyer: true,
     filters: ['pool', 'groups', 'power'],
     amenities: [
-      ['users', 'Sleeps up to 12'], ['pool', 'Pool with pump & filter'], ['lock', 'Very private house'],
+      ['users', 'Sleeps up to 10'], ['pool', 'Pool with pump & filter'], ['lock', 'Very private house'],
       ['flame', 'Large stoep & boma'], ['flame', 'Gas braai on stoep'], ['wifi', 'Uncapped fibre 30Mb/s'],
       ['tv', 'Smart TV'], ['snow', 'Aircons in bedrooms'], ['washer', 'Washing machine & tumble dryer'],
       ['dish', 'Dishwasher & microwave'], ['zap', 'Backup lights & gas equipment'], ['game', 'Darts & beer pong'],
     ],
-    draft: ['price', 'bathrooms', 'rules'],
+    draft: ['bathrooms', 'rules'],
   },
   {
     id: 'elephant-bush-house',
@@ -192,7 +193,7 @@ const STAYS = [
     tagline: 'Three-bedroom holiday home near the Crocodile River',
     description: 'A spacious three-bedroom holiday home with three modern bathrooms — including a romantic outdoor bath — a private pool and a covered patio for long lunches. WiFi, an inverter and aircons keep you connected and comfortable, while animals roam freely around the property.',
     sleeps: 6, bedrooms: 3, bathrooms: 3,
-    price: 2400,
+    price: 1800,
     photos: 11, flyer: true,
     filters: ['pool', 'river', 'power'],
     amenities: [
@@ -200,7 +201,7 @@ const STAYS = [
       ['pool', 'Private pool'], ['wifi', 'WiFi'], ['zap', 'Inverter'], ['snow', 'Aircons'],
       ['flame', 'Fire pit'], ['river', 'Close to the Crocodile River'],
     ],
-    draft: ['price', 'sleeps', 'rules'],
+    draft: ['rules'],
   },
   {
     id: 'kruger-naledi',
@@ -238,20 +239,21 @@ const STAYS = [
   {
     id: 'melmar-estate',
     name: 'Melmar Estate',
-    tag: 'Cottages & villa',
-    tagline: 'Luxury cottages and an owner’s villa with a big pool',
-    description: 'A luxury retreat in the animal sanctuary of Marloth Park, 20 minutes from the Kruger. Choose a new dual-level cottage for up to four guests — separate bedroom, living room with bunk bed and two bathrooms — or the extra-large Owner’s Villa for up to eight, with four en-suite bedrooms and a massive terrace. Every unit has a kitchenette, private braai and balcony, and there’s a full-size 1.7 m pool, a kids’ splash pool and a restaurant serving breakfast and dinner.',
-    sleeps: 8, bedrooms: 4, bathrooms: 4,
+    tag: 'Sleeps 52',
+    tagline: 'Luxury estate with 3 types of units for up to 52 guests',
+    description: 'A luxury retreat in the animal sanctuary of Marloth Park, 20 minutes from the Kruger, with three types of units and room for 52 guests in total — ideal for families, groups and functions. Units include new dual-level cottages for up to four guests (separate bedroom, living room with bunk bed and two bathrooms) and the extra-large Owner’s Villa for up to eight, with four en-suite bedrooms and a massive terrace. Every unit has a kitchenette, private braai and balcony, and there’s a full-size 1.7 m pool, a kids’ splash pool and a restaurant serving breakfast and dinner.',
+    sleeps: 52, bedrooms: 4, bathrooms: 4,
     price: 1200, priceFrom: true, priceNote: 'Cottage (up to 4 guests) R1 200 · Owner’s Villa (up to 8 guests) R4 000 per night',
     photos: 10, flyer: true,
     filters: ['pool', 'groups', 'power', 'kids'],
     amenities: [
-      ['home', 'Dual-level cottages (up to 4)'], ['users', 'Owner’s Villa (up to 8)'], ['bed', '4 en-suite bedrooms in the villa'],
+      ['users', 'Room for 52 guests'], ['home', '3 types of units'], ['home', 'Dual-level cottages (up to 4)'],
+      ['users', 'Owner’s Villa (up to 8)'], ['bed', '4 en-suite bedrooms in the villa'],
       ['snow', 'Fully air-conditioned'], ['wifi', 'WiFi'], ['zap', 'No load shedding'], ['dish', 'Kitchenette'],
       ['flame', 'Private braai'], ['deck', 'Balcony at every cottage'], ['pool', 'Full-size 1.7 m pool'],
       ['kids', 'Kids’ splash pool'], ['utensils', 'Restaurant — breakfast & dinner'], ['paw', 'Animals at the doorstep'],
     ],
-    draft: ['rules'],
+    draft: ['bedrooms', 'bathrooms', 'rules'],
   },
   {
     id: 'moepel',
@@ -295,7 +297,7 @@ const STAYS = [
     tagline: 'A unique glass luxury unit next to the Kruger fence',
     description: 'A unique, romantic luxury unit with floor-to-ceiling glass, a skylight and sweeping views over the Crocodile River and Kruger National Park. Step out onto the private deck with a braai and bar counter to watch the river below — your private escape in nature.',
     sleeps: 2, bedrooms: 1, bathrooms: 1,
-    price: 2200,
+    price: 2200, priceNote: 'December (in season): 1 night R3 300 · 3+ nights R2 800 · 7+ nights R2 200 per night',
     photos: 12, flyer: true,
     filters: ['river', 'couples'],
     amenities: [
@@ -328,7 +330,7 @@ const STAYS = [
     tagline: 'Corner stand with a loft overlooking park land',
     description: 'Self-catering accommodation for eight on a corner stand, 700 m from the Crocodile River and Kruger fence. Downstairs: a queen bedroom with en-suite bathroom, a room with two three-quarter beds and a full bathroom. The loft has two double beds overlooking the park land, and the undercover splash pool sits in a lapa with braai facilities. Just bring your food, clothes and swimming towels.',
     sleeps: 8, bedrooms: 3, bathrooms: 2,
-    price: 2200,
+    price: 1800,
     photos: 13, flyer: false,
     filters: ['pool', 'river', 'groups'],
     amenities: [
@@ -336,7 +338,7 @@ const STAYS = [
       ['pool', 'Undercover splash pool'], ['flame', 'Lapa with braai'], ['deck', 'Stoep overlooking park land'],
       ['tv', 'DStv'], ['wifi', 'WiFi'], ['snow', 'Pre-paid aircons'], ['river', '700 m from the Crocodile River'],
     ],
-    draft: ['price', 'rules'],
+    draft: ['rules'],
   },
   {
     id: 'shingwedzi',
@@ -345,14 +347,14 @@ const STAYS = [
     tagline: 'A modern bush home with a huge stoep and pool',
     description: 'Come and enjoy an unforgettable stay in this modern bush home. Three bedrooms (one en-suite with a freestanding bath), a sleeper couch, an open-plan kitchen and lounge, and a huge stoep overlooking the pool — with bushbabies and plenty of other animals roaming the area.',
     sleeps: 8, bedrooms: 3, bathrooms: 2,
-    price: 2300,
+    price: 4000,
     photos: 12, flyer: false,
     filters: ['pool', 'groups'],
     amenities: [
       ['bed', '3 bedrooms'], ['bath', 'En-suite bathroom'], ['sofa', 'Sleeper couch'], ['wifi', 'WiFi'],
       ['pool', 'Pool'], ['snow', 'Pre-paid aircons'], ['deck', 'Huge stoep'], ['paw', 'Lots of animals roaming'],
     ],
-    draft: ['price', 'sleeps', 'bathrooms', 'rules'],
+    draft: ['sleeps', 'bathrooms', 'rules'],
   },
   {
     id: 'waterpeer',
@@ -667,6 +669,24 @@ const SERVICE_CATEGORIES = [
     ],
   },
 ];
+
+/* =========================================================
+   PROPERTY FOR SALE — Nadia's estate-agency advert
+   ========================================================= */
+const PROPERTY_SALE = {
+  agency: 'Blue Lily Properties',
+  agent: 'Nadia Green',
+  phone: '061 512 9208',
+  image: 'images/sale/blue-lily-properties.jpg',
+  intro: 'Buy your piece of heaven in Marloth Park. Enjoy the freedom of free-roaming animals and the night sounds of the bush, while sipping a glass of wine on your own stoep.',
+  listings: [
+    ['home', '5 bedroom, 5 bathroom house'],
+    ['home', '5 bedroom, 3 bathroom house'],
+    ['home', '2 bedroom, 2 bathroom house'],
+    ['tree', '4 vacant stands next to parkland'],
+    ['pin', '3 street-facing stands'],
+  ],
+};
 
 /* Experiences shown in the "Things to do" strip (arranged on request) */
 const EXPERIENCES = [

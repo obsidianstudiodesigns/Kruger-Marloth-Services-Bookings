@@ -549,6 +549,28 @@ function initServices() {
   });
 }
 
+/* ---------- Property for sale ---------- */
+function renderSale() {
+  const p = PROPERTY_SALE;
+  const grid = $('#saleGrid');
+  grid.innerHTML = `
+    <button class="sale-ad" type="button" data-sale-ad aria-label="View the ${esc(p.agency)} advert">
+      <img src="${p.image}" alt="${esc(p.agency)} — houses and stands for sale in Marloth Park" loading="lazy" />
+    </button>
+    <div>
+      <span class="eyebrow">Property for sale</span>
+      <h2 id="saleTitle">Own a home in Marloth Park</h2>
+      <p class="sale-intro">${esc(p.intro)}</p>
+      <ul class="sale-list">${p.listings.map(([i, t]) => `<li>${icon(i)}${esc(t)}</li>`).join('')}</ul>
+      <p class="sale-agent">Contact <strong>${esc(p.agent)}</strong> · ${esc(p.agency)} · ${esc(p.phone)}</p>
+      <div class="sale-actions">
+        <a class="btn btn-wa" target="_blank" rel="noopener" href="${waHref(p.phone, `Hi ${p.agent.split(' ')[0]}, I saw the properties for sale on the Kruger Marloth website. Please send me more information.`)}">${icon('whatsapp')}WhatsApp ${esc(p.agent.split(' ')[0])}</a>
+        <a class="btn btn-sun" href="${telHref(p.phone)}">${icon('phone')}Call ${esc(p.phone)}</a>
+      </div>
+    </div>`;
+  grid.querySelector('[data-sale-ad]').addEventListener('click', () => openLightbox([{ src: p.image }], 0, p.agency));
+}
+
 /* ---------- Boot ---------- */
 renderChrome();
 initSearch();
@@ -557,6 +579,7 @@ initLightbox();
 initServices();
 renderStays();
 renderServices();
+renderSale();
 
 loadAvailability().then(ranges => {
   state.ranges = ranges;

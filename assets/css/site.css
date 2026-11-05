@@ -129,6 +129,21 @@ section{padding:96px 0}
 .why-item h3{color:#fff;font-size:1.25rem;margin-bottom:6px}
 .why-item p{font-size:.94rem;opacity:.85}
 
+/* ---------- Property for sale ---------- */
+.sale{background:var(--bush-deep);color:#e9e3d8}
+.sale-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:48px;align-items:center}
+.sale-ad{display:block;width:100%;border-radius:var(--radius);overflow:hidden;box-shadow:0 18px 40px rgba(0,0,0,.35);cursor:zoom-in}
+.sale-ad img{width:100%;height:auto;display:block;aspect-ratio:1/1;object-fit:cover}
+.sale .eyebrow{color:#f0c27e}
+.sale h2{color:#fff;font-size:clamp(1.8rem,4vw,2.6rem);margin-bottom:12px}
+.sale-intro{opacity:.88;margin-bottom:22px}
+.sale-list{list-style:none;display:grid;gap:10px;margin-bottom:26px}
+.sale-list li{display:flex;gap:12px;align-items:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px 14px;color:#fff;font-weight:500}
+.sale-list .ic{color:#f0c27e;flex:none}
+.sale-agent{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:.92rem;margin-bottom:14px;opacity:.9}
+.sale-agent strong{color:#fff}
+.sale-actions{display:flex;gap:10px;flex-wrap:wrap}
+
 /* ---------- Services ---------- */
 .services{background:var(--sand-2)}
 .cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;margin-bottom:34px}
@@ -327,6 +342,8 @@ footer a:hover{opacity:1;color:var(--sun)}
   .search-card .btn{grid-column:1/-1;width:100%}
   .why-grid{grid-template-columns:1fr;gap:28px}
   .contact-grid{grid-template-columns:1fr}
+  .sale-grid{grid-template-columns:minmax(0,1fr);gap:32px}
+  .sale-ad{max-width:520px}
   .gallery{grid-template-columns:1fr 1fr;grid-template-rows:240px 140px}
   .gallery button:first-child{grid-column:span 2;grid-row:auto}
   .gallery button:nth-child(n+4):not(.gallery-all){display:none}
