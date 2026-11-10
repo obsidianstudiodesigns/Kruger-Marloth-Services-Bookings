@@ -16,12 +16,21 @@ SRC, SITE = sys.argv[1], sys.argv[2]
 ACC = os.path.join(SRC, '01 - Accommodation Listings')
 SVC = os.path.join(SRC, '02 - Service Directories')
 
-# slug: (folder, cover, flyer, excluded files, files to trim black bars from)
+# slug: (folder, cover — or a list of first photos in order, flyer, excluded files,
+#        files to trim black bars from[, extra photos from other folders])
 STAYS = {
   'tarentaal':        ('2794 Tarentaal@Marloth', 'IMG-20261021-WA0310.jpg', 'IMG-20261021-WA0314.jpg', [], []),
   'afrika-safari':    ('Afrika Safari Gastehuis', 'IMG-20260612-WA0204.jpg', None, [], []),
   'bosgenade':        ('Bosgenade', 'Screenshot_20260724_070336_Gallery.jpg', 'file_00000000d7ec71f491180b0d612f6511.png', [], []),
   'buffalo-chalets':  ('Buffalo Chalets', 'IMG-20250923-WA0360.jpg', None, [], []),
+  'buffalo-zebra':    ('Buffalo Chalets/Zebra', 'IMG-20260505-WA0070.jpg', None, ['Screenshot_20261106_071247_WhatsApp.jpg', 'Screenshot_20261106_071256_WhatsApp.jpg'], []),
+  'buffalo-vlakvark': ('Buffalo Chalets/Vlakvark', 'IMG-20260505-WA0088.jpg', None, ['Screenshot_20261106_080112_WhatsApp.jpg', 'Screenshot_20261106_080120_WhatsApp.jpg'], []),
+  # Buffel's own photos first; the rest of its folder repeats Vlakvark's photos
+  'buffalo-buffel':   ('Buffalo Chalets/Buffalo uniy',
+                       ['IMG-20260505-WA0104(1).jpg', 'IMG-20260505-WA0107.jpg', 'IMG-20260505-WA0102(1).jpg',
+                        'IMG-20260505-WA0105(1).jpg', 'IMG-20260505-WA0103(1).jpg'], None,
+                       ['IMG-20260505-WA0107(1).jpg', 'Screenshot_20261106_072228_WhatsApp.jpg',
+                        'Screenshot_20261106_072235_WhatsApp.jpg', 'Screenshot_20261106_072243_WhatsApp.jpg'], []),
   'bushfire-mongoose':('Bushfire Mongoose@Marloth', 'IMG-20260920-WA0084.jpg', None, [], []),
   'bushveld-paradise':('Bushveld paradise', 'IMG-20261013-WA0174.jpg', None,
                        ['Screenshot_20261028_090649_WhatsApp.jpg', 'Screenshot_20261028_090653_WhatsApp.jpg',
@@ -29,6 +38,24 @@ STAYS = {
   'cheetah':          ('Cheetah@Marloth', 'IMG-20260515-WA0074.jpg', 'file_000000006a2071f49392460443486b3f.png',
                        ['file_000000006a2071f49392460443486b3f(1).png', 'IMG-20261028-WA0047(1).jpg',
                         'IMG-20261028-WA0048(1).jpg', 'IMG-20261028-WA0060(1).jpg'], []),
+  # Doringpoort's photos are screenshots of its website; the text panels are left out
+  'doringpoort':      ('Doringpoort Safari Lodge', 'Screenshot_20261107_082159_Gallery.jpg', None, [], [],
+                       ['Doringpoort Safari Lodge/Doringpoort luxury holiday home/Screenshot_20261107_065748_Gallery.jpg',
+                        'Doringpoort Safari Lodge/Doringpoort luxury holiday home/Screenshot_20261107_065955_Gallery.jpg',
+                        'Doringpoort Safari Lodge/Apiesdoring/Screenshot_20261107_080639_Gallery.jpg',
+                        'Doringpoort Safari Lodge/Soetdoring/Screenshot_20261107_081322_Gallery.jpg',
+                        'Doringpoort Safari Lodge/Lemoendoring/Screenshot_20261107_070757_Gallery.jpg',
+                        'Doringpoort Safari Lodge/Delgoadoring/Screenshot_20261107_081846_Gallery.jpg']),
+  'doringpoort-luxury-home': ('Doringpoort Safari Lodge/Doringpoort luxury holiday home', 'Screenshot_20261107_065748_Gallery.jpg', None,
+                       ['Screenshot_20261107_065948_Gallery.jpg', 'Screenshot_20261107_070023_Gallery.jpg', 'Screenshot_20261107_070030_Gallery.jpg'], []),
+  'doringpoort-apiesdoring': ('Doringpoort Safari Lodge/Apiesdoring', 'Screenshot_20261107_080639_Gallery.jpg', None,
+                       ['Screenshot_20261107_080700_Gallery.jpg', 'Screenshot_20261107_080706_Gallery.jpg', 'Screenshot_20261107_080710_Gallery.jpg'], []),
+  'doringpoort-soetdoring': ('Doringpoort Safari Lodge/Soetdoring', 'Screenshot_20261107_081322_Gallery.jpg', None,
+                       ['Screenshot_20261107_081255_Gallery.jpg', 'Screenshot_20261107_081300_Gallery.jpg', 'Screenshot_20261107_081313_Gallery.jpg'], []),
+  'doringpoort-lemoentjiedoring': ('Doringpoort Safari Lodge/Lemoendoring', 'Screenshot_20261107_070743_Gallery.jpg', None,
+                       ['Screenshot_20261107_070818_Gallery.jpg', 'Screenshot_20261107_070823_Gallery.jpg', 'Screenshot_20261107_070828_Gallery.jpg'], []),
+  'doringpoort-delagoadoring': ('Doringpoort Safari Lodge/Delgoadoring', 'Screenshot_20261107_081846_Gallery.jpg', None,
+                       ['Screenshot_20261107_081856_Gallery.jpg', 'Screenshot_20261107_081900_Gallery.jpg', 'Screenshot_20261107_081909_Gallery.jpg'], []),
   'elephant-bush-house': ('Elephant Bush House, Butterfly street', 'IMG-20260606-WA0101.jpg', 'file_00000000f20871fb848f4d8dcfac3219.png', ['IMG-20260818-WA0114.jpg'], []),
   'genet-house':      ('Genet House', 'IMG-20261028-WA0104.jpg', None, ['Screenshot_20261028_212250_WhatsApp.jpg'], []),
   'indabush':         ('Indabush', 'IMG-20260313-WA0039.jpg', 'IMG-20260815-WA0090.jpg', ['IMG-20260815-WA0090(1).jpg'], []),
@@ -90,6 +117,23 @@ def load(path, trim=False):
     return im
 
 
+# Screenshots taken inside a gallery viewer come out dimmed by its dark overlay
+DIMMED = ('doringpoort',)
+
+
+def lift(im):
+    # Stretch the tones so the brightest 0.5% are white again (at most 1.8x)
+    hist = im.convert('L').histogram()
+    total, acc, top = sum(hist), 0, 255
+    for v in range(255, -1, -1):
+        acc += hist[v]
+        if acc >= total * 0.005:
+            top = v
+            break
+    f = min(1.8, 245 / max(top, 1))
+    return im.point(lambda x: min(255, int(x * f)))
+
+
 def save(im, path, size, quality):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     im = im.copy()
@@ -99,17 +143,24 @@ def save(im, path, size, quality):
 
 
 manifest = {}
-for slug, (folder, cover, flyer, excluded, trim) in STAYS.items():
+for slug, (folder, cover, flyer, excluded, trim, *extra) in STAYS.items():
     d = os.path.join(ACC, folder)
     files = sorted(f for f in os.listdir(d) if f.lower().endswith(('.jpg', '.jpeg', '.png')))
-    photos = [f for f in files if f != flyer and f not in excluded and not f.startswith('file_')]
-    photos.remove(cover)
-    photos.insert(0, cover)
+    # Notes screenshots hold prices for us, not photos for guests
+    photos = [f for f in files if f != flyer and f not in excluded and not f.startswith('file_') and 'Samsung Notes' not in f]
+    first = cover if isinstance(cover, list) else [cover]   # a list fixes the order of the first photos
+    for f in reversed(first):
+        photos.remove(f)
+        photos.insert(0, f)
+    # extra: photos borrowed from other folders, e.g. a property's gallery made from its units
+    photos += [os.path.relpath(os.path.join(ACC, x), d) for x in (extra[0] if extra else [])]
     out = os.path.join(SITE, 'images', 'stays', slug)
     entries = []
     for i, f in enumerate(photos, 1):
         do_trim = trim == 'ALL_SCREENSHOTS' and f.startswith('Screenshot') or f in (trim if isinstance(trim, list) else [])
         im = load(os.path.join(d, f), do_trim)
+        if slug.startswith(DIMMED):
+            im = lift(im)
         name = f'{i:02d}.jpg'
         w, h = save(im, os.path.join(out, name), 1600, 80)
         save(im, os.path.join(out, 'thumb', name), 720, 74)

@@ -28,6 +28,12 @@ const URL_BASE = SITE.url.endsWith('/') ? SITE.url : SITE.url + '/';
 const TODAY = new Date().toISOString().slice(0, 10);
 const PHONE_INTL = '+' + SITE.whatsapp;
 
+// Properties with units (Buffalo Chalets → Zebra, Vlakvark, Buffel): units point to their property with `parent`
+const unitsOf = id => STAYS.filter(x => x.parent === id);
+const parentOf = s => s.parent && STAYS.find(x => x.id === s.parent);
+const label = s => (parentOf(s) ? `${parentOf(s).name} – ${s.name}` : s.name);
+const LISTINGS = STAYS.filter(s => !s.parent);
+
 const attr = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 const text = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 const jsonLd = obj => JSON.stringify(obj, null, 1).replace(/</g, '\\u003c');
@@ -67,7 +73,7 @@ const blockRe = /<!-- SEO:START[\s\S]*?<!-- SEO:END -->/;
 if (!blockRe.test(template)) throw new Error('index.html has no <!-- SEO:START --> … <!-- SEO:END --> block');
 
 /* ---------- Home page ---------- */
-const homeDescription = `Book ${STAYS.length} handpicked self-catering bush homes in Marloth Park, next to the Kruger National Park — pools, bomas and wildlife at your door — plus trusted local services.`;
+const homeDescription = `Book ${LISTINGS.length} handpicked self-catering bush homes in Marloth Park, next to the Kruger National Park — pools, bomas and wildlife at your door — plus trusted local services.`;
 const home = headBlock({
   base: './',
   title: 'Kruger Marloth Services & Bookings — Self-catering stays in Marloth Park',
@@ -93,30 +99,35 @@ write('index.html', template.replace(blockRe, home));
 /* ---------- One page per property ---------- */
 for (const s of STAYS) {
   const url = `${URL_BASE}stays/${s.id}/`;
-  const description = clip(`${s.tagline}. Self-catering for ${s.sleeps} guests — ${s.bedrooms} bedroom${s.bedrooms > 1 ? 's' : ''}, ${s.bathrooms} bathroom${s.bathrooms > 1 ? 's' : ''} — in Marloth Park next to the Kruger. ${s.description}`);
+  const units = unitsOf(s.id), parent = parentOf(s);
+  const size = units.length
+    ? `${units.length} self-catering ${s.unitLabel || 'unit'}s for ${Math.min(...units.map(u => u.sleeps))}–${Math.max(...units.map(u => u.sleeps))} guests each`
+    : `Self-catering for ${s.sleeps} guests — ${s.bedrooms} bedroom${s.bedrooms > 1 ? 's' : ''}, ${s.bathrooms} bathroom${s.bathrooms > 1 ? 's' : ''}`;
+  const description = clip(`${s.tagline}. ${size} — in Marloth Park next to the Kruger. ${s.description}`);
   const photos = Array.from({ length: Math.min(s.photos, 6) }, (_, i) => `${URL_BASE}images/stays/${s.id}/${String(i + 1).padStart(2, '0')}.jpg`);
   const block = headBlock({
     base: '../../',
-    title: `${s.name} | Self-catering in Marloth Park`,
+    title: `${label(s)} | Self-catering in Marloth Park`,
     description,
     url,
     image: `${URL_BASE}images/og/${s.id}.jpg`,
-    imageAlt: `${s.name}, Marloth Park`,
+    imageAlt: `${label(s)}, Marloth Park`,
     schema: {
       '@context': 'https://schema.org',
       '@graph': [
         {
-          '@type': 'LodgingBusiness', '@id': url + '#stay', name: s.name, url, description: s.description, image: photos,
-          telephone: PHONE_INTL, address: ADDRESS, numberOfRooms: s.bedrooms,
+          '@type': 'LodgingBusiness', '@id': url + '#stay', name: label(s), url, description: s.description, image: photos,
+          telephone: PHONE_INTL, address: ADDRESS, numberOfRooms: units.length || s.bedrooms,
           amenityFeature: s.amenities.map(([, label]) => ({ '@type': 'LocationFeatureSpecification', name: label, value: true })),
-          containedInPlace: { '@type': 'Place', name: 'Marloth Park' },
+          containedInPlace: parent ? { '@id': `${URL_BASE}stays/${parent.id}/#stay` } : { '@type': 'Place', name: 'Marloth Park' },
           provider: { '@id': URL_BASE + '#business' },
         },
         {
           '@type': 'BreadcrumbList', itemListElement: [
             { '@type': 'ListItem', position: 1, name: 'Home', item: URL_BASE },
             { '@type': 'ListItem', position: 2, name: 'Stays', item: URL_BASE + '#stays' },
-            { '@type': 'ListItem', position: 3, name: s.name, item: url },
+            ...(parent ? [{ '@type': 'ListItem', position: 3, name: parent.name, item: `${URL_BASE}stays/${parent.id}/` }] : []),
+            { '@type': 'ListItem', position: parent ? 4 : 3, name: s.name, item: url },
           ],
         },
       ],
@@ -124,7 +135,8 @@ for (const s of STAYS) {
   });
   // Crawlers and link previews don't run JavaScript, so include a plain summary too
   const fallback = `<noscript><main class="container" style="padding:40px 16px">
-  <h1>${text(s.name)}</h1><p>${text(s.description)}</p>
+  <h1>${text(label(s))}</h1><p>${text(s.description)}</p>${units.length ? `
+  <ul>${units.map(u => `<li><a href="stays/${u.id}/">${text(u.name)}</a> — sleeps ${u.sleeps}</li>`).join('')}</ul>` : ''}
   <ul>${s.amenities.map(([, label]) => `<li>${text(label)}</li>`).join('')}</ul>
   <p>Book with ${text(SITE.contactName)}: WhatsApp ${text(SITE.phone)}${SITE.email ? ' · ' + text(SITE.email) : ''}</p>
   <p><a href="./#stays">See all stays in Marloth Park</a></p></main></noscript>`;
@@ -158,4 +170,4 @@ Disallow: ${basePath}admin.html
 Sitemap: ${URL_BASE}sitemap.xml
 `);
 
-console.log(`Built index.html, ${STAYS.length} property pages, sitemap.xml and robots.txt for ${URL_BASE}`);
+console.log(`Built index.html, ${STAYS.length} property pages (${LISTINGS.length} listings), sitemap.xml and robots.txt for ${URL_BASE}`);

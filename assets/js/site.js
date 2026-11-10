@@ -29,7 +29,7 @@ function renderChrome() {
   $('#heroEyebrow').innerHTML = icon('pin') + 'Marloth Park · Mpumalanga';
   $('#searchBtn').innerHTML = icon('search') + 'Check availability';
   $('#heroTrust').innerHTML = [
-    ['home', `${STAYS.length} handpicked homes`],
+    ['home', `${LISTINGS.length} handpicked homes`],
     ['paw', 'Wildlife at your doorstep'],
     ['whatsapp', `Book direct with ${SITE.contactName}`],
   ].map(([i, t]) => `<span>${icon(i)}${t}</span>`).join('');
@@ -110,20 +110,22 @@ function initSearch() {
 
 function stayAvailable(s) {
   if (!state.search) return true;
+  const units = unitsOf(s.id);
+  if (units.length) return units.some(stayAvailable);
   return s.sleeps >= state.search.guests && isRangeFree(state.ranges[s.id], state.search.checkin, state.search.checkout);
 }
 
 /* ---------- Stay grid ---------- */
 function renderFilters() {
   $('#filterRow').innerHTML = STAY_FILTERS.map(f => {
-    const n = f.id === 'all' ? STAYS.length : STAYS.filter(s => s.filters.includes(f.id)).length;
+    const n = f.id === 'all' ? LISTINGS.length : LISTINGS.filter(s => s.filters.includes(f.id)).length;
     return `<button class="pill ${state.filter === f.id ? 'active' : ''}" data-filter="${f.id}" aria-pressed="${state.filter === f.id}">${f.label} <span class="count">${n}</span></button>`;
   }).join('');
 }
 
 function renderStays() {
   renderFilters();
-  let list = STAYS.filter(s => state.filter === 'all' || s.filters.includes(state.filter));
+  let list = LISTINGS.filter(s => state.filter === 'all' || s.filters.includes(state.filter));
   const bar = $('#resultsBar');
   if (state.search) {
     const { checkin, checkout, guests } = state.search;
@@ -139,7 +141,12 @@ function renderStays() {
 
   $('#stayGrid').innerHTML = list.map(s => {
     const ok = stayAvailable(s);
-    const flag = state.search ? `<span class="avail-flag ${ok ? '' : 'no'}">${icon(ok ? 'check' : 'x')}${ok ? 'Available' : s.sleeps < state.search.guests ? 'Too small' : 'Unavailable'}</span>` : '';
+    const sum = listingSummary(s);
+    const n = sum.units.length;
+    const freeUnits = n && state.search ? sum.units.filter(stayAvailable).length : 0;
+    const flagText = ok ? (n ? `${freeUnits} of ${n} available` : 'Available') : sum.sleeps < state.search?.guests ? 'Too small' : 'Unavailable';
+    const flag = state.search ? `<span class="avail-flag ${ok ? '' : 'no'}">${icon(ok ? 'check' : 'x')}${flagText}</span>` : '';
+    const unitWord = s.unitLabel || 'unit';
     return `
     <a class="stay-card ${state.search && !ok ? 'is-unavailable' : ''}" href="stays/${s.id}/" data-stay="${s.id}">
       <div class="stay-media">
@@ -149,12 +156,14 @@ function renderStays() {
         <span class="photo-count">${icon('images')}${s.photos}</span>
       </div>
       <div class="stay-info">
-        <div class="stay-title"><h3>${esc(s.name)}</h3><div class="stay-price">${s.priceFrom ? '<small>from</small> ' : ''}${money(s.price)} <small>/night</small></div></div>
+        <div class="stay-title"><h3>${esc(s.name)}</h3><div class="stay-price">${sum.priceFrom ? '<small>from</small> ' : ''}${money(sum.price)} <small>/night</small></div></div>
         <p class="stay-tagline">${esc(s.tagline)}</p>
-        <ul class="facts">
+        <ul class="facts">${n ? `
+          <li>${icon('home')}${n} ${unitWord}s</li>
+          <li>${icon('users')}${sum.minSleeps}–${sum.sleeps} guests</li>` : `
           <li>${icon('users')}${s.sleeps} guests</li>
           <li>${icon('bed')}${s.bedrooms} bedroom${s.bedrooms > 1 ? 's' : ''}</li>
-          <li>${icon('bath')}${s.bathrooms} bath${s.bathrooms > 1 ? 's' : ''}</li>
+          <li>${icon('bath')}${s.bathrooms} bath${s.bathrooms > 1 ? 's' : ''}</li>`}
           ${s.filters.includes('pool') ? `<li>${icon('pool')}Pool</li>` : ''}
         </ul>
       </div>
@@ -200,13 +209,17 @@ function openStay(id, push = true) {
   if (!s) return;
   if (push) history.pushState({ stay: id }, '', stayUrl(id));
   const photos = Array.from({ length: s.photos }, (_, i) => i + 1);
-  const rules = DEFAULT_RULES;
+  const rules = stayRules(s);
+  const sum = listingSummary(s);
+  const units = sum.units;                                   // set when this is a property with units
+  const parent = s.parent && stayById(s.parent);             // set when this is one of those units
+  const unitWord = (parent || s).unitLabel || 'unit';
   const sheet = $('#sheet');
 
   sheet.innerHTML = `
     <div class="sheet-bar"><div class="container">
       <button class="icon-btn" data-close aria-label="Back to all stays">${icon('left')}</button>
-      <h2 id="sheetTitle">${esc(s.name)}</h2>
+      <h2 id="sheetTitle">${esc(stayLabel(s))}</h2>
       <button class="icon-btn" data-share aria-label="Share this stay">${icon('share')}</button>
     </div></div>
     <div class="sheet-body"><div class="container">
@@ -219,13 +232,36 @@ function openStay(id, push = true) {
           <div class="detail-head">
             <h1>${esc(s.name)}</h1>
             <div class="detail-loc">${icon('pin')}Marloth Park, next to the Kruger National Park</div>
+            ${parent ? `<button class="parent-link" data-parent>${icon('left')}Part of ${esc(parent.name)} · see all ${unitsOf(parent.id).length} ${unitWord}s</button>` : ''}
           </div>
-          <div class="detail-facts">
+          <div class="detail-facts">${units.length ? `
+            <div><div class="cat-icon">${icon('home')}</div><div><strong>${units.length}</strong><small>${esc(unitWord[0].toUpperCase() + unitWord.slice(1))}s</small></div></div>
+            <div><div class="cat-icon">${icon('users')}</div><div><strong>${sum.minSleeps}–${sum.sleeps}</strong><small>Guests per ${esc(unitWord)}</small></div></div>` : `
             <div><div class="cat-icon">${icon('users')}</div><div><strong>${s.sleeps}</strong><small>Guests</small></div></div>
             <div><div class="cat-icon">${icon('bed')}</div><div><strong>${s.bedrooms}</strong><small>Bedrooms</small></div></div>
-            <div><div class="cat-icon">${icon('bath')}</div><div><strong>${s.bathrooms}</strong><small>Bathrooms</small></div></div>
+            <div><div class="cat-icon">${icon('bath')}</div><div><strong>${s.bathrooms}</strong><small>Bathrooms</small></div></div>`}
           </div>
           <p class="detail-desc">${esc(s.description)}</p>
+          ${units.length ? `
+          <h3 class="sub" id="unitsHead">Choose your ${esc(unitWord)}</h3>
+          <div class="unit-list">${units.map(u => {
+            const free = stayAvailable(u);
+            return `
+            <a class="unit-card ${state.search && !free ? 'is-unavailable' : ''}" href="stays/${u.id}/" data-unit="${u.id}">
+              <div class="unit-media"><img src="${stayImg(u.id, 1, true)}" alt="${esc(u.name)}" loading="lazy" />
+                ${state.search ? `<span class="avail-flag ${free ? '' : 'no'}">${icon(free ? 'check' : 'x')}${free ? 'Available' : u.sleeps < state.search.guests ? 'Too small' : 'Unavailable'}</span>` : ''}</div>
+              <div class="unit-body">
+                <div class="stay-title"><h4>${esc(u.name)}</h4><div class="stay-price">${money(u.price)} <small>/night</small></div></div>
+                <p class="stay-tagline">${esc(u.tagline)}</p>
+                <ul class="facts">
+                  <li>${icon('users')}${u.sleeps} guests</li>
+                  <li>${icon('bed')}${u.bedrooms} bedroom${u.bedrooms > 1 ? 's' : ''}</li>
+                  <li>${icon('bath')}${u.bathrooms} bath${u.bathrooms > 1 ? 's' : ''}</li>
+                </ul>
+                <span class="unit-cta">${icon('calendar')}See calendar &amp; book</span>
+              </div>
+            </a>`;
+          }).join('')}</div>` : ''}
           <h3 class="sub">What this place offers</h3>
           <ul class="amenities">${s.amenities.map(([i, t]) => `<li>${icon(i)}${esc(t)}</li>`).join('')}</ul>
           <h3 class="sub">Good to know</h3>
@@ -234,6 +270,7 @@ function openStay(id, push = true) {
             <div class="rule">${icon('clock')}<div><strong>Check-out</strong>By ${rules.checkOut}</div></div>
             <div class="rule">${icon('calendar')}<div><strong>Minimum stay</strong>${rules.minNights} nights</div></div>
             <div class="rule">${icon('info')}<div><strong>Deposit</strong>${esc(rules.deposit)}</div></div>
+            ${(rules.notes || []).map(([title, text]) => `<div class="rule">${icon('info')}<div><strong>${esc(title)}</strong>${esc(text)}</div></div>`).join('')}
           </div>
           ${s.flyer ? `
           <h3 class="sub">Property flyer</h3>
@@ -242,6 +279,12 @@ function openStay(id, push = true) {
             <div><strong>View the ${esc(s.name)} flyer</strong><span>Full feature list at a glance</span></div>
           </button>` : ''}
         </div>
+        ${units.length ? `
+        <aside class="book-card" id="bookCard">
+          <div class="book-price"><span>From</span><strong>${money(sum.price)}</strong><span>/ night</span></div>
+          <p class="peak-note">${units.length} ${esc(unitWord)}s, each with its own calendar. Choose one to check dates and book.</p>
+          <ul class="unit-mini">${units.map(u => `<li><button type="button" data-unit="${u.id}"><span>${esc(u.name)}</span><small>Sleeps ${u.sleeps} · ${money(u.price)}</small></button></li>`).join('')}</ul>
+        </aside>` : `
         <aside class="book-card" id="bookCard">
           <div class="book-price">${s.priceFrom ? '<span>From</span>' : ''}<strong>${money(s.price)}</strong><span>/ night</span></div>
           ${s.peakPrice ? `<div class="peak-note">${esc(s.peakLabel)}: ${money(s.peakPrice)} / night</div>` : ''}
@@ -271,22 +314,30 @@ function openStay(id, push = true) {
             </div>
             <p class="form-note">${icon('info')}<span>No payment now. Your request opens in WhatsApp or your email app, ready to send. ${SITE.contactName} then confirms availability and the booking details with you.</span></p>
           </form>
-        </aside>
+        </aside>`}
       </div>
     </div></div>
     <div class="mobile-book">
-      <div>${s.priceFrom ? '<span>From</span> ' : ''}<strong>${money(s.price)}</strong> <span>per night · indicative</span></div>
-      <button class="btn btn-primary" data-jump>${icon('calendar')}Check dates</button>
+      <div>${sum.priceFrom ? '<span>From</span> ' : ''}<strong>${money(sum.price)}</strong> <span>per night · indicative</span></div>
+      ${units.length
+        ? `<button class="btn btn-primary" data-jump-units>${icon('home')}Choose a ${esc(unitWord)}</button>`
+        : `<button class="btn btn-primary" data-jump>${icon('calendar')}Check dates</button>`}
     </div>`;
 
-  const start = state.search && isRangeFree(state.ranges[s.id], state.search.checkin, state.search.checkout) ? state.search : null;
-  const first = parseISO(start ? start.checkin : TODAY);
-  cal = { stay: s, y: first.getFullYear(), m: first.getMonth(), ci: start ? start.checkin : null, co: start ? start.checkout : null };
-  renderCal();
+  if (!units.length) {
+    const start = state.search && isRangeFree(state.ranges[s.id], state.search.checkin, state.search.checkout) ? state.search : null;
+    const first = parseISO(start ? start.checkin : TODAY);
+    cal = { stay: s, y: first.getFullYear(), m: first.getMonth(), ci: start ? start.checkin : null, co: start ? start.checkout : null };
+    renderCal();
+  } else cal = null;
 
   sheet.onclick = e => {
     const t = e.target;
     if (t.closest('[data-close]')) return closeStay();
+    const unit = t.closest('[data-unit]');
+    if (unit) { e.preventDefault(); return openStay(unit.dataset.unit); }
+    if (t.closest('[data-parent]')) return openStay(parent.id);
+    if (t.closest('[data-jump-units]')) return $('#unitsHead').scrollIntoView({ behavior: 'smooth', block: 'start' });
     if (t.closest('[data-share]')) return shareStay(s);
     if (t.closest('[data-book-email]')) return sendRequest('email');
     if (t.closest('[data-jump]')) return $('#bookCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -298,12 +349,12 @@ function openStay(id, push = true) {
     const nav = t.closest('[data-month]');
     if (nav) { shiftMonth(Number(nav.dataset.month)); }
   };
-  $('#bookForm').addEventListener('submit', e => { e.preventDefault(); sendRequest('whatsapp'); });
+  if (!units.length) $('#bookForm').addEventListener('submit', e => { e.preventDefault(); sendRequest('whatsapp'); });
 
   sheet.scrollTop = 0;
   sheet.classList.add('open');
   document.body.classList.add('locked');
-  document.title = `${s.name} | Self-catering in Marloth Park`;
+  document.title = `${stayLabel(s)} | Self-catering in Marloth Park`;
 }
 
 function hideStay() {
@@ -313,7 +364,9 @@ function hideStay() {
 }
 function closeStay() {
   // Opened from the grid: go back. Arrived straight on a property link: show the home page.
+  const open = stayById(history.state && history.state.stay);
   if (history.state && history.state.stay && !history.state.entry) history.back();
+  else if (open && open.parent) { history.replaceState({ stay: open.parent, entry: true }, '', stayUrl(open.parent)); openStay(open.parent, false); }
   else { history.replaceState(null, '', SITE_ROOT + '#stays'); hideStay(); }
 }
 window.addEventListener('popstate', () => {
@@ -324,7 +377,7 @@ window.addEventListener('popstate', () => {
 async function shareStay(s) {
   const url = stayUrl(s.id);
   try {
-    if (navigator.share) await navigator.share({ title: s.name, text: s.tagline, url });
+    if (navigator.share) await navigator.share({ title: stayLabel(s), text: s.tagline, url });
     else { await navigator.clipboard.writeText(url); toast('Link copied to clipboard'); }
   } catch (e) { /* share cancelled */ }
 }
@@ -393,7 +446,7 @@ function updateQuote() {
   msg.classList.remove('warn');
   if (!ci) msg.textContent = 'Select your check-in date.';
   else if (!co) msg.textContent = 'Now select your check-out date.';
-  else if (nights < DEFAULT_RULES.minNights) { msg.textContent = `Minimum stay is ${DEFAULT_RULES.minNights} nights.`; msg.classList.add('warn'); }
+  else if (nights < stayRules(cal.stay).minNights) { msg.textContent = `Minimum stay is ${stayRules(cal.stay).minNights} nights.`; msg.classList.add('warn'); }
   else msg.textContent = `${nights} nights selected — these dates are open.`;
   $('#quote').innerHTML = nights ? `
     <div><span>${money(stay.price)} × ${nights} night${nights > 1 ? 's' : ''}</span><span>${money(stay.price * nights)}</span></div>
@@ -407,13 +460,14 @@ function sendRequest(channel) {
   const nights = nightsBetween(ci, co);
   const name = $('#bName').value.trim(), phone = $('#bPhone').value.trim();
   if (!ci || !co) { toast('Please select your check-in and check-out dates on the calendar.'); return; }
-  if (nights < DEFAULT_RULES.minNights) { toast(`Minimum stay is ${DEFAULT_RULES.minNights} nights.`); return; }
+  const minNights = stayRules(stay).minNights;
+  if (nights < minNights) { toast(`Minimum stay is ${minNights} nights.`); return; }
   if (!name || !phone) { toast('Please add your name and phone number.'); (name ? $('#bPhone') : $('#bName')).focus(); return; }
   if (!$('#bConsent').checked) { toast('Please tick the box to agree to the privacy notice.'); $('#bConsent').closest('label').classList.add('need'); return; }
   const adults = $('#bAdults').value, kids = $('#bKids').value, notes = $('#bNotes').value.trim();
   const viaEmail = channel === 'email';
   const text = [
-    `Hi ${SITE.contactName}, I'd like to book ${viaEmail ? stay.name : `*${stay.name}*`}.`,
+    `Hi ${SITE.contactName}, I'd like to book ${viaEmail ? stayLabel(stay) : `*${stayLabel(stay)}*`}.`,
     '',
     `Check-in: ${fmtDate(ci)}`,
     `Check-out: ${fmtDate(co)} (${nights} nights)`,
@@ -426,7 +480,7 @@ function sendRequest(channel) {
     stayUrl(stay.id),
   ].filter(l => l !== null).join('\n');
   if (viaEmail) {
-    const subject = `Booking request — ${stay.name}, ${fmtRange(ci, co)}`;
+    const subject = `Booking request — ${stayLabel(stay)}, ${fmtRange(ci, co)}`;
     location.href = `mailto:${SITE.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
     toast(`Your email app opened with the request — press send and ${SITE.contactName} will confirm your booking.`, 6000);
   } else {

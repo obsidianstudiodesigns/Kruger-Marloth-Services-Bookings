@@ -201,6 +201,33 @@ async function loadAvailability() {
 }
 
 function stayById(id) { return STAYS.find(s => s.id === id); }
+
+/* Properties with units (e.g. Buffalo Chalets → Zebra, Vlakvark, Buffel):
+   guests see one card for the property, and each unit has its own
+   calendar and bookings. A unit points to its property with `parent`. */
+function unitsOf(id) { return STAYS.filter(s => s.parent === id); }
+const LISTINGS = STAYS.filter(s => !s.parent);              // cards on the website
+const BOOKABLE = STAYS.filter(s => !unitsOf(s.id).length);  // everything with its own calendar
+function stayLabel(s) {
+  const p = s && s.parent && stayById(s.parent);
+  return p ? `${p.name} – ${s.name}` : (s ? s.name : '');
+}
+function stayRules(s) {
+  const p = s.parent && stayById(s.parent);
+  return { ...DEFAULT_RULES, ...(p && p.rules), ...s.rules };
+}
+// Price and size for a card: a property with units shows its cheapest unit and its guest range
+function listingSummary(s) {
+  const units = unitsOf(s.id);
+  if (!units.length) return { units, price: s.price, priceFrom: !!s.priceFrom, minSleeps: s.sleeps, sleeps: s.sleeps };
+  return {
+    units,
+    price: Math.min(...units.map(u => u.price)),
+    priceFrom: true,
+    minSleeps: Math.min(...units.map(u => u.sleeps)),
+    sleeps: Math.max(...units.map(u => u.sleeps)),
+  };
+}
 function stayImg(id, n, thumb = false) {
   return `images/stays/${id}/${thumb ? 'thumb/' : ''}${String(n).padStart(2, '0')}.jpg`;
 }

@@ -77,7 +77,8 @@ function setSync(state, text) {
 function uid() { return 'bk_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
 
 function enrich(b) {
-  return { ...b, stay: stayById(b.stayId) || { name: b.stayId, id: b.stayId, price: 0 }, status: bookingStatus(b, TODAY), nights: nightsBetween(b.checkin, b.checkout) };
+  const st = stayById(b.stayId);
+  return { ...b, stay: st ? { ...st, name: stayLabel(st) } : { name: b.stayId, id: b.stayId, price: 0 }, status: bookingStatus(b, TODAY), nights: nightsBetween(b.checkin, b.checkout) };
 }
 const STATUS_LABEL = { pending: 'Pending', upcoming: 'Upcoming', 'in-house': 'Staying now', completed: 'Completed', expired: 'Expired request', cancelled: 'Cancelled' };
 function statusLabel(b) {
@@ -517,10 +518,10 @@ function renderDashboard() {
     const s = b.checkin > mStart ? b.checkin : mStart, e = b.checkout < mEnd ? b.checkout : mEnd;
     if (s < e) nightsBooked += nightsBetween(s, e);
   }
-  const occupancy = Math.round((nightsBooked / (STAYS.length * daysInMonth)) * 100);
+  const occupancy = Math.round((nightsBooked / (BOOKABLE.length * daysInMonth)) * 100);
   const upcomingCount = guests.filter(b => b.status === 'upcoming').length;
   const occupiedTonight = new Set(active.filter(b => b.checkin <= TODAY && b.checkout > TODAY).map(b => b.stayId));
-  const freeTonight = STAYS.filter(s => !occupiedTonight.has(s.id));
+  const freeTonight = BOOKABLE.filter(s => !occupiedTonight.has(s.id));
 
   const hour = now.getHours();
   const greet = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
@@ -529,13 +530,13 @@ function renderDashboard() {
       <div class="when">${when}</div></li>`;
 
   return `
-    <div class="page-head"><div><h1>${greet}, ${esc(SITE.contactName)}</h1><p>${fmtDate(TODAY)} · ${STAYS.length} properties</p></div>
+    <div class="page-head"><div><h1>${greet}, ${esc(SITE.contactName)}</h1><p>${fmtDate(TODAY)} · ${BOOKABLE.length} places to book</p></div>
       <div class="page-actions"><button class="btn btn-sun" data-new>${icon('plus')}New booking</button></div></div>
     <div class="stats">
       <div class="panel stat ${pending.length ? 'attn' : ''}" data-view-pending style="cursor:pointer"><span class="label">${icon('hourglass')}Pending requests</span><strong>${pending.length}</strong><small>${pending.length ? 'dates on hold · confirm or decline' : 'nothing waiting'}</small></div>
       <div class="panel stat"><span class="label">${icon('home')}Staying now</span><strong>${inHouse.length}</strong><small>${inHouse.reduce((t, b) => t + (+b.adults || 0) + (+b.children || 0), 0)} guests · ${departToday.length} leaving today</small></div>
       <div class="panel stat"><span class="label">${icon('calendar')}Arrivals · 7 days</span><strong>${arrivals.length}</strong><small>${arriveToday.length} arriving today</small></div>
-      <div class="panel stat"><span class="label">${icon('grid')}Occupancy · ${MONTHS[now.getMonth()]}</span><strong>${occupancy}%</strong><small>${nightsBooked} of ${STAYS.length * daysInMonth} nights</small></div>
+      <div class="panel stat"><span class="label">${icon('grid')}Occupancy · ${MONTHS[now.getMonth()]}</span><strong>${occupancy}%</strong><small>${nightsBooked} of ${BOOKABLE.length * daysInMonth} nights</small></div>
       <div class="panel stat"><span class="label">${icon('star')}Upcoming bookings</span><strong>${upcomingCount}</strong><small>confirmed, not yet arrived</small></div>
     </div>
     <div class="dash-grid">
@@ -558,7 +559,7 @@ function renderDashboard() {
           </ul>` : '<div class="empty">No arrivals or departures today.</div>'}
         </div>
         <div class="panel"><div class="panel-head"><h2>Free tonight · ${freeTonight.length}</h2></div>
-          <div class="free-list">${freeTonight.map(s => `<span data-quick="${s.id}" title="Book ${esc(s.name)} from tonight">${esc(s.name)}</span>`).join('') || '<span style="background:var(--danger-bg);color:var(--danger)">Fully booked tonight</span>'}</div>
+          <div class="free-list">${freeTonight.map(s => `<span data-quick="${s.id}" title="Book ${esc(stayLabel(s))} from tonight">${esc(stayLabel(s))}</span>`).join('') || '<span style="background:var(--danger-bg);color:var(--danger)">Fully booked tonight</span>'}</div>
         </div>
       </div>
     </div>`;
@@ -578,8 +579,8 @@ function renderCalendar() {
   const isWe = iso => [0, 6].includes(parseISO(iso).getDay());
   const active = app.bookings.map(enrich).filter(b => b.status !== 'cancelled' && b.checkin < mEnd && b.checkout > mStart);
 
-  const rows = STAYS.map(s => {
-    const cells = days.map((d, i) => `<div class="pl-cell ${isWe(d) ? 'we' : ''} ${d === TODAY ? 'today' : ''}" style="grid-column:${i + 1}" data-cell="${s.id}|${d}" title="${esc(s.name)} · ${fmtDate(d)}"></div>`).join('');
+  const rows = BOOKABLE.map(s => {
+    const cells = days.map((d, i) => `<div class="pl-cell ${isWe(d) ? 'we' : ''} ${d === TODAY ? 'today' : ''}" style="grid-column:${i + 1}" data-cell="${s.id}|${d}" title="${esc(stayLabel(s))} · ${fmtDate(d)}"></div>`).join('');
     const bars = active.filter(b => b.stayId === s.id).map(b => {
       const from = b.checkin > mStart ? b.checkin : mStart;
       const to = b.checkout < mEnd ? b.checkout : mEnd;
@@ -589,7 +590,7 @@ function renderCalendar() {
       return `<div class="pl-bar ${cls}" style="grid-column:${c1} / ${c2}" data-booking="${b.id}" title="${esc(guestLabel(b))} · ${fmtRange(b.checkin, b.checkout)}">
         <strong>${b.status === 'pending' ? 'On hold · ' : ''}${esc(guestLabel(b))}</strong><span>${b.nights}n ·${fmtDate(b.checkin, false).slice(4)} – ${fmtDate(b.checkout, false).slice(4)}</span></div>`;
     }).join('');
-    return `<div class="pl-name"><img src="${thumb(s.id)}" alt="" /><span>${esc(s.name)}</span></div><div class="pl-row">${cells}${bars}</div>`;
+    return `<div class="pl-name"><img src="${thumb(s.id)}" alt="" /><span>${esc(stayLabel(s))}</span></div><div class="pl-row">${cells}${bars}</div>`;
   }).join('');
 
   return `
@@ -668,7 +669,7 @@ function renderBookings() {
       </div>
       <div class="list-tools">
         <label class="search">${icon('search')}<input id="listQ" type="search" placeholder="Search guest, phone, email or property" value="${esc(app.list.q)}" /></label>
-        <select id="listStay"><option value="">All properties</option>${STAYS.map(s => `<option value="${s.id}" ${app.list.stay === s.id ? 'selected' : ''}>${esc(s.name)}</option>`).join('')}</select>
+        <select id="listStay"><option value="">All properties</option>${BOOKABLE.map(s => `<option value="${s.id}" ${app.list.stay === s.id ? 'selected' : ''}>${esc(stayLabel(s))}</option>`).join('')}</select>
       </div>
       <div id="listBody"></div>
     </div>`;
@@ -829,7 +830,7 @@ function findConflict(stayId, checkin, checkout, ignoreId) {
 
 function openForm(existing, preset = {}) {
   const b = existing ? { ...existing } : {
-    stayId: preset.stayId || STAYS[0].id, type: 'guest', status: 'pending', checkin: preset.checkin || TODAY, checkout: preset.checkout || addDays(TODAY, 2),
+    stayId: preset.stayId || BOOKABLE[0].id, type: 'guest', status: 'pending', checkin: preset.checkin || TODAY, checkout: preset.checkout || addDays(TODAY, 2),
     adults: 2, children: 0, source: SOURCES[0],
   };
   const opt = (v, cur, label = v) => `<option value="${esc(v)}" ${v === cur ? 'selected' : ''}>${esc(label)}</option>`;
@@ -837,7 +838,7 @@ function openForm(existing, preset = {}) {
     <div class="drawer-head"><button class="icon-btn" data-close aria-label="Close">${icon('x')}</button><h2>${existing ? 'Edit booking' : 'New booking'}</h2></div>
     <form class="drawer-body" id="bkForm" novalidate>
       <div class="fsec"><h3>${icon('home')}Stay</h3>
-        <div class="field"><label for="fStay">Property</label><select id="fStay">${STAYS.map(s => opt(s.id, b.stayId, s.name)).join('')}</select></div>
+        <div class="field"><label for="fStay">Property</label><select id="fStay">${BOOKABLE.map(s => opt(s.id, b.stayId, stayLabel(s))).join('')}</select></div>
         <div class="field" style="margin-top:12px"><span class="label">Type</span>
           <div class="seg" id="fType"><button type="button" data-type="guest" class="${b.type !== 'block' ? 'on' : ''}">Guest booking</button><button type="button" data-type="block" class="${b.type === 'block' ? 'on' : ''}">Block dates</button></div></div>
         <div class="field guest-only" style="margin-top:12px"><span class="label">Status</span>
@@ -890,7 +891,7 @@ function openForm(existing, preset = {}) {
     const stayId = $('#fStay').value, ci = $('#fIn').value, co = $('#fOut').value;
     const s = stayById(stayId);
     const nights = nightsBetween(ci, co);
-    let html = `<div class="stay-strip"><img src="${thumb(stayId)}" alt="" /><div><strong>${esc(s.name)}</strong><span>Sleeps ${s.sleeps}${nights ? ` · ${nights} night${nights === 1 ? '' : 's'}` : ''}</span></div></div>`;
+    let html = `<div class="stay-strip"><img src="${thumb(stayId)}" alt="" /><div><strong>${esc(stayLabel(s))}</strong><span>Sleeps ${s.sleeps}${nights ? ` · ${nights} night${nights === 1 ? '' : 's'}` : ''}</span></div></div>`;
     let ok = true;
     if (!ci || !co || co <= ci) { html += `<div class="alert bad">${icon('info')}<span>Check-out must be after check-in.</span></div>`; ok = false; }
     else {
@@ -922,7 +923,7 @@ function openForm(existing, preset = {}) {
       } : { name: '', phone: '', email: '', adults: 0, children: 0 }),
     };
     const stamp = new Date().toISOString();
-    const stayName = stayById(fields.stayId).name;
+    const stayName = stayLabel(stayById(fields.stayId));
     $('#fSave').disabled = true;
     $('#fSave').innerHTML = icon('refresh') + 'Saving…';
     let id = existing && existing.id;

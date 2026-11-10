@@ -48,6 +48,11 @@ The dashboard is a **booking calendar only** (entry-level package): no invoices,
 5. Check-out day is free for the next arrival: a 27–29 October booking blocks the nights of the 27th and 28th.
 6. **Dates are released automatically** once check-out has passed, and immediately if a booking is cancelled or declined. Finished, cancelled and declined bookings stay in **Bookings → History / Cancelled** with the guest's details and a change log. Pending requests whose dates pass without being confirmed show as "Expired request".
 
+### Properties with several units (Buffalo Chalets, Doringpoort Safari Lodge)
+Guests see one card for the property. Opening it shows the units (e.g. Zebra, Vlakvark and Buffel chalets), and each unit has its own page, calendar and booking form, so booking one chalet doesn't block the others. In the dashboard each unit is its own row, named "Property – Unit".
+
+To add one in `assets/js/data.js`: give the property `unitLabel` (e.g. `'chalet'`) but no price or sleeps, and add each unit as its own stay with `parent: '<property id>'`. Unit photos go in sub-folders of the property's folder — add them to `tools/process_images.py`. The property's card shows its cheapest unit ("from R…") and the guest range.
+
 ### Dashboard features
 - Pending requests queue with Confirm booking / Decline
 - Dashboard: who's staying now, arrivals, departures today, occupancy, which homes are free tonight
