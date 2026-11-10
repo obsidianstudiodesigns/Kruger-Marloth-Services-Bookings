@@ -20,7 +20,18 @@ SVC = os.path.join(SRC, '02 - Service Directories')
 #        files to trim black bars from[, extra photos from other folders])
 STAYS = {
   'tarentaal':        ('2794 Tarentaal@Marloth', 'IMG-20261021-WA0310.jpg', 'IMG-20261021-WA0314.jpg', [], []),
-  'afrika-safari':    ('Afrika Safari Gastehuis', 'IMG-20260612-WA0204.jpg', None, [], []),
+  # Afrika Safari: photos from the guesthouse's own website (in 'website'), rooms bookable one by one
+  'afrika-safari':    ('Afrika Safari Gastehuis/website',
+                       ['g-lounge-wide.jpeg', 'gal-pool-table.jpeg', 'g-bar-counter.jpeg', 'gal-boma-bar.jpeg', 'g-kitchen.jpeg',
+                        'g-lounge-thatch.jpeg', 'gal-exterior-night.jpeg', 'g-bar-lion.jpeg', 'g-lion-stairs.jpeg',
+                        'gal-lounge-carvings.jpeg', 'g-bath-grey.jpeg', 'gal-bushbuck-garden.jpeg', 'gal-warthogs.jpg'], None, '*', []),
+  'afrika-marula':    ('Afrika Safari Gastehuis/website', ['room-marula.jpeg', 'g-lounge-wide.jpeg', 'gal-pool-table.jpeg', 'g-bar-counter.jpeg'], None, '*', []),
+  'afrika-acacia':    ('Afrika Safari Gastehuis/website', ['room-acacia.jpeg', 'g-lounge-wide.jpeg', 'gal-pool-table.jpeg', 'g-bar-counter.jpeg'], None, '*', []),
+  'afrika-baobab':    ('Afrika Safari Gastehuis/website', ['room-baobab.jpeg', 'g-lounge-wide.jpeg', 'gal-pool-table.jpeg', 'g-bar-counter.jpeg'], None, '*', []),
+  'afrika-leadwood':  ('Afrika Safari Gastehuis/website', ['room-leadwood.jpeg', 'g-lounge-wide.jpeg', 'gal-pool-table.jpeg', 'g-bar-counter.jpeg'], None, '*', []),
+  'afrika-whole-house': ('Afrika Safari Gastehuis/Whole house self catering', 'IMG-20260612-WA0204.jpg', None, [], [],
+                       ['Afrika Safari Gastehuis/website/room-marula.jpeg', 'Afrika Safari Gastehuis/website/room-acacia.jpeg',
+                        'Afrika Safari Gastehuis/website/room-baobab.jpeg', 'Afrika Safari Gastehuis/website/room-leadwood.jpeg']),
   'bosgenade':        ('Bosgenade', 'Screenshot_20260724_070336_Gallery.jpg', 'file_00000000d7ec71f491180b0d612f6511.png', [], []),
   'buffalo-chalets':  ('Buffalo Chalets', 'IMG-20250923-WA0360.jpg', None, [], []),
   'buffalo-zebra':    ('Buffalo Chalets/Zebra', 'IMG-20260505-WA0070.jpg', None, ['Screenshot_20261106_071247_WhatsApp.jpg', 'Screenshot_20261106_071256_WhatsApp.jpg'], []),
@@ -149,6 +160,8 @@ for slug, (folder, cover, flyer, excluded, trim, *extra) in STAYS.items():
     # Notes screenshots hold prices for us, not photos for guests
     photos = [f for f in files if f != flyer and f not in excluded and not f.startswith('file_') and 'Samsung Notes' not in f]
     first = cover if isinstance(cover, list) else [cover]   # a list fixes the order of the first photos
+    if excluded == '*':                                     # '*': use only the listed photos
+        photos = list(first)
     for f in reversed(first):
         photos.remove(f)
         photos.insert(0, f)

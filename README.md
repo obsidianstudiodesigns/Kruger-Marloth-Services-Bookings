@@ -53,6 +53,8 @@ Guests see one card for the property. Opening it shows the units (e.g. Zebra, Vl
 
 To add one in `assets/js/data.js`: give the property `unitLabel` (e.g. `'chalet'`) but no price or sleeps, and add each unit as its own stay with `parent: '<property id>'`. Unit photos go in sub-folders of the property's folder — add them to `tools/process_images.py`. The property's card shows its cheapest unit ("from R…") and the guest range.
 
+A "whole house" option that includes rooms sold separately (Afrika Safari Gastehuis) lists those rooms in `covers: [...]`. Booking the whole house then closes all those rooms on the website, any room booking closes the whole house, and the dashboard's double-booking check warns either way.
+
 ### Dashboard features
 - Pending requests queue with Confirm booking / Decline
 - Dashboard: who's staying now, arrivals, departures today, occupancy, which homes are free tonight

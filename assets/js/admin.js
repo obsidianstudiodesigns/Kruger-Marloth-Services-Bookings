@@ -520,7 +520,7 @@ function renderDashboard() {
   }
   const occupancy = Math.round((nightsBooked / (BOOKABLE.length * daysInMonth)) * 100);
   const upcomingCount = guests.filter(b => b.status === 'upcoming').length;
-  const occupiedTonight = new Set(active.filter(b => b.checkin <= TODAY && b.checkout > TODAY).map(b => b.stayId));
+  const occupiedTonight = new Set(active.filter(b => b.checkin <= TODAY && b.checkout > TODAY).flatMap(b => linkedStays(b.stayId)));
   const freeTonight = BOOKABLE.filter(s => !occupiedTonight.has(s.id));
 
   const hour = now.getHours();
@@ -825,7 +825,8 @@ function openDetail(id) {
 
 /* ---------- New / edit booking ---------- */
 function findConflict(stayId, checkin, checkout, ignoreId) {
-  return app.bookings.find(b => b.id !== ignoreId && b.stayId === stayId && !b.cancelled && rangesOverlap(checkin, checkout, b.checkin, b.checkout));
+  const linked = linkedStays(stayId);   // e.g. a room clashes with a whole-house booking
+  return app.bookings.find(b => b.id !== ignoreId && linked.includes(b.stayId) && !b.cancelled && rangesOverlap(checkin, checkout, b.checkin, b.checkout));
 }
 
 function openForm(existing, preset = {}) {

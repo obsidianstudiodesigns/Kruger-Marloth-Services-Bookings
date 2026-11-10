@@ -197,7 +197,7 @@ async function loadAvailability() {
     for (const k in demo) ranges[k] = (ranges[k] || []).concat(demo[k]);
   }
   for (const k in ranges) ranges[k] = ranges[k].filter(([, b]) => b > today);
-  return ranges;
+  return withLinked(ranges);
 }
 
 function stayById(id) { return STAYS.find(s => s.id === id); }
@@ -211,6 +211,21 @@ const BOOKABLE = STAYS.filter(s => !unitsOf(s.id).length);  // everything with i
 function stayLabel(s) {
   const p = s && s.parent && stayById(s.parent);
   return p ? `${p.name} – ${s.name}` : (s ? s.name : '');
+}
+// Units that share space, e.g. "whole house" covers every room: booking either one takes the other
+function linkedStays(id) {
+  const s = stayById(id);
+  const out = new Set([id, ...((s && s.covers) || [])]);
+  STAYS.forEach(o => { if ((o.covers || []).includes(id)) out.add(o.id); });
+  return [...out];
+}
+function withLinked(ranges) {
+  const out = {};
+  for (const s of STAYS) {
+    const r = linkedStays(s.id).flatMap(x => ranges[x] || []);
+    if (r.length) out[s.id] = r.sort((x, y) => x[0].localeCompare(y[0]));
+  }
+  return out;
 }
 function stayRules(s) {
   const p = s.parent && stayById(s.parent);
