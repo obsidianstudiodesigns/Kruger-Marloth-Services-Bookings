@@ -590,7 +590,10 @@ function renderCalendar() {
       return `<div class="pl-bar ${cls}" style="grid-column:${c1} / ${c2}" data-booking="${b.id}" title="${esc(guestLabel(b))} · ${fmtRange(b.checkin, b.checkout)}">
         <strong>${b.status === 'pending' ? 'On hold · ' : ''}${esc(guestLabel(b))}</strong><span>${b.nights}n ·${fmtDate(b.checkin, false).slice(4)} – ${fmtDate(b.checkout, false).slice(4)}</span></div>`;
     }).join('');
-    return `<div class="pl-name"><img src="${thumb(s.id)}" alt="" /><span>${esc(stayLabel(s))}</span></div><div class="pl-row">${cells}${bars}</div>`;
+    // A unit shows its own name in full, with its property on a small line above
+    const parent = s.parent && stayById(s.parent);
+    const label = `${parent ? `<small>${esc(parent.name)}</small>` : ''}<b>${esc(s.name)}</b>`;
+    return `<div class="pl-name" title="${esc(stayLabel(s))}"><img src="${thumb(s.id)}" alt="" /><span class="pl-label">${label}</span></div><div class="pl-row">${cells}${bars}</div>`;
   }).join('');
 
   return `
