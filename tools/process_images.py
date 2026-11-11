@@ -72,6 +72,8 @@ STAYS = {
                        ['Screenshot_20261107_081856_Gallery.jpg', 'Screenshot_20261107_081900_Gallery.jpg', 'Screenshot_20261107_081909_Gallery.jpg'], []),
   'elephant-bush-house': ('Elephant Bush House, Butterfly street', 'IMG-20260606-WA0101.jpg', 'file_00000000f20871fb848f4d8dcfac3219.png', ['IMG-20260818-WA0114.jpg'], []),
   'genet-house':      ('Genet House', 'IMG-20261028-WA0104.jpg', None, ['Screenshot_20261028_212250_WhatsApp.jpg'], []),
+  # Photos from the owner's website (krugermarloth.com); duplicates and tiny ones left out
+  'hyena-bush-retreat': ('Hyena Bush Retreat/website', ['05_ea79e1b7.jpg', '01_39b1d551.jpg', '06_88c08d98.jpg', '07_395b4beb.jpg', '10_a8a749a8.jpg', '12_e05cad27.jpg', '25_90e5f798.jpg', '20_f6e57df2.jpg', '11_8310fbb9.jpg', '28_4fc21e3a.jpg', '29_c00619ce.jpg', '31_f687f821.jpg', '15_640856a2.jpg', '16_09ce9118.jpg', '13_20d6ad86.jpg', '08_a1a9f8a9.jpg', '18_e8c7b76c.jpg', '40_91b2ffbc.jpg', '38_e338cb41.jpg', '03_baeb5d7d.jpg', '02_4d6b896b.jpg'], None, '*', []),
   'indabush':         ('Indabush', 'IMG-20260313-WA0039.jpg', 'IMG-20260815-WA0090.jpg', ['IMG-20260815-WA0090(1).jpg'], []),
   'kruger-naledi':    ('Kruger Naledi', 'IMG-20260818-WA0310.jpg', 'file_00000000b9b081f68da97969255d64e2.png', ['IMG-20260820-WA0079.jpg'], []),
   'mamba-house':      ('Mamba house', 'IMG-20260924-WA0075.jpg', None,
@@ -135,6 +137,8 @@ SERVICES = {
   'africa-breeze-5':      ("Spa's/Africa Breeze", 'IMG-20261030-WA0015.jpg', None),
   'africa-breeze-6':      ("Spa's/Africa Breeze", 'IMG-20261030-WA0017.jpg', None),
   'african-rarewood':     ('Wood Works', 'IMG-20260918-WA0110.jpg', None),
+  'taurus-tiger-fishing': ('Activities (Horse Riding, Game Drives, etc.)/Tiger fishing', 'IMG-20261111-WA0071.jpg', None),
+  'wood-ice-johan':       ('Shops/Wood/Johan hout', 'IMG-20261016-WA0137.jpg', None),
 }
 
 
