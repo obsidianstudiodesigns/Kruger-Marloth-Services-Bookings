@@ -191,8 +191,12 @@ const STAYS = [
     tag: 'Very private',
     tagline: 'Stylish, very private bush getaway near the river',
     description: 'Your bush getaway with style and comfort — a very private double-storey home within walking distance of the river. Four spacious bedrooms and two modern bathrooms, air-conditioning and ceiling fans, a smart TV with Netflix and uncapped Wi-Fi. Outside there’s a braai area with boma, a jacuzzi and a deck where zebra, kudu and wildebeest wander past. A 5 000-litre JoJo tank provides back-up water, and there’s an alarm system.',
-    sleeps: 8, bedrooms: 4, bathrooms: 2,
-    price: 2400,
+    sleeps: 10, bedrooms: 4, bathrooms: 2,
+    price: 1450, priceFrom: true,
+    rates: [
+      { label: 'Out of season', rows: [[2, 1450], [4, 1650], [6, 1850], [8, 2100], [10, 2400]], note: 'pensioners R980 a night (minimum 4 nights)' },
+      { label: 'Holidays & long weekends', rows: [[2, 1550], [4, 1750], [6, 1950], [8, 2200], [10, 2500]] },
+    ],
     photos: 18, flyer: true,
     filters: ['river', 'groups'],
     amenities: [
@@ -202,7 +206,7 @@ const STAYS = [
       ['zap', '5 000 L JoJo tank with back-up water'], ['lock', 'Alarm system · very private'],
       ['river', 'Walking distance from the river'], ['paw', 'Zebra, kudu & wildebeest'],
     ],
-    draft: ['price', 'sleeps', 'rules'],
+    draft: ['rules'],
   },
   {
     id: 'bosgenade',
@@ -1001,6 +1005,13 @@ const SERVICE_CATEGORIES = [
         phones: ['060 665 5000', '082 672 4545'],
         area: 'Marloth Park & Komatipoort',
       },
+      {
+        name: 'Home Care — Mel', image: 'images/services/home-care-mel.jpg',
+        description: 'Compassionate, professional home-based care in the comfort of your home, tailored to your loved one’s needs. Free assessment.',
+        tags: ['Dementia & Alzheimer’s care', 'Wound care', 'Mobility assistance', 'Bathing & personal care', 'Feeding & stoma/PEG care', 'Palliative care', 'Medication management', 'Free assessment'],
+        phones: ['069 963 2940'],
+        area: 'Marloth Park & surrounds',
+      },
     ],
   },
   {
@@ -1057,6 +1068,23 @@ const SERVICE_CATEGORIES = [
         phones: ['083 381 0964'],
         address: '433 Crocodile Street, Marloth Park',
       },
+      {
+        name: 'L’abri Day Spa', image: 'images/services/labri-spa.jpg', moreImages: ['images/services/labri-spa-2.jpg'],
+        description: 'Day spa packages for couples, individuals and groups — massages, facials, foot and hand treatments and waxing. Open Monday to Sunday; pre-bookings essential.',
+        tags: ['Full body massage 60 min · R600', 'Couples packages from R1 499', 'Half-day spa · R1 650', 'Full-day spa · R1 800', 'Group packages', 'Facials from R400'],
+        phones: ['071 419 3475'],
+        email: 'info@labridayspa.co.za',
+        area: 'Marloth Park',
+        website: 'https://www.labridayspa.co.za',
+      },
+      {
+        name: 'Thobie’s Healing Mobile Spa', image: 'images/services/thobies-mobile-spa.jpg',
+        description: 'A mobile spa that comes to you — at home, at your lodge or poolside. Open 7 days, 9 am to 6 pm. Book in advance with a 50% deposit.',
+        tags: ['Comes to your lodge', 'Back, neck & shoulder from R450', 'Full-body massage from R700', 'Hot stone massage', 'Pedicures & manicures', 'Facials'],
+        phones: ['082 258 5322'],
+        email: 'thobieshealingmobilespa82@yahoo.com',
+        area: 'Mjejane, Marloth Park & surrounds',
+      },
     ],
   },
   {
@@ -1073,7 +1101,20 @@ const SERVICE_CATEGORIES = [
     ],
   },
   {
-    id: 'woodwork', icon: 'tree', name: 'Wood Works & Furniture',
+    id: 'trees', icon: 'tree', name: 'Tree Felling & Firewood',
+    blurb: 'Tree felling, firewood and charcoal delivered.',
+    providers: [
+      {
+        name: 'Wildman Wouter — Tree Felling Terror', image: 'images/services/wildman-wouter.jpg',
+        description: 'Tree felling plus firewood, charcoal and firelighters — with free delivery in Marloth Park.',
+        tags: ['Tree felling', 'Firewood', 'Charcoal', 'Firelighters', 'Free delivery in Marloth'],
+        phones: ['076 251 2783'],
+        area: 'Marloth Park',
+      },
+    ],
+  },
+  {
+    id: 'woodwork', icon: 'sofa', name: 'Wood Works & Furniture',
     blurb: 'Custom hardwood furniture and fittings for your home.',
     providers: [
       {

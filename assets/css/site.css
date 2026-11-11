@@ -278,6 +278,10 @@ footer a:hover{opacity:1;color:var(--sun)}
 .book-price strong{font-size:1.6rem;font-family:'Playfair Display'}
 .book-price span{color:var(--muted);font-size:.9rem}
 .peak-note{font-size:.82rem;color:var(--sun-dark);font-weight:600;margin-top:2px}
+.rate-table{width:100%;border-collapse:collapse;margin:10px 0 4px;font-size:.82rem}
+.rate-table th,.rate-table td{padding:6px 8px;text-align:right;border-bottom:1px solid var(--line)}
+.rate-table th:first-child,.rate-table td:first-child{text-align:left}
+.rate-table th{font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
 .date-boxes{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:12px;margin:16px 0 12px;overflow:hidden}
 .date-boxes div{padding:10px 14px}
 .date-boxes div+div{border-left:1px solid var(--line)}

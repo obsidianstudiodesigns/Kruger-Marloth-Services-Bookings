@@ -139,6 +139,11 @@ SERVICES = {
   'african-rarewood':     ('Wood Works', 'IMG-20260918-WA0110.jpg', None),
   'taurus-tiger-fishing': ('Activities (Horse Riding, Game Drives, etc.)/Tiger fishing', 'IMG-20261111-WA0071.jpg', None),
   'wood-ice-johan':       ('Shops/Wood/Johan hout', 'IMG-20261016-WA0137.jpg', None),
+  'wildman-wouter':       ('Tree felling  cutting', 'IMG-20261111-WA0157.jpg', None),
+  'home-care-mel':        ('Emergency services/Caregiver', 'IMG-20261111-WA0137.jpg', None),
+  'labri-spa':            ("Spa's/L'bri spa", 'IMG-20261111-WA0150.jpg', None),
+  'labri-spa-2':          ("Spa's/L'bri spa", 'IMG-20261111-WA0151.jpg', None),
+  'thobies-mobile-spa':   ("Spa's/Tobies mobile spa", 'Screenshot_20261111_131114_All PDF Viewer, Sign.jpg', None),
 }
 
 

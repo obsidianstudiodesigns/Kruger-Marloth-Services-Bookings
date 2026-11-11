@@ -289,6 +289,7 @@ function openStay(id, push = true) {
           <div class="book-price">${s.priceFrom ? '<span>From</span>' : ''}<strong>${money(s.price)}</strong><span>/ night</span></div>
           ${s.peakPrice ? `<div class="peak-note">${esc(s.peakLabel)}: ${money(s.peakPrice)} / night</div>` : ''}
           ${s.priceNote ? `<div class="peak-note">${esc(s.priceNote)}</div>` : ''}
+          ${s.rates ? rateTable(s) : ''}
           <div class="date-boxes">
             <div><small>Check-in</small><span id="bkIn" class="placeholder">Add date</span></div>
             <div><small>Check-out</small><span id="bkOut" class="placeholder">Add date</span></div>
@@ -349,7 +350,11 @@ function openStay(id, push = true) {
     const nav = t.closest('[data-month]');
     if (nav) { shiftMonth(Number(nav.dataset.month)); }
   };
-  if (!units.length) $('#bookForm').addEventListener('submit', e => { e.preventDefault(); sendRequest('whatsapp'); });
+  if (!units.length) {
+    $('#bookForm').addEventListener('submit', e => { e.preventDefault(); sendRequest('whatsapp'); });
+    // Group-size pricing: the estimate changes with the number of guests
+    if (s.rates) ['#bAdults', '#bKids'].forEach(id => $(id).addEventListener('change', updateQuote));
+  }
 
   sheet.scrollTop = 0;
   sheet.classList.add('open');
@@ -448,10 +453,26 @@ function updateQuote() {
   else if (!co) msg.textContent = 'Now select your check-out date.';
   else if (nights < stayRules(cal.stay).minNights) { msg.textContent = `Minimum stay is ${stayRules(cal.stay).minNights} nights.`; msg.classList.add('warn'); }
   else msg.textContent = `${nights} nights selected — these dates are open.`;
+  const rate = nightlyRate(stay, guestCount());
   $('#quote').innerHTML = nights ? `
-    <div><span>${money(stay.price)} × ${nights} night${nights > 1 ? 's' : ''}</span><span>${money(stay.price * nights)}</span></div>
-    <div class="total"><span>Estimated total</span><span>${money(stay.price * nights)}</span></div>
+    <div><span>${money(rate)} × ${nights} night${nights > 1 ? 's' : ''}</span><span>${money(rate * nights)}</span></div>
+    <div class="total"><span>Estimated total</span><span>${money(rate * nights)}</span></div>
     <small>Indicative rate — ${SITE.contactName} confirms the final price${stay.peakPrice ? ` (${esc(stay.peakLabel)}: ${money(stay.peakPrice)} / night)` : ''}.</small>` : '';
+}
+
+/* Stays priced by group size list `rates`: one table per season, rows of [guests, price per night] */
+function guestCount() { return Number($('#bAdults').value) + Number($('#bKids').value); }
+function nightlyRate(stay, guests) {
+  if (!stay.rates) return stay.price;
+  const rows = stay.rates[0].rows;
+  return (rows.find(([n]) => n >= guests) || rows[rows.length - 1])[1];
+}
+function rateTable(s) {
+  const sizes = s.rates[0].rows.map(([n]) => n);
+  return `<table class="rate-table">
+    <thead><tr><th>Guests</th>${s.rates.map(r => `<th>${esc(r.label)}</th>`).join('')}</tr></thead>
+    <tbody>${sizes.map((n, i) => `<tr><td>Up to ${n}</td>${s.rates.map(r => `<td>${money(r.rows[i][1])}</td>`).join('')}</tr>`).join('')}</tbody>
+  </table>${s.rates.filter(r => r.note).map(r => `<div class="peak-note">${esc(r.label)}: ${esc(r.note)}</div>`).join('')}`;
 }
 
 /* Send the booking request to the owner via 'whatsapp' or 'email' */
@@ -476,7 +497,7 @@ function sendRequest(channel) {
     `Phone: ${phone}`,
     notes ? `Notes: ${notes}` : null,
     '',
-    `Estimated total: ${money(stay.price * nights)}`,
+    `Estimated total: ${money(nightlyRate(stay, guestCount()) * nights)}`,
     stayUrl(stay.id),
   ].filter(l => l !== null).join('\n');
   if (viaEmail) {
