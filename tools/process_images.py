@@ -32,6 +32,9 @@ STAYS = {
   'afrika-whole-house': ('Afrika Safari Gastehuis/Whole house self catering', 'IMG-20260612-WA0204.jpg', None, [], [],
                        ['Afrika Safari Gastehuis/website/room-marula.jpeg', 'Afrika Safari Gastehuis/website/room-acacia.jpeg',
                         'Afrika Safari Gastehuis/website/room-baobab.jpeg', 'Afrika Safari Gastehuis/website/room-leadwood.jpeg']),
+  # Exact duplicate copies (" (1)") are left out
+  'aruka':            ('Aruka', 'IMG-20261110-WA0400.jpg', None, ['IMG-20261110-WA0398 (1).jpg', 'IMG-20261110-WA0399 (1).jpg', 'IMG-20261110-WA0400 (1).jpg', 'IMG-20261110-WA0401 (1).jpg', 'IMG-20261110-WA0402 (1).jpg', 'IMG-20261110-WA0403 (1).jpg', 'IMG-20261110-WA0415 (1).jpg', 'IMG-20261110-WA0419 (1).jpg', 'IMG-20261110-WA0422.jpg'], []),
+  'badger-kruger':    ('Badger@Kruger', 'IMG-20261110-WA0149.jpg', 'IMG-20261110-WA0130.jpg', ['IMG-20260420-WA0009 (1).jpg', 'IMG-20260420-WA0011 (1).jpg', 'IMG-20261110-WA0142 (1).jpg', 'IMG-20261110-WA0143 (1).jpg', 'IMG-20261110-WA0145 (1).jpg', 'IMG-20261110-WA0149 (1).jpg', 'IMG-20261110-WA0154 (1).jpg', 'IMG-20261110-WA0155.jpg'], []),
   'bosgenade':        ('Bosgenade', 'Screenshot_20260724_070336_Gallery.jpg', 'file_00000000d7ec71f491180b0d612f6511.png', [], []),
   'buffalo-chalets':  ('Buffalo Chalets', 'IMG-20250923-WA0360.jpg', None, [], []),
   'buffalo-zebra':    ('Buffalo Chalets/Zebra', 'IMG-20260505-WA0070.jpg', None, ['Screenshot_20261106_071247_WhatsApp.jpg', 'Screenshot_20261106_071256_WhatsApp.jpg'], []),
