@@ -715,6 +715,21 @@ const SERVICE_CATEGORIES = [
         email: 'bencalitz3@gmail.com',
         area: 'Marloth Park & surrounds',
       },
+      {
+        name: 'HHS Electrical & Property Services', image: 'images/services/hhs-electrical.jpg',
+        description: 'Complete electrical maintenance and property services — safe, reliable and professional, including emergency electrical call-outs.',
+        tags: ['Electrical installations & repairs', 'Fault finding', 'DB boards & rewiring', 'Geysers & stove connections', 'Gate motors & garage doors', 'Security lighting', 'Emergency call-outs', 'General property maintenance'],
+        phones: ['079 880 6600'],
+        email: 'steynbarnard14@gmail.com',
+        area: 'Mpumalanga, Limpopo, Gauteng & North-West',
+      },
+      {
+        name: 'Aludry Washing Lines', image: 'images/services/aludry.jpg',
+        description: 'Aludry washing lines for homes in Marloth Park, trusted since 2015.',
+        tags: ['Washing lines', 'Marloth Park'],
+        phones: ['061 512 9208', '064 520 2264'],
+        area: 'Marloth Park',
+      },
     ],
   },
   {
@@ -736,7 +751,7 @@ const SERVICE_CATEGORIES = [
     blurb: 'Capture your safari memories with a local pro.',
     providers: [
       {
-        name: 'Marloth Park Photography', image: 'images/services/marloth-photography.jpg',
+        name: 'NG Photography', image: 'images/services/marloth-photography.jpg', moreImages: ['images/services/ng-photography.jpg'],
         description: 'Professional photography in the heart of the bush — beautiful sunset locations, wildlife surroundings and scenic bushveld settings.',
         tags: ['Engagements', 'Couples', 'Family', 'Maternity', 'Birthdays', 'Special events', 'Holiday memories'],
         phones: ['061 512 9208'],
@@ -772,6 +787,14 @@ const SERVICE_CATEGORIES = [
         address: '435 Crocodile Street, Marloth Park',
         website: 'https://www.sunsetadventuretravel.co.za',
       },
+      {
+        name: '@Wild Safaris', image: 'images/services/wild-safaris.jpg',
+        description: 'Kruger National Park safaris guided by passion, driven by nature — open safari vehicle, professional field guides and small personal groups.',
+        tags: ['Kruger National Park safaris', 'Open safari vehicle', 'Professional field guides', 'Small personal groups'],
+        phones: ['081 013 7445'],
+        email: 'atwildsafaris@gmail.com',
+        area: 'Marloth Park & Kruger National Park',
+      },
     ],
   },
   {
@@ -805,6 +828,14 @@ const SERVICE_CATEGORIES = [
         phones: ['064 525 9463'],
         area: 'Marloth Park & surrounds',
       },
+      {
+        name: 'Kruger Link Private Transfers', image: 'images/services/kruger-link.jpg',
+        description: 'Where the road meets the wild — private door-to-door transfers between airports, lodges and hotels, around the Kruger, plus day tours across Mpumalanga and Eswatini.',
+        tags: ['KMIA & O.R. Tambo airport transfers', 'Door-to-door transfers', 'Panorama Route', 'Eswatini cultural tour', 'Sudwala Caves & Kaapsehoop', 'Pilgrim’s Rest', 'Elephant Whisperers & Pumbaa'],
+        phones: ['083 211 3710'],
+        email: 'krugerlinktransfers@gmail.com',
+        area: 'Marloth Park, the Kruger & Mpumalanga',
+      },
     ],
   },
   {
@@ -813,8 +844,8 @@ const SERVICE_CATEGORIES = [
     providers: [
       {
         name: 'Giraffe Pub & Grill', image: 'images/services/giraffe-pub.jpg',
-        description: 'Pop in for a game of pool, great food and a fantastic time — everyone’s welcome. Weekly quiz, pool and darts nights.',
-        tags: ['Tuesday quiz night · R30 pp', 'Wednesday pool night · R50 incl. light meal', 'Thursday darts night · free entry', 'Pub & grill'],
+        description: 'Pop in for a game of pool, great food and a fantastic time — everyone’s welcome. A full week of food, drinks, sport and fun, with drinks specials every day and live sport on the big screens.',
+        tags: ['Tue quiz night · 18:00 for 18:30 · R30 pp', 'Wed pool night · 18:00 · R50 incl. light meal', 'Thu darts night · 18:00 · free entry', 'Sat sushi buffet · 13:00–17:00 · pre-book', 'Sun roast · 11:00–16:00 · pre-book', 'Daily drinks specials', 'Live sport on big screens'],
         phones: ['064 600 7542'],
         address: 'Cnr Sekelbos & Rinkhals, Marloth Park',
       },
@@ -832,9 +863,28 @@ const SERVICE_CATEGORIES = [
         phones: ['072 289 1661'],
         area: 'Komatipoort',
       },
+      {
+        name: 'Amazing Kruger View', image: 'images/services/amazing-kruger-view.jpg',
+        description: 'Where nature meets great food — breakfast as the bush comes alive, overlooking the Crocodile River and the Kruger, and sundowners followed by dinner as the sun sets over the river. Families, kids, everybody is welcome.',
+        tags: ['Breakfasts', 'Lunches', 'Dinners', 'Crocodile River & Kruger views', 'Family friendly'],
+        phones: ['079 301 1133'],
+        address: 'Cnr Crocodile & Maroela Road, Henk van Rooyen Park',
+      },
     ],
   },
-  { id: 'butcheries', icon: 'flame', name: 'Butcheries', blurb: 'Braai packs, biltong and droëwors.', providers: [] },
+  {
+    id: 'butcheries', icon: 'flame', name: 'Butcheries',
+    blurb: 'Braai meat, biltong and droëwors.',
+    providers: [
+      {
+        name: '@Wild Butchery', image: 'images/services/wild-butchery.jpg',
+        description: '“No need to bring meat” — a full butchery at the Bush Centre in Marloth Park.',
+        tags: ['Beef', 'Lamb', 'Pork', 'Chicken', 'Game meat', 'Biltong & droëwors', 'Fish', 'Bombrood', 'Skilpadjies'],
+        phones: ['064 072 5121'],
+        address: 'Bush Centre, 3883 Olifant Road, Marloth Park',
+      },
+    ],
+  },
   {
     id: 'chefs', icon: 'chef', name: 'Private Chefs & Catering',
     blurb: 'From bush braais to VIP dinners at your stay.',
@@ -854,9 +904,9 @@ const SERVICE_CATEGORIES = [
     blurb: 'Holiday-home cleaning, pool care and property checks.',
     providers: [
       {
-        name: 'Clean Living Home Services', image: 'images/services/clean-living.jpg',
+        name: 'Clean Living Home Services', image: 'images/services/clean-living.jpg', moreImages: ['images/services/clean-living-2.jpg'],
         description: 'Professional care for your holiday home so you can relax — reliable, trustworthy and eco-friendly. Ask for Andries or Janine Nel.',
-        tags: ['Holiday, pre & post-departure cleans', 'Deep & general cleaning', 'Pool care & maintenance', 'Property checks & small repairs'],
+        tags: ['Holiday, pre & post-departure cleans', 'Deep & general cleaning', 'Festive-season preparation', 'Pool care & maintenance', 'Property checks & small repairs'],
         phones: ['072 851 0555', '071 178 1221'],
         email: 'cleanlivingmarloth@gmail.com',
         area: 'Marloth Park',
@@ -910,6 +960,20 @@ const SERVICE_CATEGORIES = [
         phones: ['078 064 2082'],
         address: 'Depot 252, Cnr Olifant & Kurper, Marloth Park',
       },
+      {
+        name: 'Daisy’s Den', image: 'images/services/daisys-den.jpg',
+        description: 'Game feed, bird feed and much more — pop in and chat, or have it delivered. A proud supporter of Wild & Free rescue and rehabilitation.',
+        tags: ['Game pellets & lucerne', 'Bird seed & feeders', 'Bushbaby houses', 'Firewood & charcoal', 'Braai accessories', 'Hardware & keys', 'OTC medication', 'Clothing repairs', 'Delivery'],
+        phones: ['072 613 0694', '082 498 6599'],
+        address: 'Wildlife Centre, 3882 Olifant Drive, Marloth Park',
+      },
+      {
+        name: 'Braaiwood, Charcoal & Firelighters', image: 'images/services/braaiwood.jpg',
+        description: 'Braai wood, charcoal and firelighters delivered to your door in Marloth Park on Tuesdays and Thursdays (delivery fee applies). Order on WhatsApp.',
+        tags: ['Braai wood', 'Charcoal', 'Firelighters', 'Delivery Tue & Thu'],
+        phones: ['072 624 8221'],
+        area: 'Marloth Park (WhatsApp only)',
+      },
     ],
   },
   {
@@ -918,10 +982,37 @@ const SERVICE_CATEGORIES = [
     providers: [
       {
         name: 'Africa Breeze Wellness', image: 'images/services/africa-breeze.jpg',
-        description: 'A serene sanctuary of rejuvenation and personalised beauty and clinical care in the heart of Marloth Park. Stockist of Lamelle skincare. Pre-bookings essential.',
-        tags: ['Facials & peels', 'Micro-needling', 'Laser & IPL', 'Back, neck & shoulder massages', 'Radial pressure wave therapy'],
+        moreImages: ['images/services/africa-breeze-2.jpg', 'images/services/africa-breeze-3.jpg', 'images/services/africa-breeze-4.jpg', 'images/services/africa-breeze-5.jpg', 'images/services/africa-breeze-6.jpg'],
+        description: 'A serene sanctuary of rejuvenation and personalised beauty and clinical care in the heart of Marloth Park. Stockist of Lamelle skincare. November & December: 10% off all facial and body treatments. Pre-bookings essential.',
+        tags: ['Relaxation massage 45 min · R450', 'Myofascial release · R450', 'Dermaplaning · R550', 'Lamelle peels · R870', 'Micro-needling', 'Laser & IPL', 'Radial pressure wave therapy'],
         phones: ['083 381 0964'],
         address: '433 Crocodile Street, Marloth Park',
+      },
+    ],
+  },
+  {
+    id: 'children', icon: 'kids', name: 'Children & Daycare',
+    blurb: 'Playcare and daycare for little ones.',
+    providers: [
+      {
+        name: 'The Little Learning Tree', image: 'images/services/little-learning-tree.jpg',
+        description: 'Playcare in the heart of the bush — a place where your child is lovingly supported as they explore, play and learn in a beautiful, homely and secure environment. Limited spaces.',
+        tags: ['Daycare 07:00 – 14:00', 'Aftercare (enquire)', 'Meals', 'Weekly themes', 'Music & movement', 'Arts & crafts', 'Reports'],
+        phones: ['082 378 5167'],
+        area: 'Marloth Park',
+      },
+    ],
+  },
+  {
+    id: 'woodwork', icon: 'tree', name: 'Wood Works & Furniture',
+    blurb: 'Custom hardwood furniture and fittings for your home.',
+    providers: [
+      {
+        name: 'African Rarewood Creations', image: 'images/services/african-rarewood.jpg',
+        description: 'Nature’s beauty, crafted for your home — custom wooden pieces in modern or rustic style, from live-edge kitchen and bar tops to doors, cupboards, basins and headboards.',
+        tags: ['Kitchen & bar tops', 'Doors & cupboards', 'Basins & headboards', 'Tables & shelving', 'Stairs & railings', 'Outdoor furniture'],
+        phones: ['060 791 5479', '061 512 9208'],
+        area: 'Marloth Park',
       },
     ],
   },

@@ -114,6 +114,24 @@ SERVICES = {
   'waterkloof-gas':       ('../04 - Business and Legal Details', 'IMG-20261028-WA0014.jpg', None),
   'africa-breeze':        ('Spa_s/Africa Breeze', 'IMG-20261028-WA0133.jpg', None),
   'tourist-info-centre':  ('../Tourist Information Centre', 'IMG-20260917-WA0008.jpg', None),
+  # Added 2026-11-11
+  'wild-butchery':        ('Butcheries', 'IMG-20261110-WA0057(1).jpg', None),
+  'little-learning-tree': ('Children', 'IMG-20261110-WA0361.jpg', None),
+  'wild-safaris':         ('Game Drives and Sunset Drives', 'IMG-20261110-WA0054.jpg', None),
+  'aludry':               ('Handyman & Maintenance Services', 'ALUDRY_20261108_182428_0000.png', None),
+  'hhs-electrical':       ('Handyman & Maintenance Services/Steyn', 'IMG-20261110-WA0084(1).jpg', None),
+  'clean-living-2':       ('House Cleaning Services/Clean living', 'IMG-20261109-WA0042.jpg', None),
+  'ng-photography':       ('Photographers', 'N_20261108_182023_0000.png', None),
+  'amazing-kruger-view':  ('Restaurants/Amazing', 'IMG-20261110-WA0424(1).jpg', None),
+  'daisys-den':           ('Shops/Daisy Den', 'IMG-20261110-WA0210.jpg', None),
+  'braaiwood':            ('Shops/Wood', 'IMG-20261110-WA0345.jpg', None),
+  'kruger-link':          ('Shuttle Services', 'IMG-20261110-WA0055.jpg', None),
+  'africa-breeze-2':      ("Spa's/Africa Breeze", 'IMG-20261103-WA0152.jpg', None),
+  'africa-breeze-3':      ("Spa's/Africa Breeze", 'IMG-20261030-WA0010.jpg', None),
+  'africa-breeze-4':      ("Spa's/Africa Breeze", 'IMG-20261030-WA0011.jpg', None),
+  'africa-breeze-5':      ("Spa's/Africa Breeze", 'IMG-20261030-WA0015.jpg', None),
+  'africa-breeze-6':      ("Spa's/Africa Breeze", 'IMG-20261030-WA0017.jpg', None),
+  'african-rarewood':     ('Wood Works', 'IMG-20260918-WA0110.jpg', None),
 }
 
 
