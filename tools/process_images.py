@@ -192,6 +192,9 @@ SERVICES = {
   'phai-tong-anniversary': ('Restaurants/PHAI Tong', 'FB_IMG_1794435813422.jpg', None),
   'thatch-clean':         ('Thatch clean', 'IMG-20261111-WA0145.jpg', None),
   'wild-wheels-workshop': ('Wild wheels workshop', 'FB_IMG_1794437550787.jpg', None),
+  'buffalo-grass':        ('BAFFALO GRASS', 'WhatsApp Image 2026-11-12 at 21.56.11.jpeg', None),       # finished lawn
+  'buffalo-grass-before': ('BAFFALO GRASS', 'WhatsApp Image 2026-11-12 at 21.56.11 (1).jpeg', None),   # ground prepared
+  'buffalo-grass-planted': ('BAFFALO GRASS', 'WhatsApp Image 2026-11-12 at 21.56.12.jpeg', None),      # plugs planted
 }
 
 

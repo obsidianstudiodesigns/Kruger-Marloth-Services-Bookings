@@ -633,9 +633,9 @@ function renderServices() {
     <div class="provider-head"><h3>${esc(c.name)}</h3><p>${esc(c.blurb)}</p></div>
     <div class="provider-grid">${c.providers.map((p, i) => `
       <article class="provider">
-        <button class="provider-media" data-flyer-img="${[p.image, ...(p.moreImages || [])].join('|')}" data-flyer-name="${esc(p.name)}" aria-label="View ${esc(p.name)} flyer">
+        <button class="provider-media" data-flyer-img="${[p.image, ...(p.moreImages || [])].join('|')}" data-flyer-name="${esc(p.name)}" aria-label="View ${esc(p.name)} ${p.photos ? 'photos' : 'flyer'}">
           <img src="${p.image}" alt="${esc(p.name)} flyer" loading="lazy" />
-          <span class="photo-count">${icon('file')}${p.moreImages ? `View ${p.moreImages.length + 1} flyers` : 'View flyer'}</span>
+          <span class="photo-count">${icon('file')}${p.moreImages ? `View ${p.moreImages.length + 1} ${p.photos ? 'photos' : 'flyers'}` : p.photos ? 'View photo' : 'View flyer'}</span>
         </button>
         <div class="provider-body">
           <h4>${esc(p.name)}</h4>

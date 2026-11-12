@@ -1362,6 +1362,18 @@ const SERVICE_CATEGORIES = [
       },
     ],
   },
+  { id: 'gardening', icon: 'sprout', name: 'Gardening & Lawns',
+    blurb: 'Grass, lawns and garden help.',
+    providers: [
+      {
+        name: 'Buffalo Grass — Kitta', image: 'images/services/buffalo-grass.jpg', photos: true,
+        moreImages: ['images/services/buffalo-grass-before.jpg', 'images/services/buffalo-grass-planted.jpg'],
+        description: 'Buffalo grass plugs for a thick, green lawn. The photos show a garden going from bare ground to freshly planted plugs to a full lawn. Contact Kitta to order.',
+        tags: ['R500 per 1 000 plugs', 'Buffalo grass plugs', 'Before & after photos'],
+        phones: ['071 451 4832'],
+        area: 'Marloth Park',
+      },
+    ] },
   {
     id: 'woodwork', icon: 'sofa', name: 'Wood Works & Furniture',
     blurb: 'Custom hardwood furniture and fittings for your home.',
