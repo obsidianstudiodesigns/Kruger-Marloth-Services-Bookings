@@ -1295,3 +1295,42 @@ const EXPERIENCES = [
   { name: 'Night safaris', text: 'Spot leopard, hyena, genets and bushbabies after dark.', image: 'https://images.unsplash.com/photo-1549366021-9f761d450615?auto=format&fit=crop&w=900&q=80' },
   { name: 'Guided bush walks', text: 'Learn to read tracks and the small things most people miss.', image: 'https://images.unsplash.com/photo-1523805009345-7448845a9e53?auto=format&fit=crop&w=900&q=80' },
 ];
+
+/* Map of Marloth Park (#map). Pins come from Nadia's marked-up park map (Nov 2026), placed on the
+   street she marked; shops were checked against Google Maps. `bounds` must match
+   tools/build_map.py, which draws images/map/marloth-park.svg. */
+const MAP = {
+  bounds: { west: 31.748, east: 31.822, north: -25.326, south: -25.404 },
+  stays: [
+    { stay: 'badger-kruger', lat: -25.34160, lng: 31.80030, where: 'Ratel Street' },
+    { stay: 'buffalo-chalets', lat: -25.35890, lng: 31.80900, where: '4408 Buffel Street, near Gate 2' },
+    { stay: 'bushfire-mongoose', lat: -25.33936, lng: 31.78474, where: 'Mongoose Street' },
+    { stay: 'elephant-bush-house', lat: -25.33923, lng: 31.77785, where: 'Butterfly Street' },
+    { stay: 'genet-house', lat: -25.38031, lng: 31.75973, where: 'Cnr Karee & Locust' },
+    { stay: 'heenenweertjie', lat: -25.33864, lng: 31.78285, where: 'Wielewaal Street' },
+    { stay: 'moepel', lat: -25.39468, lng: 31.76210, where: '187 Moepel Street' },
+    { stay: 'salamah', lat: -25.33830, lng: 31.79950, where: 'Berghaan Street' },
+    { stay: 'tarentaal', lat: -25.33770, lng: 31.79265, where: '2794 Tarentaal Street' },
+    { stay: 'waterpeer', lat: -25.34460, lng: 31.80790, where: 'Waterpeer Street' },
+  ],
+  places: [
+    { name: 'Giraffe Pub & Grill', lat: -25.34785, lng: 31.77908, where: 'Cnr Sekelbos & Olifant',
+      here: 'Pub, grill and restaurant', providers: ['Giraffe Pub & Grill'] },
+    { name: 'Marlothi Centre', lat: -25.34752, lng: 31.78625, where: 'Olifant Drive, at the fuel station',
+      here: 'SPAR SaveMor, Tin Shack, bottle store, post office, pole yard and Calabash curio shop — Marlothi caravan park at the back',
+      providers: ['Marlothi Shopping Centre'] },
+    { name: 'Bush Centre', lat: -25.34978, lng: 31.78179, where: '3883 Olifant Drive',
+      here: 'BOS Restaurant, water park, @Wild Butchery, Ingwe and Field Security',
+      providers: ['@Wild Butchery', 'Ingwe on the Move', 'Field Security'] },
+    { name: 'Marloth & More', lat: -25.34935, lng: 31.78075, where: 'Wildlife Centre, 3882 Olifant Drive',
+      here: 'Daisy’s Den, vape shop, water shop and Dean’s DIY', providers: ['Daisy’s Den'] },
+    { name: 'Gas & security depot', lat: -25.38417, lng: 31.76162, where: 'Cnr Olifant & Kurper',
+      here: 'Waterkloof (Nkomazi) Gas and iSecure', providers: ['Waterkloof Gas', 'iSecure Security & EMS'] },
+    { name: 'Marloth Park Medical Practice', lat: -25.39170, lng: 31.76003, where: '73 Kudu Street',
+      here: 'Doctors’ rooms', providers: ['Marloth Park Medical Practice'] },
+  ],
+  landmarks: [
+    { name: 'Gate 2 · Komatipoort', lat: -25.36350, lng: 31.80676, icon: 'gate', side: 'left' },
+    { name: 'Main gate · from the N4', lat: -25.39920, lng: 31.76170, icon: 'gate', side: 'right' },
+  ],
+};

@@ -75,6 +75,10 @@ A "whole house" option that includes rooms sold separately (Afrika Safari Gasteh
 
 **Why it's built this way:** the token can only change the bookings repository, never the website. It is stored encrypted with the owner's password and never saved on a device. Guest details are encrypted too (AES-256-GCM, key from the password via PBKDF2). The public availability file has dates only. **If the password is lost, the bookings cannot be recovered** — keep regular backups (Settings → Download backup). When the token expires, Henry creates a new one and saves it under Settings → Replace access token.
 
+## Park map
+
+The "Map of Marloth Park" section draws `images/map/marloth-park.svg` (built by `python -I tools/build_map.py` from the OpenStreetMap extract in `tools/map/`) and places the pins listed in `MAP` in `assets/js/data.js`. To add a stay or shop, add an entry with its `lat`/`lng` (right-click the spot in Google Maps to copy them) and a `where` line. Each name opens Google Maps at that spot.
+
 ## Link previews (WhatsApp, Facebook) and Google
 
 - Every property has its own page, e.g. `stays/kruger-naledi/`. Shared links show that property's photo, name and description; the home page shows a collage with the logo. The share button and the property cards use these addresses.

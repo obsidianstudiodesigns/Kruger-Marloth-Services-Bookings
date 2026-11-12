@@ -136,7 +136,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/site.css?v=20261112b" />
+<link rel="stylesheet" href="assets/css/site.css?v=20261112c" />
 </head>
 <body data-stay="doringpoort-soetdoring">
 <noscript><main class="container" style="padding:40px 16px">
@@ -153,6 +153,7 @@
     <ul class="nav-links" id="navLinks">
       <li><a href="#stays">Stays</a></li>
       <li><a href="#services">Local services</a></li>
+      <li><a href="#map">Map</a></li>
       <li><a href="#experiences">Experiences</a></li>
       <li><a href="#property">Property for sale</a></li>
       <li><a href="#contact">Contact</a></li>
@@ -233,6 +234,30 @@
   </div>
 </section>
 
+<section id="map" class="map-sec" aria-labelledby="mapTitle">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Find your way</span>
+      <h2 id="mapTitle">Map of Marloth Park</h2>
+      <p>Our stays and the park’s shops and services, pinned on the map. Tap a name to open it in Google Maps for directions.</p>
+    </div>
+    <div class="map-layout">
+      <div class="map-frame">
+        <div class="map-view" id="mapView">
+          <div class="map-stage" id="mapStage">
+            <div class="map-svg" id="mapSvg"></div>
+            <div class="map-pins" id="mapPins"></div>
+          </div>
+          <div class="map-pop" id="mapPop" role="dialog" aria-live="polite" hidden></div>
+          <div class="map-zoom" id="mapZoom"></div>
+          <p class="map-hint" id="mapHint"></p>
+        </div>
+      </div>
+      <aside class="map-legend" id="mapLegend" aria-label="Places on the map"></aside>
+    </div>
+  </div>
+</section>
+
 <section id="experiences">
   <div class="container">
     <div class="section-head">
@@ -280,7 +305,7 @@
       </div>
       <div>
         <h4>Explore</h4>
-        <ul><li><a href="#stays">Accommodation</a></li><li><a href="#services">Local services</a></li><li><a href="#experiences">Experiences</a></li><li><a href="#property">Property for sale</a></li></ul>
+        <ul><li><a href="#stays">Accommodation</a></li><li><a href="#services">Local services</a></li><li><a href="#map">Park map</a></li><li><a href="#experiences">Experiences</a></li><li><a href="#property">Property for sale</a></li></ul>
       </div>
       <div>
         <h4>Services</h4>
@@ -306,8 +331,8 @@
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<script src="assets/js/data.js?v=20261112b"></script>
-<script src="assets/js/common.js?v=20261112b"></script>
-<script src="assets/js/site.js?v=20261112b"></script>
+<script src="assets/js/data.js?v=20261112c"></script>
+<script src="assets/js/common.js?v=20261112c"></script>
+<script src="assets/js/site.js?v=20261112c"></script>
 </body>
 </html>

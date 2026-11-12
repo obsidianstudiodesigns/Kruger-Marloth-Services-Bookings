@@ -656,6 +656,207 @@ function renderSale() {
   }));
 }
 
+/* ---------- Park map ---------- */
+function gmapsHref(p) { return `https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lng}`; }
+function mapPos(p) {
+  const b = MAP.bounds;
+  return { x: (p.lng - b.west) / (b.east - b.west) * 100, y: (b.north - p.lat) / (b.north - b.south) * 100 };
+}
+const mp = { z: 1, tx: 0, ty: 0, filter: 'all', active: null, pts: new Map(), moved: 0, pinch: null };
+// Every pin, stays numbered and shops lettered, in legend order
+const MAP_PINS = [
+  ...MAP.stays.map((p, i) => {
+    const s = stayById(p.stay);
+    return { ...p, kind: 'stay', key: `s${i}`, badge: String(i + 1), name: s.name, s };
+  }),
+  ...MAP.places.map((p, i) => ({ ...p, kind: 'place', key: `p${i}`, badge: 'ABCDEFGHIJKLMNOP'[i] })),
+];
+function renderMap() {
+  $('#mapPins').innerHTML = MAP_PINS.map(p => {
+    const { x, y } = mapPos(p);
+    return `<button class="map-pin ${p.kind}" data-pin="${p.key}" style="left:${x}%;top:${y}%" aria-label="${esc(p.name)} — ${esc(p.where)}"><span>${p.badge}</span></button>`;
+  }).join('') + MAP.landmarks.map(l => {
+    const { x, y } = mapPos(l);
+    return `<span class="map-mark ${l.side}" style="left:${x}%;top:${y}%">${icon(l.icon)}<em>${esc(l.name)}</em></span>`;
+  }).join('');
+
+  const item = p => `
+    <li><a class="ml-item ${p.kind}" href="${gmapsHref(p)}" target="_blank" rel="noopener" data-hl="${p.key}">
+      <span class="ml-badge">${p.badge}</span>
+      <span class="ml-text"><strong>${esc(p.name)}</strong><small>${esc(p.kind === 'place' ? p.here : p.where)}</small></span>
+      <span class="ml-go" aria-hidden="true">${icon('external')}</span>
+      <span class="sr-only">(opens Google Maps)</span>
+    </a></li>`;
+  const chips = [['all', 'All'], ['stay', 'Stays'], ['place', 'Shops & services']];
+  $('#mapLegend').innerHTML = `
+    <div class="ml-chips" role="toolbar" aria-label="Show on map">${chips.map(([k, t]) =>
+      `<button class="pill ${mp.filter === k ? 'active' : ''}" data-mf="${k}" aria-pressed="${mp.filter === k}">${t}</button>`).join('')}</div>
+    ${mp.filter !== 'place' ? `<h3 class="ml-head">${icon('home')}Stays</h3><ol class="ml-list">${MAP_PINS.filter(p => p.kind === 'stay').map(item).join('')}</ol>` : ''}
+    ${mp.filter !== 'stay' ? `<h3 class="ml-head">${icon('bag')}Shops &amp; services</h3><ol class="ml-list">${MAP_PINS.filter(p => p.kind === 'place').map(item).join('')}</ol>` : ''}
+    <p class="ml-note">${icon('info')}<span>Pins show the street; ${SITE.contactName} sends the exact address and directions when you book.</span></p>`;
+  $('#mapView').dataset.filter = mp.filter;
+}
+function mapSize() { const v = $('#mapView'); return { w: v.clientWidth, h: v.clientHeight }; }
+function mapApply() {
+  const { w, h } = mapSize();
+  mp.z = Math.min(6, Math.max(1, mp.z));
+  mp.tx = Math.min(0, Math.max(w - w * mp.z, mp.tx));
+  mp.ty = Math.min(0, Math.max(h - h * mp.z, mp.ty));
+  const st = $('#mapStage');
+  st.style.transform = `translate(${mp.tx}px,${mp.ty}px) scale(${mp.z})`;
+  st.style.setProperty('--z', mp.z);
+  $('#mapView').classList.toggle('zoomed', mp.z > 1.01);
+  placePop();
+}
+function mapZoomAt(factor, cx, cy) {
+  const z = Math.min(6, Math.max(1, mp.z * factor));
+  const f = z / mp.z;
+  mp.tx = cx - (cx - mp.tx) * f;
+  mp.ty = cy - (cy - mp.ty) * f;
+  mp.z = z;
+  mapApply();
+}
+function openPop(key) {
+  const p = MAP_PINS.find(x => x.key === key);
+  mp.active = p ? key : null;
+  document.querySelectorAll('.map-pin.on').forEach(el => el.classList.remove('on'));
+  const pop = $('#mapPop');
+  if (!p) { pop.hidden = true; return; }
+  $(`.map-pin[data-pin="${key}"]`).classList.add('on');
+  let body;
+  if (p.kind === 'stay') {
+    const sum = listingSummary(p.s);
+    body = `<img src="${stayImg(p.s.id, 1, true)}" alt="" />
+      <div><strong>${esc(p.name)}</strong><small>${esc(p.where)}</small>
+      <small>Sleeps ${sum.minSleeps !== sum.sleeps ? `${sum.minSleeps}–${sum.sleeps}` : sum.sleeps} · ${sum.priceFrom ? 'from ' : ''}${money(sum.price)}/night</small></div>`;
+  } else {
+    body = `<div><strong>${esc(p.name)}</strong><small>${esc(p.where)}</small><small>${esc(p.here)}</small></div>`;
+  }
+  pop.innerHTML = `<button class="map-pop-x" data-pop-close aria-label="Close">${icon('x')}</button>
+    <div class="map-pop-body ${p.kind}">${body}</div>
+    <div class="map-pop-actions">
+      <a class="btn btn-primary" href="${gmapsHref(p)}" target="_blank" rel="noopener">${icon('map')}Google Maps</a>
+      ${p.kind === 'stay' ? `<button class="btn btn-ghost" data-pop-stay="${p.s.id}">View stay</button>`
+        : `<button class="btn btn-ghost" data-pop-dir="${esc(p.providers[0])}">In directory</button>`}
+    </div>`;
+  pop.hidden = false;
+  placePop();
+}
+function placePop() {
+  const pop = $('#mapPop');
+  if (pop.hidden || !mp.active) return;
+  const p = MAP_PINS.find(x => x.key === mp.active);
+  const { w, h } = mapSize();
+  const { x, y } = mapPos(p);
+  const px = mp.tx + x / 100 * w * mp.z, py = mp.ty + y / 100 * h * mp.z;
+  const pw = pop.offsetWidth, ph = pop.offsetHeight;
+  const left = Math.min(w - pw - 8, Math.max(8, px - pw / 2));
+  const below = py - ph - 46 < 8;
+  pop.style.left = `${left}px`;
+  pop.style.top = `${below ? py + 10 : py - ph - 42}px`;
+  pop.classList.toggle('off', px < 0 || px > w || py < 0 || py > h);
+}
+function initMap() {
+  const view = $('#mapView');
+  renderMap();
+  $('#mapZoom').innerHTML = `<button data-mz="in" aria-label="Zoom in">${icon('plus')}</button><button data-mz="out" aria-label="Zoom out">${icon('minus')}</button><button data-mz="reset" aria-label="Show the whole park">${icon('refresh')}</button>`;
+  $('#mapHint').textContent = matchMedia('(pointer:coarse)').matches ? 'Pinch to zoom · tap a pin' : 'Drag to move · Ctrl + scroll or +/− to zoom';
+  $('#mapZoom').addEventListener('click', e => {
+    const b = e.target.closest('[data-mz]');
+    if (!b) return;
+    const { w, h } = mapSize();
+    if (b.dataset.mz === 'reset') { mp.z = 1; mp.tx = mp.ty = 0; mapApply(); } else mapZoomAt(b.dataset.mz === 'in' ? 1.6 : 1 / 1.6, w / 2, h / 2);
+  });
+  $('#mapLegend').addEventListener('click', e => {
+    const c = e.target.closest('[data-mf]');
+    if (c) { mp.filter = c.dataset.mf; renderMap(); openPop(null); }
+  });
+  const hl = (e, on) => {
+    const a = e.target.closest('[data-hl]');
+    if (a) $(`.map-pin[data-pin="${a.dataset.hl}"]`)?.classList.toggle('hl', on);
+  };
+  $('#mapLegend').addEventListener('mouseover', e => hl(e, true));
+  $('#mapLegend').addEventListener('mouseout', e => hl(e, false));
+  $('#mapLegend').addEventListener('focusin', e => hl(e, true));
+  $('#mapLegend').addEventListener('focusout', e => hl(e, false));
+  $('#mapPop').addEventListener('click', e => {
+    if (e.target.closest('[data-pop-close]')) return openPop(null);
+    const st = e.target.closest('[data-pop-stay]');
+    if (st) return openStay(st.dataset.popStay);
+    const d = e.target.closest('[data-pop-dir]');
+    if (d) {
+      const cat = SERVICE_CATEGORIES.find(c => c.providers.some(x => x.name === d.dataset.popDir));
+      if (cat) { state.serviceCat = cat.id; renderServices(); }
+      document.getElementById('services').scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+
+  // Pan with one pointer, pinch with two; a press that barely moves is a tap
+  const rel = e => { const r = view.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+  view.addEventListener('pointerdown', e => {
+    if (e.target.closest('.map-zoom, .map-pop') || (e.pointerType === 'mouse' && e.button !== 0)) return;
+    mp.pts.set(e.pointerId, rel(e));
+    if (mp.pts.size === 1) mp.moved = 0;
+    if (mp.pts.size === 2) {
+      const [a, b] = [...mp.pts.values()];
+      mp.pinch = { d: Math.hypot(a.x - b.x, a.y - b.y), z: mp.z };
+    }
+  });
+  view.addEventListener('pointermove', e => {
+    if (!mp.pts.has(e.pointerId)) return;
+    const prev = mp.pts.get(e.pointerId), cur = rel(e);
+    mp.pts.set(e.pointerId, cur);
+    if (mp.pts.size === 2 && mp.pinch) {
+      const [a, b] = [...mp.pts.values()];
+      const d = Math.hypot(a.x - b.x, a.y - b.y);
+      mapZoomAt(mp.pinch.z * d / mp.pinch.d / mp.z, (a.x + b.x) / 2, (a.y + b.y) / 2);
+      mp.moved = 99;
+    } else if (mp.pts.size === 1) {
+      mp.moved += Math.abs(cur.x - prev.x) + Math.abs(cur.y - prev.y);
+      if (mp.moved > 6 && mp.z > 1) {
+        if (!view.hasPointerCapture(e.pointerId)) view.setPointerCapture(e.pointerId);
+        view.classList.add('dragging');
+        mp.tx += cur.x - prev.x; mp.ty += cur.y - prev.y; mapApply();
+      }
+    }
+  });
+  const up = e => {
+    mp.pts.delete(e.pointerId);
+    if (mp.pts.size < 2) mp.pinch = null;
+    if (!mp.pts.size) view.classList.remove('dragging');
+  };
+  view.addEventListener('pointerup', up);
+  view.addEventListener('pointercancel', up);
+  view.addEventListener('click', e => {
+    if (mp.moved > 6) return;
+    const pin = e.target.closest('[data-pin]');
+    if (pin) openPop(mp.active === pin.dataset.pin ? null : pin.dataset.pin);
+    else if (!e.target.closest('.map-pop, .map-zoom')) openPop(null);
+  });
+  view.addEventListener('dblclick', e => { if (!e.target.closest('.map-pop, .map-zoom, [data-pin]')) { const p = rel(e); mapZoomAt(1.8, p.x, p.y); } });
+  view.addEventListener('wheel', e => {
+    if (!e.ctrlKey && !e.metaKey) return;
+    e.preventDefault();
+    const p = rel(e);
+    mapZoomAt(e.deltaY < 0 ? 1.25 : 0.8, p.x, p.y);
+  }, { passive: false });
+  addEventListener('resize', mapApply);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && mp.active) openPop(null); });
+
+  // Load the drawn map when the section comes near the screen
+  let loading = false;
+  const load = () => {
+    if (loading) return;
+    loading = true;
+    fetch('images/map/marloth-park.svg?v=20261112c').then(r => r.text()).then(t => { $('#mapSvg').innerHTML = t; view.classList.add('ready'); });
+  };
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(es => { if (es.some(x => x.isIntersecting)) { io.disconnect(); load(); } }, { rootMargin: '800px' });
+    io.observe(view);
+    addEventListener('load', () => setTimeout(load, 3000));  // fetch it anyway once the page has settled
+  } else load();
+}
+
 /* ---------- Boot ---------- */
 renderChrome();
 initSearch();
@@ -665,6 +866,7 @@ initServices();
 renderStays();
 renderServices();
 renderSale();
+initMap();
 
 loadAvailability().then(ranges => {
   state.ranges = ranges;
