@@ -13,6 +13,11 @@ const SITE = {
   whatsapp: '27615129208',          // international format, no + or spaces
   email: 'whndistributors@gmail.com',
   location: 'Marloth Park, Mpumalanga, South Africa',
+  // Red call buttons in the header (iSecure's numbers)
+  emergency: [
+    { label: '24/7 Security', short: 'Security', phone: '013 110 2595', icon: 'shield', who: 'iSecure 24/7 security' },
+    { label: 'Medical', short: 'Medical', phone: '064 511 2263', icon: 'medical', who: 'iSecure emergency medical services' },
+  ],
   // Public address of the site — used for link previews, Google and the sitemap.
   // Change it when the site moves to its own domain, then run: node tools/build-pages.cjs
   url: 'https://obsidianstudiodesigns.github.io/Kruger-Marloth-Services-Bookings/',
@@ -1477,3 +1482,35 @@ const MAP = {
     { name: 'Main gate · from the N4', lat: -25.39920, lng: 31.76170, icon: 'gate', side: 'right' },
   ],
 };
+
+/* Marloth Park rules (#rules), from the park's own signs */
+const PARK_RULES = {
+  intro: 'Marloth Park is a conservancy where wild animals roam free between the houses. A few house rules keep it that way — for the animals and for your neighbours.',
+  rules: [
+    { icon: 'ban', title: 'No noise, no loud music', text: 'Marloth Park is a no noise / no music zone — that includes yelling, loud talking and music. Fines and evictions apply if the rules are ignored.' },
+    { icon: 'lock', title: 'Keep windows and doors closed', text: 'Baboons and monkeys will come inside. Close windows and doors when you leave, and don’t leave food in plain sight.' },
+    { icon: 'paw', title: 'No pets', text: 'Pets are not allowed in Marloth Park.' },
+    { icon: 'leaf', title: 'Respect the animals', text: 'Let’s respect our animals and neighbours — enjoy the wildlife quietly and from a distance.' },
+  ],
+  signs: [
+    { title: 'No noise / no music zone' },
+    { title: 'Baboons and monkeys' },
+  ],
+};
+
+/* Interesting facts about Marloth and our animals (#facts) — images/facts/NN.jpg, in this order */
+const FACTS = [
+  { wide: true, title: 'Lookout points & bird hides', text: 'Two Trees, the Krans, the Bee-eater and Fish Eagle hides, Henk van Rooyen Park, Lionspruit and the park’s wildlife dams.', tag: 'Marloth Park' },
+  { title: 'Bush baby feeding tips', text: 'When and what to feed, a safe feeding spot, and the two kinds of bush babies in Marloth Park. From Daisy’s Den.', tag: 'Marloth Park' },
+  { wide: true, title: 'Bush babies', text: 'Nocturnal hunters and remarkable leapers, with a special grooming claw.', tag: 'Animals' },
+  { wide: true, title: 'Mongoose', text: 'Snake defenders — small, fearless and social.', tag: 'Animals' },
+  { title: 'Five facts about impala', text: 'Speed, diet, herds, horns and habitat.', tag: 'Animals' },
+  { title: 'Four things to notice about giraffes', text: 'Why older males get darker, giraffe nurseries and who feeds where.', tag: 'Animals' },
+  { title: 'Inside an elephant family', text: 'Led by the oldest female — young males leave at 12 to 15.', tag: 'Animals' },
+  { title: 'The strange childhood of spotted hyenas', text: 'Born black, with eyes open and teeth already through.', tag: 'Animals' },
+  { title: 'Southern ground hornbill', text: 'Close-knit family groups — and nine years to grow up.', tag: 'Animals' },
+  { wide: true, title: 'Can you match all four?', text: 'Lion, leopard, wild dog or rhino — whose tracks are whose?', tag: 'Quiz' },
+  { title: 'How to read a safari scene', text: 'Find the first animal, then look beyond it, up and for movement.', tag: 'Kruger' },
+  { title: 'Field notes from Kruger', text: 'Why a safari slowly teaches you to notice the small things.', tag: 'Kruger' },
+  { title: 'More field notes from Kruger', text: 'How animals position themselves, and why no two sightings are alike.', tag: 'Kruger' },
+];

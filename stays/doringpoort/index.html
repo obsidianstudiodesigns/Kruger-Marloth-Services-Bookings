@@ -138,7 +138,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/site.css?v=20261113a" />
+<link rel="stylesheet" href="assets/css/site.css?v=20261113c" />
 </head>
 <body data-stay="doringpoort">
 <noscript><main class="container" style="padding:40px 16px">
@@ -157,11 +157,13 @@
       <li><a href="#stays">Stays</a></li>
       <li><a href="#services">Local services</a></li>
       <li><a href="#map">Map</a></li>
+      <li><a href="#rules">Good to know</a></li>
       <li><a href="#experiences">Experiences</a></li>
       <li><a href="#property">Property for sale</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
     <div class="nav-actions">
+      <div class="sos" id="navSos"></div>
       <a class="btn btn-primary nav-cta" id="navWhatsapp" target="_blank" rel="noopener" aria-label="WhatsApp us"></a>
       <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false"></button>
     </div>
@@ -178,7 +180,9 @@
     sizes="100vw" fetchpriority="high" />
   <div class="container">
     <span class="hero-eyebrow" id="heroEyebrow"></span>
-    <h1>Bush homes on the doorstep of the <em>Kruger</em>.</h1>
+    <p class="hero-welcome">Welcome to</p>
+    <h1 class="hero-brand">Kruger Marloth <em>Services &amp; Bookings</em></h1>
+    <p class="hero-tagline">Bush homes on the doorstep of the Kruger.</p>
     <p class="hero-lead">Handpicked self-catering stays in Marloth Park — where zebra, kudu and giraffe wander past your stoep — plus the local services that make your holiday easy.</p>
 
     <form class="search-card" id="searchForm" autocomplete="off">
@@ -265,6 +269,31 @@
   </div>
 </section>
 
+<section id="rules" class="rules-sec" aria-labelledby="rulesTitle">
+  <div class="container rules-grid">
+    <div>
+      <span class="eyebrow">Good to know</span>
+      <div class="section-head">
+        <h2 id="rulesTitle">Marloth Park rules</h2>
+        <p id="rulesIntro"></p>
+      </div>
+      <div class="rule-list" id="ruleList"></div>
+    </div>
+    <div class="rule-signs" id="ruleSigns"></div>
+  </div>
+</section>
+
+<section id="facts" aria-labelledby="factsTitle">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Bush wisdom</span>
+      <h2 id="factsTitle">Interesting facts about Marloth &amp; our animals</h2>
+      <p>Lookout points, bush babies, hyenas, hornbills and more — tap a card to read it full size.</p>
+    </div>
+    <div class="facts-grid" id="factsGrid"></div>
+  </div>
+</section>
+
 <section id="experiences">
   <div class="container">
     <div class="section-head">
@@ -312,7 +341,7 @@
       </div>
       <div>
         <h4>Explore</h4>
-        <ul><li><a href="#stays">Accommodation</a></li><li><a href="#services">Local services</a></li><li><a href="#map">Park map</a></li><li><a href="#experiences">Experiences</a></li><li><a href="#property">Property for sale</a></li></ul>
+        <ul><li><a href="#stays">Accommodation</a></li><li><a href="#services">Local services</a></li><li><a href="#map">Park map</a></li><li><a href="#rules">Park rules</a></li><li><a href="#facts">Bush facts</a></li><li><a href="#experiences">Experiences</a></li><li><a href="#property">Property for sale</a></li></ul>
       </div>
       <div>
         <h4>Services</h4>
@@ -338,8 +367,8 @@
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<script src="assets/js/data.js?v=20261113a"></script>
-<script src="assets/js/common.js?v=20261113a"></script>
-<script src="assets/js/site.js?v=20261113a"></script>
+<script src="assets/js/data.js?v=20261113c"></script>
+<script src="assets/js/common.js?v=20261113c"></script>
+<script src="assets/js/site.js?v=20261113c"></script>
 </body>
 </html>

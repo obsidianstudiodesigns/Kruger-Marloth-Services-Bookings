@@ -285,5 +285,24 @@ for slug, (folder, cover) in SALE.items():
         save(im, os.path.join(SITE, 'images', 'sale', slug, 'thumb', f'{i:02d}.jpg'), 720, 74)
     print('sale', slug, len(photos), 'photos')
 
+# Interesting facts and park rules: (folder, [(file, crop box or None), ...]) in display order
+GALLERIES = {
+  'facts': ('Interesting facts about Marloth and our animals', [
+    ('Screenshot_20260729_110802_WhatsApp.jpg', (0, 630, 1080, 1368)),  # lookout points infographic only
+    ('FB_IMG_1769886310429.jpg', None), ('FB_IMG_1779354171603.jpg', None), ('FB_IMG_1779354162090.jpg', None),
+    ('FB_IMG_1779354163933.jpg', None), ('FB_IMG_1787820238568.jpg', None), ('FB_IMG_1783879683979.jpg', None),
+    ('FB_IMG_1779821329602.jpg', None), ('FB_IMG_1780571949179.jpg', None), ('FB_IMG_1788036223194.jpg', None),
+    ('FB_IMG_1784380809062.jpg', None), ('FB_IMG_1779001375564.jpg', None), ('FB_IMG_1779303978103.jpg', None)]),
+  'rules': ('Marloth Rules', [('Screenshot_20260402_071549_OneDrive.jpg', None), ('Screenshot_20260402_071540_OneDrive.jpg', None)]),
+}
+for slug, (folder, files) in GALLERIES.items():
+    for i, (f, crop) in enumerate(files, 1):
+        im = load(os.path.join(SRC, folder, f))
+        if crop:
+            im = im.crop(crop)
+        save(im, os.path.join(SITE, 'images', slug, f'{i:02d}.jpg'), 1600, 82)
+        save(im, os.path.join(SITE, 'images', slug, 'thumb', f'{i:02d}.jpg'), 640, 76)
+    print(slug, len(files), 'images')
+
 with open(os.path.join(SITE, 'images', 'manifest.json'), 'w') as fh:
     json.dump(manifest, fh, indent=1)

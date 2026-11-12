@@ -25,6 +25,9 @@ function toast(msg, ms = 4200) {
 function renderChrome() {
   $('#navWhatsapp').href = waHref(SITE.whatsapp, 'Hi ' + SITE.contactName + ', I found you on the Kruger Marloth website.');
   $('#navWhatsapp').innerHTML = icon('whatsapp') + '<span>WhatsApp us</span>';
+  // Red emergency buttons: a tap opens the phone's dialler with the number filled in
+  $('#navSos').innerHTML = (SITE.emergency || []).map(e =>
+    `<a class="btn sos-btn" href="${telHref(e.phone)}" aria-label="Call ${esc(e.who)}: ${esc(e.phone)}" title="${esc(e.who)} · ${esc(e.phone)}">${icon(e.icon)}<span class="sos-long">${esc(e.label)}</span><span class="sos-short">${esc(e.short)}</span></a>`).join('');
   $('#menuBtn').innerHTML = icon('menu');
   $('#heroEyebrow').innerHTML = icon('pin') + 'Marloth Park · Mpumalanga';
   $('#searchBtn').innerHTML = icon('search') + 'Check availability';
@@ -437,7 +440,7 @@ function renderCal() {
       iso === ci && 'start', iso === co && 'end', ci && co && iso > ci && iso < co && 'range'].filter(Boolean).join(' ');
     html += `<div class="${cls}" ${on ? `data-day="${iso}" role="button" tabindex="0"` : ''} aria-label="${fmtDate(iso)}${held ? ' (on hold)' : booked ? ' (booked)' : ''}">${d}</div>`;
   }
-  html += `</div><div class="cal-legend"><span><i style="background:var(--bush)"></i>Your dates</span><span><i style="background:repeating-linear-gradient(-45deg,#eee 0 2px,#e3c4bf 2px 4px)"></i>Booked</span><span><i style="background:repeating-linear-gradient(-45deg,#fdf3e3 0 2px,#ecc58f 2px 4px)"></i>On hold</span><span><i style="background:var(--sun);border-radius:50%"></i>Today</span></div>`;
+  html += `</div><div class="cal-legend"><span><i style="background:var(--bush)"></i>Your dates</span><span><i style="background:#e53935"></i>Booked</span><span><i style="background:repeating-linear-gradient(-45deg,#fdf3e3 0 2px,#ecc58f 2px 4px)"></i>On hold</span><span><i style="background:var(--sun);border-radius:50%"></i>Today</span></div>`;
   $('#cal').innerHTML = html;
   updateQuote();
 }
@@ -568,7 +571,8 @@ function openLightbox(items, i, title) {
   showLb();
 }
 function showLb() {
-  const { items, i, title } = lb;
+  const { items, i } = lb;
+  const title = items[i].title || lb.title;   // an item can carry its own caption
   $('#lbImg').src = items[i].src;
   $('#lbImg').alt = `${title} — photo ${i + 1}`;
   $('#lbCount').textContent = items.length > 1 ? `${title} · ${i + 1} / ${items.length}` : title;
@@ -695,6 +699,33 @@ function renderSale() {
     const n = i => String(i + 1).padStart(2, '0');
     openLightbox(Array.from({ length: g.photos }, (_, i) => ({ src: `images/sale/${g.id}/${n(i)}.jpg`, thumb: `images/sale/${g.id}/thumb/${n(i)}.jpg` })), 0, g.title);
   }));
+}
+
+/* ---------- Park rules & bush facts ---------- */
+function renderRules() {
+  $('#rulesIntro').textContent = PARK_RULES.intro;
+  $('#ruleList').innerHTML = PARK_RULES.rules.map(r => `
+    <div class="rule-item"><span class="rule-icon">${icon(r.icon)}</span><div><h3>${esc(r.title)}</h3><p>${esc(r.text)}</p></div></div>`).join('');
+  const signs = PARK_RULES.signs.map((g, i) => ({ src: `images/rules/${String(i + 1).padStart(2, '0')}.jpg`, thumb: `images/rules/thumb/${String(i + 1).padStart(2, '0')}.jpg`, title: g.title }));
+  $('#ruleSigns').innerHTML = signs.map((g, i) => `
+    <button class="rule-sign" data-sign="${i}" aria-label="View the sign: ${esc(g.title)}"><img src="${g.thumb}" alt="Marloth Park sign: ${esc(g.title)}" loading="lazy" /></button>`).join('');
+  $('#ruleSigns').addEventListener('click', e => {
+    const b = e.target.closest('[data-sign]');
+    if (b) openLightbox(signs, Number(b.dataset.sign), 'Marloth Park rules');
+  });
+}
+function renderFacts() {
+  const n = i => String(i + 1).padStart(2, '0');
+  const items = FACTS.map((f, i) => ({ src: `images/facts/${n(i)}.jpg`, thumb: `images/facts/thumb/${n(i)}.jpg`, title: f.title }));
+  $('#factsGrid').innerHTML = FACTS.map((f, i) => `
+    <button class="fact${f.wide ? ' wide' : ''}" data-fact="${i}">
+      <span class="fact-media"><img src="${items[i].thumb}" alt="" loading="lazy" /></span>
+      <span class="fact-body"><small>${esc(f.tag)}</small><strong>${esc(f.title)}</strong><span>${esc(f.text)}</span></span>
+    </button>`).join('');
+  $('#factsGrid').addEventListener('click', e => {
+    const b = e.target.closest('[data-fact]');
+    if (b) openLightbox(items, Number(b.dataset.fact), 'Interesting facts');
+  });
 }
 
 /* ---------- Park map ---------- */
@@ -932,6 +963,8 @@ initServices();
 renderStays();
 renderServices();
 renderSale();
+renderRules();
+renderFacts();
 initMap();
 
 loadAvailability().then(ranges => {

@@ -78,6 +78,7 @@ const ICON_PATHS = {
   map: '<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/>',
   external: '<path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
   minus: '<path d="M5 12h14"/>',
+  medical: '<path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/>',
   bug: '<path d="M8 6a4 4 0 0 1 8 0"/><rect x="7" y="6" width="10" height="14" rx="5"/><path d="M12 10v10M3 13h4M17 13h4M4 7l3 2M20 7l-3 2M4 19l3-2M20 19l-3-2"/>',
 };
 

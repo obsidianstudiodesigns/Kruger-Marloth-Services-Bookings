@@ -52,12 +52,17 @@ input,select,textarea{font:inherit;color:inherit}
 .site-header{position:sticky;top:0;z-index:50;background:rgba(245,239,230,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
 .nav{display:flex;align-items:center;justify-content:space-between;gap:20px;height:76px}
 .logo img{height:62px;width:62px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.18))}
-.nav-links{display:flex;gap:28px;list-style:none;font-size:.93rem;font-weight:500}
+.nav-links{display:flex;gap:20px;list-style:none;font-size:.9rem;font-weight:500;white-space:nowrap}
 .nav-links a{position:relative;padding:6px 0}
 .nav-links a::after{content:'';position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--sun);transform:scaleX(0);transition:transform .25s var(--ease)}
 .nav-links a:hover::after{transform:scaleX(1)}
 .nav-actions{display:flex;align-items:center;gap:10px}
 .nav-cta{min-height:42px;padding:0 16px;font-size:.86rem}
+.sos{display:flex;gap:8px}
+.sos-btn{min-height:42px;padding:0 14px;gap:7px;font-size:.84rem;background:#c62828;color:#fff;box-shadow:0 4px 14px rgba(198,40,40,.3)}
+.sos-btn:hover{background:#a51f1f}
+.sos-btn .ic{width:18px;height:18px}
+.sos-short{display:none}
 .menu-btn{display:none;width:44px;height:44px;border-radius:12px;align-items:center;justify-content:center}
 .menu-btn .ic{width:24px;height:24px}
 
@@ -70,6 +75,10 @@ input,select,textarea{font:inherit;color:inherit}
 .hero-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:.78rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#f3d9b0;margin-bottom:16px}
 .hero h1{font-size:clamp(2.1rem,5.6vw,4.2rem);max-width:860px;margin-bottom:16px;color:#fff}
 .hero h1 em{font-style:italic;color:#f0c27e}
+.hero-welcome{font-family:'Playfair Display',Georgia,serif;font-style:italic;font-size:clamp(1.1rem,2.4vw,1.5rem);color:#f3d9b0;margin-bottom:2px}
+.hero h1.hero-brand{font-size:clamp(2.3rem,6.2vw,4.6rem);line-height:1.04;margin-bottom:14px;text-shadow:0 2px 24px rgba(0,0,0,.35)}
+.hero h1.hero-brand em{display:block}
+.hero-tagline{font-family:'Playfair Display',Georgia,serif;font-size:clamp(1.2rem,2.6vw,1.7rem);color:#fff;margin-bottom:12px;padding-left:14px;border-left:3px solid var(--sun)}
 .hero-lead{font-size:clamp(1rem,2vw,1.15rem);max-width:600px;opacity:.92;margin-bottom:32px}
 .search-card{background:#fff;color:var(--charcoal);border-radius:20px;padding:10px;display:grid;grid-template-columns:1fr 1fr .8fr auto;gap:4px;box-shadow:var(--shadow-lg);max-width:900px}
 .search-field{padding:10px 16px;border-radius:14px;transition:background .2s}
@@ -259,6 +268,37 @@ section{padding:96px 0}
 .ml-item:hover .ml-go{color:var(--bush)}
 .mp-st-major{fill:#8a5e22}
 
+/* ---------- Park rules ---------- */
+.rules-sec{background:var(--bush-deep);color:#fff}
+.rules-sec .eyebrow{color:#f0c27e}
+.rules-sec .section-head h2{color:#fff}
+.rules-sec .section-head p{color:rgba(255,255,255,.78)}
+.rules-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:48px;align-items:center}
+.rule-list{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.rule-item{display:flex;gap:14px;align-items:flex-start;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:16px}
+.rule-icon{width:42px;height:42px;flex:none;display:grid;place-items:center;border-radius:12px;background:rgba(240,194,126,.16);color:#f0c27e}
+.rule-icon .ic{width:22px;height:22px}
+.rule-item h3{font-family:'Inter',sans-serif;font-size:.98rem;font-weight:700;color:#fff;margin-bottom:4px}
+.rule-item p{font-size:.86rem;color:rgba(255,255,255,.78);line-height:1.5}
+.rule-signs{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+.rule-sign{border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 18px 40px rgba(0,0,0,.35);cursor:zoom-in;transition:transform .3s var(--ease)}
+.rule-sign:nth-child(2){margin-top:40px}
+.rule-sign:hover{transform:translateY(-4px) rotate(-.5deg)}
+.rule-sign img{width:100%;height:auto}
+
+/* ---------- Bush facts ---------- */
+.facts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px}
+.fact{display:flex;flex-direction:column;text-align:left;background:#fff;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;transition:transform .3s var(--ease),box-shadow .3s var(--ease)}
+.fact:hover{transform:translateY(-4px);box-shadow:var(--shadow-md)}
+.fact-media{display:block;aspect-ratio:1/1;overflow:hidden;background:var(--sand-2)}
+.fact.wide .fact-media img{object-fit:contain;object-position:center}
+.fact-media img{width:100%;height:100%;object-fit:cover;object-position:top;transition:transform .6s var(--ease)}
+.fact:hover .fact-media img{transform:scale(1.04)}
+.fact-body{display:flex;flex-direction:column;gap:4px;padding:14px 16px 18px}
+.fact-body small{font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--sun-dark)}
+.fact-body strong{font-family:'Playfair Display',Georgia,serif;font-size:1.08rem;line-height:1.25}
+.fact-body>span{font-size:.84rem;color:var(--muted);line-height:1.45}
+
 /* ---------- Experiences ---------- */
 .exp-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
 .exp{position:relative;border-radius:var(--radius);overflow:hidden;aspect-ratio:3/4;color:#fff;background:var(--bush-dark);text-align:left}
@@ -379,9 +419,13 @@ footer a:hover{opacity:1;color:var(--sun)}
 .cal-d.on{cursor:pointer}
 .cal-d.on:hover{background:var(--sand-2)}
 .cal-d.past{color:#cbc3b6}
-.cal-d.booked{color:#c3a9a4;text-decoration:line-through;background:repeating-linear-gradient(-45deg,transparent 0 4px,rgba(179,69,58,.07) 4px 8px);border-radius:8px}
-.cal-d.booked.on{color:var(--charcoal);text-decoration:none;cursor:pointer}
-.cal-d.held{color:#c9a676;background:repeating-linear-gradient(-45deg,transparent 0 4px,rgba(201,138,60,.14) 4px 8px)}
+/* Booked nights: solid bright red. On-hold nights keep their amber stripes. */
+.cal-d.booked{color:#fff;font-weight:700;background:#e53935;border-radius:8px;text-decoration:line-through;text-decoration-color:rgba(255,255,255,.65)}
+.cal-d.booked.on{color:#fff;text-decoration:none;cursor:pointer}
+.cal-d.booked.on:hover{background:#c62828}
+.cal-d.booked.held{color:#c9a676;font-weight:500;text-decoration:line-through;text-decoration-color:currentColor;background:repeating-linear-gradient(-45deg,transparent 0 4px,rgba(201,138,60,.14) 4px 8px)}
+.cal-d.booked.held.on{color:var(--charcoal);text-decoration:none}
+.cal-d.booked.held.on:hover{background:var(--sand-2)}
 .book-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .book-actions .btn{padding:0 12px;font-size:.88rem}
 .consent{display:flex;gap:10px;align-items:flex-start;font-size:.8rem;color:#4d463d;line-height:1.45;margin-top:4px}
@@ -434,12 +478,15 @@ footer a:hover{opacity:1;color:var(--sun)}
   .exp-grid{grid-template-columns:repeat(2,1fr)}
   .footer-grid{grid-template-columns:1fr 1fr}
 }
-@media (max-width:860px){
+@media (max-width:1250px){
   .nav-links{display:none;position:absolute;top:76px;left:0;right:0;flex-direction:column;gap:0;background:#fff;padding:8px 24px 16px;box-shadow:var(--shadow-md)}
   .nav-links.open{display:flex}
   .nav-links li{border-bottom:1px solid var(--line)}
   .nav-links a{display:block;padding:14px 0}
   .menu-btn{display:inline-flex}
+}
+@media (max-width:860px){
+  .rules-grid{grid-template-columns:1fr;gap:32px}
   .search-card{grid-template-columns:1fr 1fr}
   .search-card .btn{grid-column:1/-1;width:100%}
   .why-grid{grid-template-columns:1fr;gap:28px}
@@ -460,6 +507,18 @@ footer a:hover{opacity:1;color:var(--sun)}
   .nav-links{top:66px}
   .nav-cta span{display:none}
   .nav-cta{width:42px;padding:0}
+  .nav-actions{gap:6px}
+  .sos{gap:6px}
+  .sos-btn{width:50px;min-height:44px;padding:0;flex-direction:column;gap:1px;border-radius:12px;font-size:.6rem;line-height:1}
+  .sos-btn .ic{width:17px;height:17px}
+  .sos-long{display:none}
+  .sos-short{display:block;font-weight:700}
+  .rule-list{grid-template-columns:1fr}
+  .rule-sign:nth-child(2){margin-top:24px}
+  .facts-grid{grid-template-columns:1fr 1fr;gap:12px}
+  .fact-body{padding:10px 12px 14px}
+  .fact-body strong{font-size:.95rem}
+  .fact-body>span{display:none}
   section{padding:64px 0}
   .hero{min-height:auto}
   .hero .container{padding-top:72px;padding-bottom:36px}
