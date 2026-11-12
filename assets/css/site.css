@@ -143,6 +143,12 @@ section{padding:96px 0}
 .sale-agent{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:.92rem;margin-bottom:14px;opacity:.9}
 .sale-agent strong{color:#fff}
 .sale-actions{display:flex;gap:10px;flex-wrap:wrap}
+.sale-gallery{display:flex;gap:14px;align-items:center;width:100%;text-align:left;margin:-8px 0 22px;padding:10px;border-radius:14px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#fff;transition:background .2s}
+.sale-gallery:hover{background:rgba(255,255,255,.14)}
+.sale-gallery img{width:96px;height:72px;object-fit:cover;border-radius:10px;flex:none}
+.sale-gallery span{display:flex;flex-direction:column;gap:3px;min-width:0}
+.sale-gallery small{opacity:.8;font-size:.8rem;line-height:1.35}
+.sale-gallery em{font-style:normal;font-size:.8rem;font-weight:600;color:#f0c27e;display:inline-flex;align-items:center;gap:6px}
 
 /* ---------- Services ---------- */
 .services{background:var(--sand-2)}

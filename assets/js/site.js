@@ -603,8 +603,8 @@ function renderServices() {
             ${p.website ? `<a href="${p.website}" target="_blank" rel="noopener">${icon('globe')}${esc(p.website.replace(/^https?:\/\/(www\.)?/, ''))}</a>` : ''}
           </div>
           <div class="provider-actions">
-            <a class="btn btn-primary" href="${telHref(p.phones[0])}">${icon('phone')}Call</a>
-            <a class="btn btn-wa" target="_blank" rel="noopener" href="${waHref(p.phones[0], `Hi, I found ${p.name} on the Kruger Marloth website.`)}">${icon('whatsapp')}WhatsApp</a>
+            ${p.phones.length ? `<a class="btn btn-primary" href="${telHref(p.phones[0])}">${icon('phone')}Call</a>
+            <a class="btn btn-wa" target="_blank" rel="noopener" href="${waHref(p.phones[0], `Hi, I found ${p.name} on the Kruger Marloth website.`)}">${icon('whatsapp')}WhatsApp</a>` : ''}
             ${p.email ? `<a class="btn btn-ghost" href="mailto:${p.email}">${icon('mail')}Email</a>` : ''}
           </div>
         </div>
@@ -637,6 +637,11 @@ function renderSale() {
       <h2 id="saleTitle">Own a home in Marloth Park</h2>
       <p class="sale-intro">${esc(p.intro)}</p>
       <ul class="sale-list">${p.listings.map(([i, t]) => `<li>${icon(i)}${esc(t)}</li>`).join('')}</ul>
+      ${(p.galleries || []).map(g => `
+      <button class="sale-gallery" type="button" data-sale-gallery="${g.id}">
+        <img src="images/sale/${g.id}/thumb/01.jpg" alt="" loading="lazy" />
+        <span><strong>${esc(g.title)}</strong><small>${esc(g.text)}</small><em>${icon('images')}View ${g.photos} photos</em></span>
+      </button>`).join('')}
       <p class="sale-agent">Contact <strong>${esc(p.agent)}</strong> · ${esc(p.agency)} · ${esc(p.phone)}</p>
       <div class="sale-actions">
         <a class="btn btn-wa" target="_blank" rel="noopener" href="${waHref(p.phone, `Hi ${p.agent.split(' ')[0]}, I saw the properties for sale on the Kruger Marloth website. Please send me more information.`)}">${icon('whatsapp')}WhatsApp ${esc(p.agent.split(' ')[0])}</a>
@@ -644,6 +649,11 @@ function renderSale() {
       </div>
     </div>`;
   grid.querySelector('[data-sale-ad]').addEventListener('click', () => openLightbox([{ src: p.image }], 0, p.agency));
+  grid.querySelectorAll('[data-sale-gallery]').forEach(b => b.addEventListener('click', () => {
+    const g = p.galleries.find(x => x.id === b.dataset.saleGallery);
+    const n = i => String(i + 1).padStart(2, '0');
+    openLightbox(Array.from({ length: g.photos }, (_, i) => ({ src: `images/sale/${g.id}/${n(i)}.jpg`, thumb: `images/sale/${g.id}/thumb/${n(i)}.jpg` })), 0, g.title);
+  }));
 }
 
 /* ---------- Boot ---------- */

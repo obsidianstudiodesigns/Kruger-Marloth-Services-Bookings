@@ -73,6 +73,11 @@ STAYS = {
   'elephant-bush-house': ('Elephant Bush House, Butterfly street', 'IMG-20260606-WA0101.jpg', 'file_00000000f20871fb848f4d8dcfac3219.png', ['IMG-20260818-WA0114.jpg'], []),
   'genet-house':      ('Genet House', 'IMG-20261028-WA0104.jpg', None, ['Screenshot_20261028_212250_WhatsApp.jpg'], []),
   # Photos from the owner's website (krugermarloth.com); duplicates and tiny ones left out
+  'heenenweertjie':   ('Heenenweertjie', 'IMG-20261111-WA0191.jpg', None,
+                       ['IMG-20261111-WA0194.jpg',  # name sign with the owners' names
+                        'IMG-20261111-WA0196(1).jpg', 'IMG-20261111-WA0197(1).jpg',
+                        'Screenshot_20261112_001016_Gallery.jpg', 'Screenshot_20261112_000850_Samsung Notes.jpg'], []),
+  'marloth-bush-escape': ('Marloth Bush Escape', 'IMG-20261022-WA0092.jpg', 'IMG-20261022-WA0147.jpg', [], []),
   'hyena-bush-retreat': ('Hyena Bush Retreat/website', ['05_ea79e1b7.jpg', '01_39b1d551.jpg', '06_88c08d98.jpg', '07_395b4beb.jpg', '10_a8a749a8.jpg', '12_e05cad27.jpg', '25_90e5f798.jpg', '20_f6e57df2.jpg', '11_8310fbb9.jpg', '28_4fc21e3a.jpg', '29_c00619ce.jpg', '31_f687f821.jpg', '15_640856a2.jpg', '16_09ce9118.jpg', '13_20d6ad86.jpg', '08_a1a9f8a9.jpg', '18_e8c7b76c.jpg', '40_91b2ffbc.jpg', '38_e338cb41.jpg', '03_baeb5d7d.jpg', '02_4d6b896b.jpg'], None, '*', []),
   'indabush':         ('Indabush', 'IMG-20260313-WA0039.jpg', 'IMG-20260815-WA0090.jpg', ['IMG-20260815-WA0090(1).jpg'], []),
   'kruger-naledi':    ('Kruger Naledi', 'IMG-20260818-WA0310.jpg', 'file_00000000b9b081f68da97969255d64e2.png', ['IMG-20260820-WA0079.jpg'], []),
@@ -139,6 +144,25 @@ SERVICES = {
   'african-rarewood':     ('Wood Works', 'IMG-20260918-WA0110.jpg', None),
   'taurus-tiger-fishing': ('Activities (Horse Riding, Game Drives, etc.)/Tiger fishing', 'IMG-20261111-WA0071.jpg', None),
   'wood-ice-johan':       ('Shops/Wood/Johan hout', 'IMG-20261016-WA0137.jpg', None),
+  'selukwe-walks':        ('Activities (Horse Riding, Game Drives, etc.)/Guided walks', 'FB_IMG_1794437096980.jpg', None),
+  'kruger-link-elephants': ('Activities (Horse Riding, Game Drives, etc.)/Elephant interaction', 'FB_IMG_1794436660181.jpg', None),
+  'kruger-link-kaapsehoop': ('Activities (Horse Riding, Game Drives, etc.)/Bushveld Horse Safaris', 'FB_IMG_1794436651230.jpg', None),
+  'kruger-link-matsamo':  ('Activities (Horse Riding, Game Drives, etc.)/Swaziland', 'FB_IMG_1794436657372.jpg', None),
+  'pumbaa-wildlife-park': ('Activities (Horse Riding, Game Drives, etc.)/Pumba wildlife park', 'FB_IMG_1794437045212.jpg', None),
+  'bushveld-atlantis':    ('Activities (Horse Riding, Game Drives, etc.)/Waterpark', 'FB_IMG_1794436070876.jpg', None),
+  'kruger-gate-times':    ('Activities (Horse Riding, Game Drives, etc.)/Kruger National park', 'FB_IMG_1794435896669.jpg', None),
+  'dstv-connexion':       ('Dstv', 'FB_IMG_1794435357202.jpg', None),
+  'chiropractor':         ('Emergency services', 'FB_IMG_1794435209815.jpg', None),
+  'isecure':              ('Security/Isecure', 'IMG-20261111-WA0213.jpg', None),
+  'isecure-ems':          ('Security/Isecure', 'IMG-20261111-WA0214.jpg', None),
+  'marlothi-savemor':     ('Shops/Savemore spar', 'Screenshot_20261111_224816_Samsung Browser.jpg', None),
+  'marlothi-curio':       ('Shops', 'Screenshot_20261111_224830_Samsung Browser.jpg', None),
+  'marlothi-liquors':     ('Shops', 'Screenshot_20261111_224840_Samsung Browser.jpg', None),
+  'marlothi-poleyard':    ('Shops', 'Screenshot_20261111_224849_Samsung Browser.jpg', None),
+  'marlothi-butcher':     ('Shops', 'Screenshot_20261111_224856_Samsung Browser.jpg', None),
+  'marlothi-carwash':     ('Shops', 'Screenshot_20261111_224905_Samsung Browser.jpg', None),
+  'marlothi-bushnet':     ('Shops', 'Screenshot_20261111_224918_Samsung Browser.jpg', None),
+  'marlothi-nails':       ('Shops', 'Screenshot_20261111_224944_Samsung Browser.jpg', None),
   'wildman-wouter':       ('Tree felling  cutting', 'IMG-20261111-WA0157.jpg', None),
   'home-care-mel':        ('Emergency services/Caregiver', 'IMG-20261111-WA0137.jpg', None),
   'labri-spa':            ("Spa's/L'bri spa", 'IMG-20261111-WA0150.jpg', None),
@@ -221,6 +245,21 @@ for slug, (folder, f, crop) in SERVICES.items():
         im = im.crop(crop)
     save(im, os.path.join(SITE, 'images', 'services', slug + '.jpg'), 1400, 82)
     print('service', slug)
+
+# Photo galleries for houses for sale: images/sale/<slug>/NN.jpg and thumb/
+SALE = {
+  'geelslang': ('Properties for Sale/Geelslang', 'IMG-20260916-WA0184.jpg'),
+}
+for slug, (folder, cover) in SALE.items():
+    d = os.path.join(SRC, folder)
+    photos = sorted(f for f in os.listdir(d) if f.lower().endswith(('.jpg', '.jpeg', '.png')) and '(1)' not in f)
+    photos.remove(cover)
+    photos.insert(0, cover)
+    for i, f in enumerate(photos, 1):
+        im = load(os.path.join(d, f))
+        save(im, os.path.join(SITE, 'images', 'sale', slug, f'{i:02d}.jpg'), 1600, 80)
+        save(im, os.path.join(SITE, 'images', 'sale', slug, 'thumb', f'{i:02d}.jpg'), 720, 74)
+    print('sale', slug, len(photos), 'photos')
 
 with open(os.path.join(SITE, 'images', 'manifest.json'), 'w') as fh:
     json.dump(manifest, fh, indent=1)

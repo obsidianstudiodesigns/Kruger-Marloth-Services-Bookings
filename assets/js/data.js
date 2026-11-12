@@ -500,6 +500,23 @@ const STAYS = [
     draft: ['bedrooms', 'bathrooms', 'amenities', 'rules'],
   },
   {
+    id: 'heenenweertjie',
+    name: 'Heenenweertjie',
+    tag: 'Inverter & borehole',
+    tagline: 'Thatched bush home with a private pool and boma',
+    description: 'A homely thatched bush house with a private pool right outside the lounge, a covered patio with cosy seating and a boma fire pit in a garden full of aloes. Kudu and zebra are regular visitors. Wi-Fi, an inverter and borehole water keep things running, and a housekeeper can be arranged during your stay on request.',
+    sleeps: 4, bedrooms: 2, bathrooms: 1,
+    price: 1100, peakPrice: 1500, peakLabel: 'In season',
+    photos: 21, flyer: false,
+    filters: ['pool', 'power'],
+    amenities: [
+      ['pool', 'Private pool'], ['flame', 'Boma & braai'], ['deck', 'Covered patio'], ['sofa', 'Lounge opening onto the pool'],
+      ['wifi', 'Wi-Fi'], ['zap', 'Inverter'], ['home', 'Borehole water'], ['star', 'Housekeeper on request'],
+      ['paw', 'Kudu & zebra visit'],
+    ],
+    draft: ['sleeps', 'bedrooms', 'bathrooms', 'rules'],
+  },
+  {
     id: 'hyena-bush-retreat',
     name: 'Hyena Bush Retreat',
     tag: 'Solar powered',
@@ -566,6 +583,23 @@ const STAYS = [
       ['paw', 'Kudu visit the house'],
     ],
     draft: ['sleeps', 'bedrooms', 'bathrooms', 'rules'],
+  },
+  {
+    id: 'marloth-bush-escape',
+    name: 'Marloth Bush Escape',
+    tag: 'Sleeps 4',
+    tagline: 'Your home away from home — splash pool & outdoor shower',
+    description: 'Relax, unwind and reconnect with nature in this peaceful bushveld retreat — the perfect getaway for couples, friends or small families. A double bedroom and a twin room sleep four, with a cosy lounge, an equipped kitchenette and a bathroom with bath, plus an outdoor shower. Wake up to birdsong, sip your coffee on the deck and end the day at the boma beside the splash pool.',
+    sleeps: 4, bedrooms: 2, bathrooms: 1,
+    price: 1000, priceFrom: true, priceNote: 'R1 000 – R1 300 per night',
+    photos: 14, flyer: true,
+    filters: ['pool', 'couples', 'kids'],
+    amenities: [
+      ['users', 'Sleeps 4'], ['bed', 'Double room & twin room'], ['snow', 'Aircon'], ['wifi', 'Wi-Fi'],
+      ['pool', 'Splash pool'], ['shower', 'Outdoor shower'], ['bath', 'Bathroom with bath'], ['dish', 'Equipped kitchenette'],
+      ['sofa', 'Lounge'], ['flame', 'Boma & braai'], ['deck', 'Deck'], ['paw', 'Zebra & giraffe nearby'],
+    ],
+    draft: ['rules'],
   },
   {
     id: 'melmar-estate',
@@ -874,6 +908,37 @@ const SERVICE_CATEGORIES = [
         phones: ['082 220 9602'],
         area: 'Komati & Crocodile rivers area',
       },
+      {
+        name: 'Selukwe Nature Walks', image: 'images/services/selukwe-walks.jpg',
+        description: 'Guided bush walks through Marloth Park with Timothy — a guide, tracker and storyteller with over 10 years’ experience, especially passionate about birds and botany. Led by nature, guided by experience.',
+        tags: ['Guided bush walks', 'Tracks & bird calls', 'Birds & botany'],
+        phones: ['062 859 2121'],
+        email: 'jane@selukwe.com',
+        area: 'Marloth Park',
+      },
+      {
+        name: 'Kruger Link Day Tours', image: 'images/services/kruger-link-elephants.jpg',
+        moreImages: ['images/services/kruger-link-kaapsehoop.jpg', 'images/services/kruger-link-matsamo.jpg'],
+        description: 'Guided day trips with pick-up from where you stay and a R200 meal voucher included: the Elephant Whisperers in Hazyview (entry included), historic Kaapsehoop with its wild horses and waterfalls, and Matsamo Cultural Village in Eswatini (passport needed).',
+        tags: ['Elephant Whisperers · pick-up 06:00', 'Kaapsehoop historical town', 'Matsamo Cultural Village, Eswatini · pick-up 07:30', 'R200 meal voucher included'],
+        phones: ['083 211 3710'],
+        email: 'krugerlinktransfers@gmail.com',
+        area: 'Pick-up in Marloth Park',
+      },
+      {
+        name: 'Pumbaa Wildlife Park', image: 'images/services/pumbaa-wildlife-park.jpg',
+        description: 'Guided walks led by an expert guide through the wildlife park, with tours every hour from 9 am to 3 pm daily.',
+        tags: ['Adults R200', 'Pensioners R150', 'Kids 2–12 R100', 'Under 2 free', 'Tours hourly 09:00 – 15:00'],
+        phones: ['082 520 2456', '081 338 9980'],
+        address: 'Barberton Road, 5 km outside Nelspruit (Glenwood turn-off)',
+      },
+      {
+        name: 'Bushveld Atlantis', image: 'images/services/bushveld-atlantis.jpg',
+        description: 'A quality family day out at the waterpark and putt-putt course, with water slides and a jumping castle for the kids.',
+        tags: ['Waterpark & slides', 'Putt-putt', 'Jumping castle', 'Open daily 09:00 – 17:00'],
+        phones: ['079 992 8972'],
+        email: 'info@bushveldatlantis.com',
+      },
     ],
   },
   {
@@ -1012,6 +1077,21 @@ const SERVICE_CATEGORIES = [
         phones: ['069 963 2940'],
         area: 'Marloth Park & surrounds',
       },
+      {
+        name: 'iSecure Security & EMS', image: 'images/services/isecure.jpg', moreImages: ['images/services/isecure-ems.jpg'],
+        description: 'Save their numbers — you might need them. 24/7 security response, plus iSecure EMS emergency medical services.',
+        tags: ['24/7 security · 013 110 2595 / 061 527 9330', 'Emergency medical services · 064 511 2263'],
+        phones: ['013 110 2595', '061 527 9330', '064 511 2263'],
+        area: 'Marloth Park & surrounds',
+        website: 'https://www.isecuregroup.co.za',
+      },
+      {
+        name: 'Chiropractic Back Pain Centre — Dr René Brückner', image: 'images/services/chiropractor.jpg',
+        description: 'Chiropractic care for infants, children, adults and older adults. Visiting Komatipoort on Tuesday mornings from 17 November to 15 December 2026.',
+        tags: ['Back pain', 'All ages', 'Tuesday mornings in Komatipoort'],
+        phones: ['083 574 9022'],
+        address: 'LeaH Beauty House, 16 Hartebees Street, Komatipoort',
+      },
     ],
   },
   {
@@ -1046,6 +1126,15 @@ const SERVICE_CATEGORIES = [
         tags: ['Braai wood', 'Charcoal', 'Firelighters', 'Delivery Tue & Thu'],
         phones: ['072 624 8221'],
         area: 'Marloth Park (WhatsApp only)',
+      },
+      {
+        name: 'Marlothi Shopping Centre', image: 'images/services/marlothi-savemor.jpg',
+        moreImages: ['images/services/marlothi-liquors.jpg', 'images/services/marlothi-butcher.jpg', 'images/services/marlothi-bushnet.jpg',
+          'images/services/marlothi-curio.jpg', 'images/services/marlothi-carwash.jpg', 'images/services/marlothi-poleyard.jpg', 'images/services/marlothi-nails.jpg'],
+        description: 'Everything you need in Marloth Park in one place: the SPAR SaveMor with a butcher (boerewors, cheese wors and smoked chilli wors), SaveMor Liquors, Bushnet post office and courier agent, a curio shop, pole yard, car wash and nail salon.',
+        tags: ['SPAR SaveMor · Mon–Sat 7–6, Sun 8–3', 'SaveMor Liquors · Mon–Sat 9–6, Sun 10–3', 'Butcher in the SPAR', 'Bushnet post office, courier & printing', 'Curio shop', 'Pole yard', 'Car wash', 'Nail salon'],
+        phones: [],
+        area: 'Marloth Park',
       },
       {
         name: 'Wood, Ice & Firelighters', image: 'images/services/wood-ice-johan.jpg',
@@ -1101,6 +1190,19 @@ const SERVICE_CATEGORIES = [
     ],
   },
   {
+    id: 'dstv', icon: 'tv', name: 'DStv & TV',
+    blurb: 'DStv and OpenView installs, signal repairs and more.',
+    providers: [
+      {
+        name: 'DStv Connexion — Vasco', image: 'images/services/dstv-connexion.jpg',
+        description: 'Forty years in the business and still going — DStv and OpenView installations, signal repairs, TV mounting and sound systems, plus handyman work, renovations, pools and paving. One call, one solution.',
+        tags: ['DStv installations & extra view', 'Signal & LNB repairs', 'OpenView installs', 'TV mounting & sound', 'Handyman & renovations', 'Pools & paving'],
+        phones: ['083 756 1135'],
+        area: 'Marloth Park',
+      },
+    ],
+  },
+  {
     id: 'trees', icon: 'tree', name: 'Tree Felling & Firewood',
     blurb: 'Tree felling, firewood and charcoal delivered.',
     providers: [
@@ -1139,6 +1241,13 @@ const SERVICE_CATEGORIES = [
         area: 'Marloth Park',
         website: 'https://www.marlothkruger.com',
       },
+      {
+        name: 'Kruger National Park gate times', image: 'images/services/kruger-gate-times.jpg',
+        description: 'Opening and closing times for the Kruger gates (from 1 November). Plan to be out — or back at camp — before the gates close.',
+        tags: ['Nov – Feb · 05:30 – 18:30', 'Mar & Oct · 05:30 – 18:00', 'Apr, Aug & Sep · 06:00 – 18:00', 'May – Jul · 06:00 – 17:30'],
+        phones: [],
+        area: 'Crocodile Bridge & Malelane gates are closest',
+      },
     ],
   },
 ];
@@ -1152,6 +1261,10 @@ const PROPERTY_SALE = {
   phone: '061 512 9208',
   image: 'images/sale/blue-lily-properties.jpg',
   intro: 'Buy your piece of heaven in Marloth Park. Enjoy the freedom of free-roaming animals and the night sounds of the bush, while sipping a glass of wine on your own stoep.',
+  // Houses with their own photo gallery (from 'Properties for Sale/<folder>' in the client's files)
+  galleries: [
+    { id: 'geelslang', title: 'Double-storey home in Geelslang Street', text: 'Thatched double-storey home with a balcony, open-plan kitchen and dining room, carports and a round splash pool with braai area.', photos: 17 },
+  ],
   listings: [
     ['home', '5 bedroom, 5 bathroom house'],
     ['home', '5 bedroom, 3 bathroom house'],
