@@ -701,7 +701,13 @@ function showOnMap(key) {
   if (!p) return;
   if (mp.filter !== 'all') { mp.filter = 'all'; renderMap(); }
   mapLoad();
-  $('#mapView').scrollIntoView({ behavior: 'instant', block: 'center' });
+  // Jump (not glide) to the map. Some phone browsers reject behavior:'instant', so switch the page's
+  // smooth scrolling off for a moment instead.
+  const root = document.documentElement, view = $('#mapView');
+  root.style.scrollBehavior = 'auto';
+  const r = view.getBoundingClientRect();
+  window.scrollTo(0, Math.max(0, scrollY + r.top - Math.max(70, (innerHeight - r.height) / 2)));
+  setTimeout(() => { root.style.scrollBehavior = ''; }, 100);
   const { w, h } = mapSize(), { x, y } = mapPos(p);
   mp.z = 3;
   mp.tx = w / 2 - x / 100 * w * mp.z;
