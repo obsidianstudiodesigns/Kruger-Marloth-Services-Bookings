@@ -89,6 +89,14 @@ STAYS = {
   'melmar-estate':    ('Melmar Estate', 'FB_IMG_1779909924637.jpg', 'FB_IMG_1779909914677.jpg', [], []),
   'moepel':           ('Moepel 187', 'IMG-20260727-WA0055.jpg', 'file_00000000d3b081f4ad7571022f7dab76.png', ['file_00000000d3b081f4ad7571022f7dab76(1).png'], []),
   'my-africa-chalet': ('My Africa Chalet', 'Screenshot_20260911_105518_Gallery.jpg', 'file_0000000085b48211b56d480859fd890c.png', [], []),
+  # Owner's WhatsApp photos; the handwritten rate sheet and info screenshots are text, not photos
+  'old-hippo':        ('Old Hippo River House',
+                       ['IMG-20261112-WA0182.jpg', 'IMG-20261112-WA0183.jpg', 'IMG-20260519-WA0158.jpg', 'IMG-20260519-WA0163.jpg',
+                        'IMG-20260519-WA0157.jpg', 'IMG-20260519-WA0153.jpg', 'IMG-20260519-WA0152.jpg', 'IMG-20260519-WA0133.jpg',
+                        'IMG-20261112-WA0184.jpg', 'IMG-20260519-WA0164.jpg', 'IMG-20260519-WA0155.jpg'], None,
+                       ['20261112_164204.jpg', 'Screenshot_20261112_163302_WhatsApp.jpg', 'Screenshot_20261112_163309_WhatsApp.jpg',
+                        'Screenshot_20261112_163314_WhatsApp.jpg', 'Screenshot_20261112_163319_WhatsApp.jpg',
+                        'Screenshot_20261112_163430_WhatsApp.jpg'], []),
   'phai-thong':       ('Phai Thong Hide Away', 'IMG-20260812-WA0269.jpg', 'file_00000000c1a0824386393e7cec6fc66d.png', ['IMG-20260812-WA0257.jpg'], []),
   'porcupine':        ('Porcupine@Marloth', 'IMG-20260828-WA0229.jpg', 'file_000000003ab88210a3576cddd350b5a9.png', [], ['IMG-20260828-WA0221.jpg', 'IMG-20260828-WA0223.jpg']),
   'salamah':          ('Salamah', 'IMG-20260721-WA0368.jpg', None, ['Screenshot_20260724_072322_WhatsApp.jpg', 'Screenshot_20260724_072329_WhatsApp.jpg'], []),
@@ -170,6 +178,20 @@ SERVICES = {
   'labri-spa':            ("Spa's/L'bri spa", 'IMG-20261111-WA0150.jpg', None),
   'labri-spa-2':          ("Spa's/L'bri spa", 'IMG-20261111-WA0151.jpg', None),
   'thobies-mobile-spa':   ("Spa's/Tobies mobile spa", 'Screenshot_20261111_131114_All PDF Viewer, Sign.jpg', None),
+  # Bottom line ('Valid till October 2024') cropped off
+  'chama-horse-trails':   ('Activities (Horse Riding, Game Drives, etc.)/Bushveld Horse Safaris', 'FB_IMG_1794436610264.jpg', (0, 0, 656, 925)),
+  'jan-hendrik-guide':    ('Freelance Guides', 'IMG-20260910-WA0016.jpg', None),
+  'kruger-wilderness-trails': ('Game Drives and Sunset Drives', 'FB_IMG_1794435844785.jpg', None),
+  'hog-wood':             ('HOG Wood Furniture', 'IMG-20261110-WA0222(1).jpg', None),
+  'xmas-market':          ('Henk van Rooyen', 'FB_IMG_1794436212404.jpg', None),
+  'kruger-restaurants':   ('Kruger National Park', 'IMG-20261109-WA0044.jpg', None),
+  'marloth-and-more':     ('Marloth and more', 'FB_IMG_1794436262189.jpg', None),
+  'nxs-fire-safety':      ('NXS', 'FB_IMG_1794496738152.jpg', None),
+  'deepsix-pest':         ('Pest control', 'IMG-20261112-WA0163.jpg', None),
+  'termite-titans':       ('Pest control/Titans', 'IMG-20261109-WA0185.jpg', None),
+  'phai-tong-anniversary': ('Restaurants/PHAI Tong', 'FB_IMG_1794435813422.jpg', None),
+  'thatch-clean':         ('Thatch clean', 'IMG-20261111-WA0145.jpg', None),
+  'wild-wheels-workshop': ('Wild wheels workshop', 'FB_IMG_1794437550787.jpg', None),
 }
 
 

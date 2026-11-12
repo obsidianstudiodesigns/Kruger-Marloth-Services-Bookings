@@ -270,7 +270,7 @@ function openStay(id, push = true) {
           <div class="rules">
             <div class="rule">${icon('clock')}<div><strong>Check-in</strong>From ${rules.checkIn}</div></div>
             <div class="rule">${icon('clock')}<div><strong>Check-out</strong>By ${rules.checkOut}</div></div>
-            <div class="rule">${icon('calendar')}<div><strong>Minimum stay</strong>${rules.minNights} nights</div></div>
+            <div class="rule">${icon('calendar')}<div><strong>Minimum stay</strong>${rules.minNights} nights${s.seasons && s.seasons.some(x => x.min > rules.minNights) ? ` (${Math.max(...s.seasons.map(x => x.min))} nights in season)` : ''}</div></div>
             <div class="rule">${icon('info')}<div><strong>Deposit</strong>${esc(rules.deposit)}</div></div>
             ${(rules.notes || []).map(([title, text]) => `<div class="rule">${icon('info')}<div><strong>${esc(title)}</strong>${esc(text)}</div></div>`).join('')}
           </div>
@@ -278,7 +278,7 @@ function openStay(id, push = true) {
           <h3 class="sub">Where it is</h3>
           <div class="stay-where">
             <button class="stay-where-map" data-show-map aria-label="Show ${esc(s.name)} on the park map">
-              <img src="images/map/marloth-park.svg?v=20261112d" alt="" style="transform:translate(-${pinPos.x.toFixed(2)}%,-${pinPos.y.toFixed(2)}%)" />
+              <img src="images/map/marloth-park.svg?v=20261113a" alt="" style="transform:translate(-${pinPos.x.toFixed(2)}%,-${pinPos.y.toFixed(2)}%)" />
               <span class="map-pin stay on" style="left:50%;top:50%"><span>${pin.badge}</span></span>
             </button>
             <div class="stay-where-info">
@@ -308,6 +308,7 @@ function openStay(id, push = true) {
           ${s.peakPrice ? `<div class="peak-note">${esc(s.peakLabel)}: ${money(s.peakPrice)} / night</div>` : ''}
           ${s.priceNote ? `<div class="peak-note">${esc(s.priceNote)}</div>` : ''}
           ${s.rates ? rateTable(s) : ''}
+          ${s.seasons ? seasonTable(s) : ''}
           <div class="date-boxes">
             <div><small>Check-in</small><span id="bkIn" class="placeholder">Add date</span></div>
             <div><small>Check-out</small><span id="bkOut" class="placeholder">Add date</span></div>
@@ -474,13 +475,15 @@ function updateQuote() {
   msg.classList.remove('warn');
   if (!ci) msg.textContent = 'Select your check-in date.';
   else if (!co) msg.textContent = 'Now select your check-out date.';
-  else if (nights < stayRules(cal.stay).minNights) { msg.textContent = `Minimum stay is ${stayRules(cal.stay).minNights} nights.`; msg.classList.add('warn'); }
+  else if (nights < minNightsFor(stay, ci, co)) { msg.textContent = `Minimum stay is ${minNightsFor(stay, ci, co)} nights for these dates.`; msg.classList.add('warn'); }
   else msg.textContent = `${nights} nights selected — these dates are open.`;
   const rate = nightlyRate(stay, guestCount());
+  const total = nights ? stayTotal(stay, ci, co, guestCount()) : 0;
+  const even = total === rate * nights;
   $('#quote').innerHTML = nights ? `
-    <div><span>${money(rate)} × ${nights} night${nights > 1 ? 's' : ''}</span><span>${money(rate * nights)}</span></div>
-    <div class="total"><span>Estimated total</span><span>${money(rate * nights)}</span></div>
-    <small>Indicative rate — ${SITE.contactName} confirms the final price${stay.peakPrice ? ` (${esc(stay.peakLabel)}: ${money(stay.peakPrice)} / night)` : ''}.</small>` : '';
+    <div><span>${even ? `${money(rate)} × ${nights} night${nights > 1 ? 's' : ''}` : `${nights} nights at seasonal rates`}</span><span>${money(total)}</span></div>
+    <div class="total"><span>Estimated total</span><span>${money(total)}</span></div>
+    <small>Indicative rate — ${SITE.contactName} confirms the final price${stay.peakPrice ? ` (${esc(stay.peakLabel)}: ${money(stay.peakPrice)} / night)` : ''}${stay.seasons ? '. School holiday, long weekend and Easter rates apply on those dates' : ''}.</small>` : '';
 }
 
 /* Stays priced by group size list `rates`: one table per season, rows of [guests, price per night] */
@@ -489,6 +492,21 @@ function nightlyRate(stay, guests) {
   if (!stay.rates) return stay.price;
   const rows = stay.rates[0].rows;
   return (rows.find(([n]) => n >= guests) || rows[rows.length - 1])[1];
+}
+// Seasonal pricing: seasons with from/to ('MM-DD') set the price of the nights that fall in them
+function nightsOf(ci, co) { const out = []; for (let d = ci; d < co; d = addDays(d, 1)) out.push(d); return out; }
+function seasonFor(stay, iso) { return (stay.seasons || []).find(x => x.from && iso.slice(5) >= x.from && iso.slice(5) <= x.to); }
+function stayTotal(stay, ci, co, guests) {
+  return nightsOf(ci, co).reduce((t, d) => t + (seasonFor(stay, d)?.price ?? nightlyRate(stay, guests)), 0);
+}
+function minNightsFor(stay, ci, co) {
+  return Math.max(stayRules(stay).minNights, ...(ci && co ? nightsOf(ci, co).map(d => seasonFor(stay, d)?.min || 0) : [0]));
+}
+function seasonTable(s) {
+  return `<table class="rate-table">
+    <thead><tr><th>Season</th><th>Min stay</th><th>Per night</th></tr></thead>
+    <tbody>${s.seasons.map(r => `<tr><td>${esc(r.label)}</td><td>${r.min} nights</td><td>${money(r.price)}</td></tr>`).join('')}</tbody>
+  </table>${s.seasonNote ? `<div class="peak-note">${esc(s.seasonNote)}</div>` : ''}`;
 }
 function rateTable(s) {
   const sizes = s.rates[0].rows.map(([n]) => n);
@@ -504,7 +522,7 @@ function sendRequest(channel) {
   const nights = nightsBetween(ci, co);
   const name = $('#bName').value.trim(), phone = $('#bPhone').value.trim();
   if (!ci || !co) { toast('Please select your check-in and check-out dates on the calendar.'); return; }
-  const minNights = stayRules(stay).minNights;
+  const minNights = minNightsFor(stay, ci, co);
   if (nights < minNights) { toast(`Minimum stay is ${minNights} nights.`); return; }
   if (!name || !phone) { toast('Please add your name and phone number.'); (name ? $('#bPhone') : $('#bName')).focus(); return; }
   if (!$('#bConsent').checked) { toast('Please tick the box to agree to the privacy notice.'); $('#bConsent').closest('label').classList.add('need'); return; }
@@ -520,7 +538,7 @@ function sendRequest(channel) {
     `Phone: ${phone}`,
     notes ? `Notes: ${notes}` : null,
     '',
-    `Estimated total: ${money(nightlyRate(stay, guestCount()) * nights)}`,
+    `Estimated total: ${money(stayTotal(stay, ci, co, guestCount()))}`,
     stayUrl(stay.id),
   ].filter(l => l !== null).join('\n');
   if (viaEmail) {
@@ -896,7 +914,7 @@ function initMap() {
   const load = mapLoad = () => {
     if (loading) return;
     loading = true;
-    fetch('images/map/marloth-park.svg?v=20261112d').then(r => r.text()).then(t => { $('#mapSvg').innerHTML = t; view.classList.add('ready'); });
+    fetch('images/map/marloth-park.svg?v=20261113a').then(r => r.text()).then(t => { $('#mapSvg').innerHTML = t; view.classList.add('ready'); });
   };
   if ('IntersectionObserver' in window) {
     const io = new IntersectionObserver(es => { if (es.some(x => x.isIntersecting)) { io.disconnect(); load(); } }, { rootMargin: '800px' });
