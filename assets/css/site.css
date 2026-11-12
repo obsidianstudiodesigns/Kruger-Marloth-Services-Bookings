@@ -211,6 +211,7 @@ section{padding:96px 0}
 .map-pin::before{content:'';position:absolute;left:0;top:0;width:30px;height:30px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:var(--bush);border:2px solid #fff;box-sizing:border-box;transition:background .2s}
 .map-pin span{position:relative;display:block;width:30px;height:30px;line-height:30px;text-align:center;color:#fff;font-weight:700;font-size:.8rem}
 .map-pin.place::before{background:var(--sun)}
+.map-pin.nudge{transform:scale(calc(1 / var(--z))) translateX(26px)}
 .map-pin:hover,.map-pin.hl,.map-pin.on{z-index:4}
 .map-pin:hover::before,.map-pin.hl::before,.map-pin.on::before{background:var(--charcoal)}
 .map-pin.hl{animation:pinHop .6s var(--ease)}

@@ -769,9 +769,12 @@ function showOnMap(key) {
 }
 let mapLoad = () => {};
 function renderMap() {
+  // A shop that shares a stay's spot is drawn a little to the side, so both badges show
+  const stays = MAP_PINS.filter(q => q.kind === 'stay').map(mapPos);
   $('#mapPins').innerHTML = MAP_PINS.map(p => {
     const { x, y } = mapPos(p);
-    return `<button class="map-pin ${p.kind}" data-pin="${p.key}" style="left:${x}%;top:${y}%" aria-label="${esc(p.name)} — ${esc(p.where)}"><span>${p.badge}</span></button>`;
+    const nudge = p.kind === 'place' && stays.some(q => Math.abs(q.x - x) < 2.2 && Math.abs(q.y - y) < 2.2);
+    return `<button class="map-pin ${p.kind}${nudge ? ' nudge' : ''}" data-pin="${p.key}" style="left:${x}%;top:${y}%" aria-label="${esc(p.name)} — ${esc(p.where)}"><span>${p.badge}</span></button>`;
   }).join('') + MAP.landmarks.map(l => {
     const { x, y } = mapPos(l);
     return `<span class="map-mark ${l.side}" style="left:${x}%;top:${y}%">${icon(l.icon)}<em>${esc(l.name)}</em></span>`;
