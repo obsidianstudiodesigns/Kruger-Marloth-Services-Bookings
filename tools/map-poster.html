@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<!-- Source of images/map/marloth-park-map.jpg (the "Download the map" picture).
+     Rebuild with: python -I tools/make_map_poster.py -->
+<title>Marloth Park map poster</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#fff;font-family:Inter,Arial,sans-serif;color:#26221d;width:1400px}
+  #poster{width:1400px;background:#f5efe6}
+  .head{display:flex;align-items:center;gap:26px;padding:30px 48px;background:#1c2e1c;color:#fff}
+  .head img{width:112px;height:112px;border-radius:50%}
+  .head h1{font-family:'Playfair Display',Georgia,serif;font-size:56px;line-height:1.05}
+  .head p{color:#f0c27e;font-size:20px;margin-top:6px;font-weight:500}
+  .head .contact{margin-left:auto;text-align:right;font-size:19px;line-height:1.5}
+  .head .contact strong{display:block;font-size:26px;color:#fff}
+  .head .contact span{color:#d9cdb6}
+  .map{position:relative;width:1400px;height:1633px;overflow:hidden;background:#efe4cc}
+  .map > img{position:absolute;inset:0;width:100%;height:100%}
+  .pin{position:absolute;width:40px;height:50px;margin:-50px 0 0 -20px;filter:drop-shadow(0 3px 4px rgba(38,34,29,.4))}
+  .pin::before{content:'';position:absolute;left:0;top:0;width:40px;height:40px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:#3b5d3a;border:3px solid #fff;box-sizing:border-box}
+  .pin b{position:relative;display:block;width:40px;height:40px;line-height:40px;text-align:center;color:#fff;font-size:19px}
+  .pin.place::before{background:#c98a3c}
+  .mark{position:absolute;display:flex;align-items:center;gap:8px;transform:translate(-17px,-50%)}
+  .mark.left{flex-direction:row-reverse;transform:translate(calc(-100% + 17px),-50%)}
+  .mark i{width:34px;height:34px;border-radius:50%;background:#1c2e1c;border:3px solid #fff;display:grid;place-items:center}
+  .mark i svg{width:18px;height:18px;stroke:#f0c27e}
+  .mark em{font-style:normal;font-weight:700;font-size:19px;color:#1c2e1c;background:rgba(255,253,247,.94);padding:3px 10px;border-radius:8px;white-space:nowrap}
+  .north{position:absolute;right:28px;top:24px;width:64px;text-align:center;font-family:'Playfair Display',Georgia,serif;font-weight:700;color:#6d5f49;font-size:22px}
+  .north svg{width:44px;height:44px}
+  .bottom{display:grid;grid-template-columns:520px 1fr;gap:40px;padding:40px 48px 30px}
+  h2{font-family:'Playfair Display',Georgia,serif;font-size:30px;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+  .inset{position:relative;width:520px;height:520px;overflow:hidden;border-radius:14px;border:3px solid #fff;box-shadow:0 8px 24px rgba(38,34,29,.15);background:#efe4cc}
+  .inset > img{position:absolute;max-width:none}
+  .inset-note{font-size:16px;color:#6b6358;margin-top:10px}
+  .list{list-style:none;display:grid;gap:9px 22px}
+  .list.two{grid-template-columns:1fr 1fr}
+  .list li{display:flex;gap:12px;align-items:flex-start;font-size:19px;line-height:1.3}
+  .list .badge{width:34px;height:34px;flex:none;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:17px;background:#3b5d3a}
+  .list.places .badge{background:#c98a3c}
+  .list strong{display:block;font-weight:700}
+  .list small{display:block;color:#6b6358;font-size:16px}
+  .legend-block + .legend-block{margin-top:26px}
+  .foot{margin:0 48px;padding:24px 0 34px;border-top:1px solid rgba(38,34,29,.15)}
+  .numbers{display:flex;flex-wrap:wrap;gap:10px 14px;margin-bottom:18px}
+  .numbers span{background:#fff;border-radius:10px;padding:8px 14px;font-size:17px}
+  .numbers b{font-weight:700}
+  .fine{display:flex;justify-content:space-between;gap:20px;color:#6b6358;font-size:15px}
+</style>
+</head>
+<body>
+<div id="poster"></div>
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/common.js"></script>
+<script>
+const B = MAP.bounds;
+const pos = p => ({ x: (p.lng - B.west) / (B.east - B.west) * 100, y: (B.north - p.lat) / (B.north - B.south) * 100 });
+const PINS = [
+  ...MAP.stays.map((p, i) => ({ ...p, kind: 'stay', badge: String(i + 1), name: stayById(p.stay).name })),
+  ...MAP.places.map((p, i) => ({ ...p, kind: 'place', badge: 'ABCDEFGHIJKLMNOP'[i] })),
+];
+const SVG = '../images/map/marloth-park.svg';
+const ASPECT = 1166.5 / 1000;
+const GATE = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round"><path d="M4 21V5M20 21V5M4 9h16M4 16h16M9 9v7M14 9v7"/></svg>';
+
+// Close-up of the shops along Olifant Drive
+const INSET = { lat: -25.3482, lng: 31.7835, zoom: 4.4, size: 520 };
+const ic = pos(INSET), iw = INSET.size * INSET.zoom, ih = iw * ASPECT;
+const inInset = p => {
+  const { x, y } = pos(p);
+  const px = INSET.size / 2 + (x - ic.x) / 100 * iw, py = INSET.size / 2 + (y - ic.y) / 100 * ih;
+  return px > 16 && px < INSET.size - 16 && py > 40 && py < INSET.size - 6 ? { px, py } : null;
+};
+
+const numbers = [[SITE.contactName + ' (bookings)', SITE.phone],
+  ...SERVICE_CATEGORIES.find(c => c.id === 'emergency').providers.filter(p => p.phones.length && !/Chiropract/.test(p.name)).map(p => [p.name.replace(/ —.*/, ''), p.phones.join(' / ')])];
+
+const pinHtml = (p, x, y, unit = '%') => `<div class="pin ${p.kind}" style="left:${x}${unit};top:${y}${unit}"><b>${p.badge}</b></div>`;
+document.getElementById('poster').innerHTML = `
+  <div class="head">
+    <img src="../images/logo.png" alt="" />
+    <div><h1>Map of Marloth Park</h1><p>Stays, shops &amp; services · ${SITE.name}</p></div>
+    <div class="contact"><strong>${SITE.contactName} · ${SITE.phone}</strong><span>WhatsApp or call for bookings &amp; help</span></div>
+  </div>
+  <div class="map">
+    <img src="${SVG}" alt="" />
+    ${MAP.landmarks.map(l => { const { x, y } = pos(l); return `<div class="mark ${l.side}" style="left:${x}%;top:${y}%"><i>${GATE}</i><em>${l.name}</em></div>`; }).join('')}
+    ${PINS.map(p => { const { x, y } = pos(p); return pinHtml(p, x, y); }).join('')}
+    <div class="north"><svg viewBox="0 0 24 24"><path d="M12 2l6 18-6-4-6 4z" fill="#6d5f49"/></svg><div>N</div></div>
+  </div>
+  <div class="bottom">
+    <div>
+      <h2>Close-up: Olifant Drive shops</h2>
+      <div class="inset">
+        <img src="${SVG}" alt="" style="width:${iw}px;left:${INSET.size / 2 - ic.x / 100 * iw}px;top:${INSET.size / 2 - ic.y / 100 * ih}px" />
+        ${PINS.map(p => { const q = inInset(p); return q ? pinHtml(p, q.px, q.py, 'px') : ''; }).join('')}
+      </div>
+      <p class="inset-note">The shops along Olifant Drive, zoomed in.</p>
+    </div>
+    <div>
+      <div class="legend-block"><h2>Stays</h2>
+        <ol class="list two">${PINS.filter(p => p.kind === 'stay').map(p => `<li><span class="badge">${p.badge}</span><span><strong>${p.name}</strong><small>${p.where}</small></span></li>`).join('')}</ol></div>
+      <div class="legend-block"><h2>Shops &amp; services</h2>
+        <ol class="list places">${PINS.filter(p => p.kind === 'place').map(p => `<li><span class="badge">${p.badge}</span><span><strong>${p.name} · ${p.where}</strong><small>${p.here}</small></span></li>`).join('')}</ol></div>
+    </div>
+  </div>
+  <div class="foot">
+    <h2>Useful numbers</h2>
+    <div class="numbers">${numbers.map(([n, ph]) => `<span><b>${n}</b> · ${ph}</span>`).join('')}</div>
+    <div class="fine"><span>${SITE.url.replace(/^https?:\/\//, '').replace(/\/$/, '')}</span><span>Map data © OpenStreetMap contributors</span></div>
+  </div>`;
+</script>
+</body>
+</html>

@@ -77,7 +77,7 @@ A "whole house" option that includes rooms sold separately (Afrika Safari Gasteh
 
 ## Park map
 
-The "Map of Marloth Park" section draws `images/map/marloth-park.svg` (built by `python -I tools/build_map.py` from the OpenStreetMap extract in `tools/map/`) and places the pins listed in `MAP` in `assets/js/data.js`. To add a stay or shop, add an entry with its `lat`/`lng` (right-click the spot in Google Maps to copy them) and a `where` line. Each name opens Google Maps at that spot.
+The "Map of Marloth Park" section draws `images/map/marloth-park.svg` (built by `python -I tools/build_map.py` from the OpenStreetMap extract in `tools/map/`) and places the pins listed in `MAP` in `assets/js/data.js`. To add a stay or shop, add an entry with its `lat`/`lng` (right-click the spot in Google Maps to copy them) and a `where` line. Each name opens Google Maps at that spot, and a stay with a pin gets a "Where it is" map on its page. After changing pins, run `python -I tools/make_map_poster.py` to refresh the downloadable map picture (`images/map/marloth-park-map.jpg`, drawn from `tools/map-poster.html`).
 
 ## Link previews (WhatsApp, Facebook) and Google
 

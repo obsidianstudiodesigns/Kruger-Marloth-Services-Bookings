@@ -215,6 +215,8 @@ function openStay(id, push = true) {
   const parent = s.parent && stayById(s.parent);             // set when this is one of those units
   const unitWord = (parent || s).unitLabel || 'unit';
   const sheet = $('#sheet');
+  const pin = stayPin(s);
+  const pinPos = pin && mapPos(pin);
 
   sheet.innerHTML = `
     <div class="sheet-bar"><div class="container">
@@ -231,7 +233,7 @@ function openStay(id, push = true) {
         <div>
           <div class="detail-head">
             <h1>${esc(s.name)}</h1>
-            <div class="detail-loc">${icon('pin')}Marloth Park, next to the Kruger National Park</div>
+            <div class="detail-loc">${icon('pin')}${pin ? `${esc(pin.where)}, Marloth Park · <button class="link-btn" data-show-map>Show on map</button>` : 'Marloth Park, next to the Kruger National Park'}</div>
             ${parent ? `<button class="parent-link" data-parent>${icon('left')}Part of ${esc(parent.name)} · see all ${unitsOf(parent.id).length} ${unitWord}s</button>` : ''}
           </div>
           <div class="detail-facts">${units.length ? `
@@ -272,6 +274,22 @@ function openStay(id, push = true) {
             <div class="rule">${icon('info')}<div><strong>Deposit</strong>${esc(rules.deposit)}</div></div>
             ${(rules.notes || []).map(([title, text]) => `<div class="rule">${icon('info')}<div><strong>${esc(title)}</strong>${esc(text)}</div></div>`).join('')}
           </div>
+          ${pin ? `
+          <h3 class="sub">Where it is</h3>
+          <div class="stay-where">
+            <button class="stay-where-map" data-show-map aria-label="Show ${esc(s.name)} on the park map">
+              <img src="images/map/marloth-park.svg?v=20261112d" alt="" style="transform:translate(-${pinPos.x.toFixed(2)}%,-${pinPos.y.toFixed(2)}%)" />
+              <span class="map-pin stay on" style="left:50%;top:50%"><span>${pin.badge}</span></span>
+            </button>
+            <div class="stay-where-info">
+              <strong>${esc(pin.where)}</strong>
+              <span>Marloth Park, between the Kruger National Park and Lionspruit</span>
+              <div class="stay-where-actions">
+                <button class="btn btn-ghost" data-show-map>${icon('map')}Show on park map</button>
+                <a class="btn btn-primary" href="${gmapsHref(pin)}" target="_blank" rel="noopener">${icon('pin')}Google Maps</a>
+              </div>
+            </div>
+          </div>` : ''}
           ${s.flyer ? `
           <h3 class="sub">Property flyer</h3>
           <button class="flyer-btn" data-flyer>
@@ -340,6 +358,11 @@ function openStay(id, push = true) {
     if (t.closest('[data-parent]')) return openStay(parent.id);
     if (t.closest('[data-jump-units]')) return $('#unitsHead').scrollIntoView({ behavior: 'smooth', block: 'start' });
     if (t.closest('[data-share]')) return shareStay(s);
+    if (t.closest('[data-show-map]')) {
+      hideStay();
+      history.replaceState(null, '', SITE_ROOT + '#map');
+      return showOnMap(pin.key);
+    }
     if (t.closest('[data-book-email]')) return sendRequest('email');
     if (t.closest('[data-jump]')) return $('#bookCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
     if (t.closest('[data-flyer]')) return openLightbox([{ src: `images/stays/${s.id}/flyer.jpg` }], 0, s.name + ' flyer');
@@ -671,6 +694,25 @@ const MAP_PINS = [
   }),
   ...MAP.places.map((p, i) => ({ ...p, kind: 'place', key: `p${i}`, badge: 'ABCDEFGHIJKLMNOP'[i] })),
 ];
+// The map pin for a stay, or for the property a unit belongs to
+function stayPin(s) { return MAP_PINS.find(p => p.kind === 'stay' && (p.stay === s.id || p.stay === s.parent)); }
+function showOnMap(key) {
+  const p = MAP_PINS.find(x => x.key === key);
+  if (!p) return;
+  if (mp.filter !== 'all') { mp.filter = 'all'; renderMap(); }
+  mapLoad();
+  $('#mapView').scrollIntoView({ behavior: 'instant', block: 'center' });
+  const { w, h } = mapSize(), { x, y } = mapPos(p);
+  mp.z = 3;
+  mp.tx = w / 2 - x / 100 * w * mp.z;
+  mp.ty = h / 2 - y / 100 * h * mp.z;
+  $('#mapView').classList.add('used');
+  mapApply();
+  openPop(key);
+  const el = $(`.map-pin[data-pin="${key}"]`);
+  el.classList.remove('hl'); void el.offsetWidth; el.classList.add('hl');
+}
+let mapLoad = () => {};
 function renderMap() {
   $('#mapPins').innerHTML = MAP_PINS.map(p => {
     const { x, y } = mapPos(p);
@@ -793,6 +835,7 @@ function initMap() {
   // Pan with one pointer, pinch with two; a press that barely moves is a tap
   const rel = e => { const r = view.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
   view.addEventListener('pointerdown', e => {
+    view.classList.add('used');
     if (e.target.closest('.map-zoom, .map-pop') || (e.pointerType === 'mouse' && e.button !== 0)) return;
     mp.pts.set(e.pointerId, rel(e));
     if (mp.pts.size === 1) mp.moved = 0;
@@ -844,10 +887,10 @@ function initMap() {
 
   // Load the drawn map when the section comes near the screen
   let loading = false;
-  const load = () => {
+  const load = mapLoad = () => {
     if (loading) return;
     loading = true;
-    fetch('images/map/marloth-park.svg?v=20261112c').then(r => r.text()).then(t => { $('#mapSvg').innerHTML = t; view.classList.add('ready'); });
+    fetch('images/map/marloth-park.svg?v=20261112d').then(r => r.text()).then(t => { $('#mapSvg').innerHTML = t; view.classList.add('ready'); });
   };
   if ('IntersectionObserver' in window) {
     const io = new IntersectionObserver(es => { if (es.some(x => x.isIntersecting)) { io.disconnect(); load(); } }, { rootMargin: '800px' });
