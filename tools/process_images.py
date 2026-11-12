@@ -164,6 +164,8 @@ SERVICES = {
   'marlothi-bushnet':     ('Shops', 'Screenshot_20261111_224918_Samsung Browser.jpg', None),
   'marlothi-nails':       ('Shops', 'Screenshot_20261111_224944_Samsung Browser.jpg', None),
   'wildman-wouter':       ('Tree felling  cutting', 'IMG-20261111-WA0157.jpg', None),
+  # Rendered from 'Arma ad white BG.pdf' in the same folder
+  'as-architectural':     ('Architectural & Building Plans', 'arma-ad.png', None),
   'home-care-mel':        ('Emergency services/Caregiver', 'IMG-20261111-WA0137.jpg', None),
   'labri-spa':            ("Spa's/L'bri spa", 'IMG-20261111-WA0150.jpg', None),
   'labri-spa-2':          ("Spa's/L'bri spa", 'IMG-20261111-WA0151.jpg', None),

@@ -1190,6 +1190,20 @@ const SERVICE_CATEGORIES = [
     ],
   },
   {
+    id: 'architectural', icon: 'home', name: 'Architectural & Building Plans',
+    blurb: 'House plans, alterations and municipal submissions.',
+    providers: [
+      {
+        name: 'A S Architectural Drawing Services', image: 'images/services/as-architectural.jpg',
+        description: 'Professional architectural drawing services specialising in new houses, alterations, additions, as-built building plans and municipal submissions. Based in Marloth Park. Ask for Arma Steyn.',
+        tags: ['New houses', 'Alterations & additions', 'As-built building plans', 'Municipal submissions'],
+        phones: ['084 261 6190'],
+        email: 'asteyn@live.co.za',
+        area: 'Marloth Park, Mpumalanga',
+      },
+    ],
+  },
+  {
     id: 'dstv', icon: 'tv', name: 'DStv & TV',
     blurb: 'DStv and OpenView installs, signal repairs and more.',
     providers: [
