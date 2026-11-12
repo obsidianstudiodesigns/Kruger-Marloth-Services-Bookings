@@ -327,15 +327,16 @@ function openStay(id, push = true) {
             </div>
             <div class="field"><label for="bName">Full name</label><input id="bName" autocomplete="name" required /></div>
             <div class="field"><label for="bPhone">Phone / WhatsApp</label><input id="bPhone" type="tel" autocomplete="tel" required /></div>
+            <div class="field"><label for="bEmail">Email <span class="opt">(optional)</span></label><input id="bEmail" type="email" autocomplete="email" placeholder="So ${SITE.contactName} can reply by email" /></div>
             <div class="field"><label for="bNotes">Message (optional)</label><textarea id="bNotes" rows="2" style="min-height:64px" placeholder="Arrival time, special requests…"></textarea></div>
             <div class="quote" id="quote"></div>
             <label class="consent"><input type="checkbox" id="bConsent" />
               <span>I agree that my details may be used to process this booking request, as set out in the <a href="privacy.html" target="_blank" rel="noopener">privacy notice</a> (POPIA).</span></label>
             <div class="book-actions">
-              <button class="btn btn-wa" type="submit">${icon('whatsapp')}Book via WhatsApp</button>
-              <button class="btn btn-ghost" type="button" data-book-email>${icon('mail')}Book via email</button>
+              <button class="btn btn-primary" type="button" data-book-email>${icon('mail')}Send request</button>
+              <button class="btn btn-wa" type="submit">${icon('whatsapp')}WhatsApp</button>
             </div>
-            <p class="form-note">${icon('info')}<span>No payment now. Your request opens in WhatsApp or your email app, ready to send. ${SITE.contactName} then confirms availability and the booking details with you.</span></p>
+            <p class="form-note">${icon('info')}<span>No payment now. <b>Send request</b> emails it straight to ${SITE.contactName} — or send it on WhatsApp. ${SITE.contactName} then confirms availability and the booking details with you.</span></p>
           </form>
         </aside>`}
       </div>
@@ -523,34 +524,75 @@ function rateTable(s) {
 function sendRequest(channel) {
   const { stay, ci, co } = cal;
   const nights = nightsBetween(ci, co);
-  const name = $('#bName').value.trim(), phone = $('#bPhone').value.trim();
+  const name = $('#bName').value.trim(), phone = $('#bPhone').value.trim(), email = $('#bEmail').value.trim();
   if (!ci || !co) { toast('Please select your check-in and check-out dates on the calendar.'); return; }
   const minNights = minNightsFor(stay, ci, co);
   if (nights < minNights) { toast(`Minimum stay is ${minNights} nights.`); return; }
   if (!name || !phone) { toast('Please add your name and phone number.'); (name ? $('#bPhone') : $('#bName')).focus(); return; }
+  if (email && !$('#bEmail').checkValidity()) { toast('Please check your email address (or leave it empty).'); $('#bEmail').focus(); return; }
   if (!$('#bConsent').checked) { toast('Please tick the box to agree to the privacy notice.'); $('#bConsent').closest('label').classList.add('need'); return; }
   const adults = $('#bAdults').value, kids = $('#bKids').value, notes = $('#bNotes').value.trim();
-  const viaEmail = channel === 'email';
+  const guests = `${adults} adult${adults > 1 ? 's' : ''}${Number(kids) ? `, ${kids} child${kids > 1 ? 'ren' : ''}` : ''}`;
+  const total = money(stayTotal(stay, ci, co, guestCount()));
+  if (channel === 'email') return emailRequest({ stay, ci, co, nights, name, phone, email, guests, notes, total });
   const text = [
-    `Hi ${SITE.contactName}, I'd like to book ${viaEmail ? stayLabel(stay) : `*${stayLabel(stay)}*`}.`,
+    `Hi ${SITE.contactName}, I'd like to book *${stayLabel(stay)}*.`,
     '',
     `Check-in: ${fmtDate(ci)}`,
     `Check-out: ${fmtDate(co)} (${nights} nights)`,
-    `Guests: ${adults} adult${adults > 1 ? 's' : ''}${Number(kids) ? `, ${kids} child${kids > 1 ? 'ren' : ''}` : ''}`,
+    `Guests: ${guests}`,
     `Name: ${name}`,
     `Phone: ${phone}`,
+    email ? `Email: ${email}` : null,
     notes ? `Notes: ${notes}` : null,
     '',
-    `Estimated total: ${money(stayTotal(stay, ci, co, guestCount()))}`,
+    `Estimated total: ${total}`,
     stayUrl(stay.id),
   ].filter(l => l !== null).join('\n');
-  if (viaEmail) {
-    const subject = `Booking request — ${stayLabel(stay)}, ${fmtRange(ci, co)}`;
-    location.href = `mailto:${SITE.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
-    toast(`Your email app opened with the request — press send and ${SITE.contactName} will confirm your booking.`, 6000);
-  } else {
-    window.open(waHref(SITE.whatsapp, text), '_blank', 'noopener');
-    toast(`WhatsApp opened with your request — press send and ${SITE.contactName} will confirm your booking.`, 6000);
+  window.open(waHref(SITE.whatsapp, text), '_blank', 'noopener');
+  toast(`WhatsApp opened with your request — press send and ${SITE.contactName} will confirm your booking.`, 6000);
+}
+
+/* Booking request by email: posted straight to the owner's inbox through FormSubmit (free, no
+   account). If that fails, fall back to opening the guest's email app with the request filled in. */
+async function emailRequest(r) {
+  const btn = document.querySelector('[data-book-email]');
+  const subject = `Booking request — ${stayLabel(r.stay)}, ${fmtRange(r.ci, r.co)}`;
+  const fields = {
+    Stay: stayLabel(r.stay),
+    'Check-in': fmtDate(r.ci),
+    'Check-out': `${fmtDate(r.co)} (${r.nights} nights)`,
+    Guests: r.guests,
+    Name: r.name,
+    Phone: r.phone,
+    Email: r.email || '—',
+    Message: r.notes || '—',
+    'Estimated total': r.total,
+    Link: stayUrl(r.stay.id),
+  };
+  btn.disabled = true;
+  btn.innerHTML = icon('refresh') + 'Sending…';
+  try {
+    const res = await fetch(`https://formsubmit.co/ajax/${SITE.email}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({ ...fields, _subject: subject, _template: 'table', _captcha: 'false', ...(r.email ? { _replyto: r.email } : {}) }),
+    });
+    const out = await res.json().catch(() => ({}));
+    if (!res.ok || String(out.success) !== 'true') throw new Error(out.message || `HTTP ${res.status}`);
+    $('#bookForm').innerHTML = `<div class="sent">
+      <span class="sent-icon">${icon('check')}</span>
+      <h4>Request sent to ${esc(SITE.contactName)}</h4>
+      <p>${esc(stayLabel(r.stay))} · ${esc(fmtRange(r.ci, r.co))} · ${esc(r.guests)}</p>
+      <p>${esc(SITE.contactName)} will confirm availability with you on ${esc(r.phone)}${r.email ? ` or ${esc(r.email)}` : ''}, usually within a day.</p>
+      <a class="btn btn-wa btn-block" target="_blank" rel="noopener" href="${waHref(SITE.whatsapp, `Hi ${SITE.contactName}, I've just sent a booking request for ${stayLabel(r.stay)} (${fmtRange(r.ci, r.co)}).`)}">${icon('whatsapp')}Follow up on WhatsApp</a>
+    </div>`;
+  } catch (e) {
+    btn.disabled = false;
+    btn.innerHTML = icon('mail') + 'Send request';
+    const body = Object.entries(fields).map(([k, v]) => `${k}: ${v}`).join('\n');
+    location.href = `mailto:${SITE.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(`Hi ${SITE.contactName}, I'd like to book.\n\n${body}`)}`;
+    toast(`We couldn't send it automatically, so your email app opened with the request — press send, or use WhatsApp.`, 7000);
   }
 }
 

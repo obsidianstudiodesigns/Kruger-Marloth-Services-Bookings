@@ -442,6 +442,13 @@ footer a:hover{opacity:1;color:var(--sun)}
 .cal-d.booked.held.on{color:var(--charcoal);text-decoration:none}
 .cal-d.booked.held.on:hover{background:var(--sand-2)}
 .book-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.field .opt{font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0}
+.sent{text-align:center;padding:18px 6px 4px}
+.sent-icon{display:inline-grid;place-items:center;width:52px;height:52px;border-radius:50%;background:#e6f2e8;color:var(--ok);margin-bottom:10px}
+.sent-icon .ic{width:26px;height:26px}
+.sent h4{font-size:1.2rem;margin-bottom:6px}
+.sent p{font-size:.88rem;color:var(--muted);margin-bottom:8px}
+.sent .btn{margin-top:8px}
 .book-actions .btn{padding:0 12px;font-size:.88rem}
 .consent{display:flex;gap:10px;align-items:flex-start;font-size:.8rem;color:#4d463d;line-height:1.45;margin-top:4px}
 .consent input{width:18px;height:18px;margin-top:1px;flex-shrink:0;accent-color:var(--bush)}
