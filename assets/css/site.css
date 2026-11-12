@@ -241,8 +241,6 @@ section{padding:96px 0}
 .ml-text small{font-size:.78rem;color:var(--muted);line-height:1.35}
 .ml-go{color:var(--muted);flex:none}
 .ml-item:hover .ml-go{color:var(--bush)}
-.ml-note{display:flex;gap:8px;align-items:flex-start;font-size:.8rem;color:var(--muted);margin-top:6px}
-.ml-note .ic{flex:none;margin-top:2px}
 .mp-st-major{fill:#8a5e22}
 
 /* ---------- Experiences ---------- */

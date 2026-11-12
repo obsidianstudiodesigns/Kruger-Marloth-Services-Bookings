@@ -692,8 +692,7 @@ function renderMap() {
     <div class="ml-chips" role="toolbar" aria-label="Show on map">${chips.map(([k, t]) =>
       `<button class="pill ${mp.filter === k ? 'active' : ''}" data-mf="${k}" aria-pressed="${mp.filter === k}">${t}</button>`).join('')}</div>
     ${mp.filter !== 'place' ? `<h3 class="ml-head">${icon('home')}Stays</h3><ol class="ml-list">${MAP_PINS.filter(p => p.kind === 'stay').map(item).join('')}</ol>` : ''}
-    ${mp.filter !== 'stay' ? `<h3 class="ml-head">${icon('bag')}Shops &amp; services</h3><ol class="ml-list">${MAP_PINS.filter(p => p.kind === 'place').map(item).join('')}</ol>` : ''}
-    <p class="ml-note">${icon('info')}<span>Pins show the street; ${SITE.contactName} sends the exact address and directions when you book.</span></p>`;
+    ${mp.filter !== 'stay' ? `<h3 class="ml-head">${icon('bag')}Shops &amp; services</h3><ol class="ml-list">${MAP_PINS.filter(p => p.kind === 'place').map(item).join('')}</ol>` : ''}`;
   $('#mapView').dataset.filter = mp.filter;
 }
 function mapSize() { const v = $('#mapView'); return { w: v.clientWidth, h: v.clientHeight }; }
