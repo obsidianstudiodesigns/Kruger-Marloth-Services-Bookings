@@ -23,7 +23,7 @@ const write = (f, text) => {
 };
 
 // data.js declares its content with const, so return it from the script
-const { SITE, STAYS } = vm.runInNewContext(read('assets/js/data.js') + '\n;({ SITE, STAYS })');
+const { SITE, STAYS, MAP } = vm.runInNewContext(read('assets/js/data.js') + '\n;({ SITE, STAYS, MAP })');
 const URL_BASE = SITE.url.endsWith('/') ? SITE.url : SITE.url + '/';
 const TODAY = new Date().toISOString().slice(0, 10);
 const PHONE_INTL = '+' + SITE.whatsapp;
@@ -33,6 +33,13 @@ const unitsOf = id => STAYS.filter(x => x.parent === id);
 const parentOf = s => s.parent && STAYS.find(x => x.id === s.parent);
 const label = s => (parentOf(s) ? `${parentOf(s).name} – ${s.name}` : s.name);
 const LISTINGS = STAYS.filter(s => !s.parent);
+// Map pin for a stay (a unit uses its property's pin) → schema.org geo coordinates
+const pinOf = s => ((MAP && MAP.stays) || []).find(p => p.stay === s.id || p.stay === s.parent);
+const geoOf = s => { const p = pinOf(s); return p ? { '@type': 'GeoCoordinates', latitude: p.lat, longitude: p.lng } : undefined; };
+const rand = n => 'R' + n.toLocaleString('en-ZA').replace(/,/g, ' ');
+const prices = STAYS.filter(s => s.price).map(s => s.price);
+const topPrice = Math.max(...prices, ...STAYS.flatMap(s => (s.seasons || []).map(x => x.price)), ...STAYS.map(s => s.peakPrice || 0));
+const PRICE_RANGE = `${rand(Math.min(...prices))} – ${rand(topPrice)} per night`;
 
 const attr = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 const text = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -73,10 +80,10 @@ const blockRe = /<!-- SEO:START[\s\S]*?<!-- SEO:END -->/;
 if (!blockRe.test(template)) throw new Error('index.html has no <!-- SEO:START --> … <!-- SEO:END --> block');
 
 /* ---------- Home page ---------- */
-const homeDescription = `Book ${LISTINGS.length} handpicked self-catering bush homes in Marloth Park, next to the Kruger National Park — pools, bomas and wildlife at your door — plus trusted local services.`;
+const homeDescription = `Self-catering accommodation in Marloth Park next to the Kruger National Park — ${LISTINGS.length} handpicked bush homes with pools, bomas and wildlife at your door, plus trusted local services. Book direct with ${SITE.contactName}.`;
 const home = headBlock({
   base: './',
-  title: 'Kruger Marloth Services & Bookings — Self-catering stays in Marloth Park',
+  title: 'Marloth Park Accommodation | Kruger Marloth Services & Bookings',
   description: homeDescription,
   url: URL_BASE,
   image: URL_BASE + 'images/og/home.jpg',
@@ -86,9 +93,12 @@ const home = headBlock({
     '@graph': [
       {
         '@type': 'TravelAgency', '@id': URL_BASE + '#business', name: SITE.name, url: URL_BASE,
-        description: homeDescription, logo: URL_BASE + 'logo.jpg', image: URL_BASE + 'images/og/home.jpg',
+        description: homeDescription, logo: URL_BASE + 'images/logo-large.png', image: URL_BASE + 'images/og/home.jpg',
         telephone: PHONE_INTL, ...(SITE.email ? { email: SITE.email } : {}),
-        address: ADDRESS, areaServed: ['Marloth Park', 'Kruger National Park', 'Komatipoort'],
+        address: ADDRESS, geo: { '@type': 'GeoCoordinates', latitude: -25.349, longitude: 31.781 },
+        priceRange: PRICE_RANGE, currenciesAccepted: 'ZAR',
+        areaServed: ['Marloth Park', 'Kruger National Park', 'Komatipoort', 'Mpumalanga'],
+        knowsAbout: ['Marloth Park accommodation', 'Self-catering holiday homes', 'Kruger National Park safaris', 'Marloth Park local services'],
       },
       { '@type': 'WebSite', '@id': URL_BASE + '#website', name: SITE.name, url: URL_BASE, inLanguage: 'en-ZA' },
     ],
@@ -103,11 +113,11 @@ for (const s of STAYS) {
   const size = units.length
     ? `${units.length} self-catering ${s.unitLabel || 'unit'}s for ${Math.min(...units.map(u => u.sleeps))}–${Math.max(...units.map(u => u.sleeps))} guests each`
     : `Self-catering for ${s.sleeps} guests — ${s.bedrooms} bedroom${s.bedrooms > 1 ? 's' : ''}, ${s.bathrooms} bathroom${s.bathrooms > 1 ? 's' : ''}`;
-  const description = clip(`${s.tagline}. ${size} — in Marloth Park next to the Kruger. ${s.description}`);
+  const description = clip(`${s.tagline}. ${size} — self-catering accommodation in Marloth Park next to the Kruger. ${s.description}`);
   const photos = Array.from({ length: Math.min(s.photos, 6) }, (_, i) => `${URL_BASE}images/stays/${s.id}/${String(i + 1).padStart(2, '0')}.jpg`);
   const block = headBlock({
     base: '../../',
-    title: `${label(s)} | Self-catering in Marloth Park`,
+    title: `${label(s)} — Marloth Park Accommodation`,
     description,
     url,
     image: `${URL_BASE}images/og/${s.id}.jpg`,
@@ -118,6 +128,8 @@ for (const s of STAYS) {
         {
           '@type': 'LodgingBusiness', '@id': url + '#stay', name: label(s), url, description: s.description, image: photos,
           telephone: PHONE_INTL, address: ADDRESS, numberOfRooms: units.length || s.bedrooms,
+          ...(geoOf(s) ? { geo: geoOf(s) } : {}),
+          ...(s.price || units.length ? { priceRange: `From ${rand(s.price || Math.min(...units.map(u => u.price)))} per night` } : {}),
           amenityFeature: s.amenities.map(([, label]) => ({ '@type': 'LocationFeatureSpecification', name: label, value: true })),
           containedInPlace: parent ? { '@id': `${URL_BASE}stays/${parent.id}/#stay` } : { '@type': 'Place', name: 'Marloth Park' },
           provider: { '@id': URL_BASE + '#business' },
@@ -166,6 +178,7 @@ const basePath = new URL(URL_BASE).pathname;
 write('robots.txt', `User-agent: *
 Allow: /
 Disallow: ${basePath}admin.html
+Disallow: ${basePath}admin/
 
 Sitemap: ${URL_BASE}sitemap.xml
 `);

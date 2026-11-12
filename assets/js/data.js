@@ -20,7 +20,7 @@ const SITE = {
   ],
   // Public address of the site — used for link previews, Google and the sitemap.
   // Change it when the site moves to its own domain, then run: node tools/build-pages.cjs
-  url: 'https://obsidianstudiodesigns.github.io/Kruger-Marloth-Services-Bookings/',
+  url: 'https://krugermarlothservicesbookings.co.za/',
   // GitHub repository that hosts the website
   repo: { owner: 'obsidianstudiodesigns', name: 'Kruger-Marloth-Services-Bookings', branch: 'main' },
   // Separate repository the owner dashboard saves bookings to. Its access token

@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
-Disallow: /Kruger-Marloth-Services-Bookings/admin.html
+Disallow: /admin.html
+Disallow: /admin/
 
-Sitemap: https://obsidianstudiodesigns.github.io/Kruger-Marloth-Services-Bookings/sitemap.xml
+Sitemap: https://krugermarlothservicesbookings.co.za/sitemap.xml

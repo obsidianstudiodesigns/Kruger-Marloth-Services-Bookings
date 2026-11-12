@@ -197,7 +197,7 @@ function initStayGrid() {
    description in WhatsApp and Google. The <base> tag keeps relative links
    pointing at the site root while the address bar shows the property. */
 const SITE_ROOT = document.baseURI;
-const HOME_TITLE = 'Kruger Marloth Services & Bookings — Self-catering stays in Marloth Park';
+const HOME_TITLE = 'Marloth Park Accommodation | Kruger Marloth Services & Bookings';
 function stayUrl(id) { return new URL(`stays/${id}/`, SITE_ROOT).href; }
 function stayFromUrl() {
   const rel = location.href.startsWith(SITE_ROOT) ? location.href.slice(SITE_ROOT.length) : '';
@@ -386,7 +386,7 @@ function openStay(id, push = true) {
   sheet.scrollTop = 0;
   sheet.classList.add('open');
   document.body.classList.add('locked');
-  document.title = `${stayLabel(s)} | Self-catering in Marloth Park`;
+  document.title = `${stayLabel(s)} — Marloth Park Accommodation`;
 }
 
 function hideStay() {

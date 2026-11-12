@@ -1,7 +1,7 @@
 # Kruger Marloth Services & Bookings
 
 Static website for handpicked self-catering stays in Marloth Park, a local services directory, and an owner dashboard for managing bookings. Hosted on GitHub Pages:
-https://obsidianstudiodesigns.github.io/Kruger-Marloth-Services-Bookings/
+https://krugermarlothservicesbookings.co.za/ (was https://obsidianstudiodesigns.github.io/Kruger-Marloth-Services-Bookings/)
 
 ## What's in here
 
