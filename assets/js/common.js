@@ -187,7 +187,7 @@ function lsSet(key, value) {
 }
 function lsDel(key) { try { localStorage.removeItem(key); } catch (e) { /* ignore */ } }
 
-/* Public site: load booked ranges (published file + demo bookings in this browser) */
+/* Public site: load booked ranges from the file the owner dashboard publishes */
 async function loadAvailability() {
   const today = todayISO();
   let ranges = {};
@@ -199,10 +199,7 @@ async function loadAvailability() {
     const res = await fetch(`https://raw.githubusercontent.com/${owner}/${name}/${branch}/availability.json?m=${minute}`);
     if (res.ok) ranges = (await res.json()).ranges || {};
   } catch (e) { /* offline or not set up yet — fall through */ }
-  if (lsGet(LS.mode) === 'demo') {
-    const demo = computeAvailability(lsGet(LS.demoBookings, []), today).ranges;
-    for (const k in demo) ranges[k] = (ranges[k] || []).concat(demo[k]);
-  }
+  // (demo bookings are no longer merged in — the live calendar only shows real bookings)
   for (const k in ranges) ranges[k] = ranges[k].filter(([, b]) => b > today);
   return withLinked(ranges);
 }

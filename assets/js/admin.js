@@ -375,10 +375,7 @@ function renderAuth(step = 'login', error = '') {
         <button class="btn btn-primary btn-block" type="submit" id="aSubmit">${icon('lock')}${setup ? 'Save & open dashboard' : 'Sign in'}</button>
       </form>
       ${setup ? `<button class="btn btn-ghost btn-block" style="margin-top:10px" id="aBack">Back to sign in</button>` : `
-      <div class="auth-or">or</div>
-      <button class="btn btn-ghost btn-block" id="aDemo">${icon('star')}Try the demo (no setup)</button>
-      <p class="auth-note">Demo mode keeps sample bookings in this browser only, so you can try everything safely.
-        <br><a href="#" id="aSetup" style="color:var(--sun-dark);font-weight:600">First-time setup (Henry)</a></p>`}
+      <p class="auth-note"><a href="#" id="aSetup" style="color:var(--sun-dark);font-weight:600">First-time setup (Henry)</a></p>`}
     </div>`;
 
   $('#authForm').addEventListener('submit', async e => {
@@ -399,7 +396,6 @@ function renderAuth(step = 'login', error = '') {
     }
   });
   const on = (id, fn) => { const el = $('#' + id); if (el) el.onclick = e => { e.preventDefault(); fn(); }; };
-  on('aDemo', enterDemo);
   on('aSetup', () => renderAuth('setup'));
   on('aBack', () => renderAuth('login'));
 }
@@ -1116,7 +1112,8 @@ $('#signOutSide').onclick = async () => {
 (async function boot() {
   const mode = lsGet(LS.mode);
   const saved = lsGet(LS.settings, {});
-  if (mode === 'demo') return enterDemo();
+  // Demo mode has been retired: clear it from any browser that once tried it
+  if (mode === 'demo') { lsDel(LS.mode); lsDel(LS.demoBookings); renderAuth('login'); return; }
   if (mode === 'github' && saved.password) {
     $('#auth').classList.add('hidden');
     $('#shell').classList.remove('hidden');
