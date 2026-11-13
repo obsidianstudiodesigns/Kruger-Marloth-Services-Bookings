@@ -321,7 +321,7 @@ function openStay(id, push = true) {
           <form class="book-form" id="bookForm" novalidate>
             <div class="row">
               <div class="field"><label for="bAdults">Adults</label>
-                <select id="bAdults">${Array.from({ length: s.sleeps }, (_, i) => `<option ${i === 1 ? 'selected' : ''}>${i + 1}</option>`).join('')}</select></div>
+                <select id="bAdults">${Array.from({ length: Math.min(s.maxAdults || s.sleeps, s.sleeps) }, (_, i) => `<option ${i === 1 ? 'selected' : ''}>${i + 1}</option>`).join('')}</select></div>
               <div class="field"><label for="bKids">Children</label>
                 <select id="bKids">${Array.from({ length: s.sleeps }, (_, i) => `<option>${i}</option>`).join('')}</select></div>
             </div>
@@ -534,6 +534,7 @@ function sendRequest(channel) {
   const minNights = minNightsFor(stay, ci, co);
   if (nights < minNights) { toast(`Minimum stay is ${minNights} nights.`); return; }
   if (!name || !phone) { toast('Please add your name and phone number.'); (name ? $('#bPhone') : $('#bName')).focus(); return; }
+  if (guestCount() > stay.sleeps) { toast(`${stayLabel(stay)} sleeps ${stay.sleeps}${stay.maxAdults ? ` (up to ${stay.maxAdults} adults)` : ''} — please adjust the number of guests.`, 6000); return; }
   if (email && !$('#bEmail').checkValidity()) { toast('Please check your email address (or leave it empty).'); $('#bEmail').focus(); return; }
   if (!$('#bConsent').checked) { toast('Please tick the box to agree to the privacy notice.'); $('#bConsent').closest('label').classList.add('need'); return; }
   const adults = $('#bAdults').value, kids = $('#bKids').value, notes = $('#bNotes').value.trim();
