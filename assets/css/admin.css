@@ -347,3 +347,5 @@ code{background:var(--sand);padding:1px 6px;border-radius:5px;font-size:.82rem}
   .list-tools select{max-width:none;flex:1}
   .auth-card{padding:24px}
 }
+
+.field .opt{font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0}

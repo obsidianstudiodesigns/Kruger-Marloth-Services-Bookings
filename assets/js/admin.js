@@ -851,16 +851,17 @@ function openForm(existing, preset = {}) {
         <div id="fAvail"></div>
       </div>
       <div class="fsec guest-only"><h3>${icon('users')}Guest details</h3>
+        <p class="hint" style="margin:-4px 0 10px">Only the name and phone number are needed — everything else can be added later.</p>
         <div class="field"><label for="fName">Full name *</label><input id="fName" value="${esc(b.name || '')}" autocomplete="off" /></div>
         <div class="grid2" style="margin-top:12px">
           <div class="field"><label for="fPhone">Phone / WhatsApp *</label><input id="fPhone" type="tel" value="${esc(b.phone || '')}" /></div>
-          <div class="field"><label for="fEmail">Email</label><input id="fEmail" type="email" value="${esc(b.email || '')}" /></div>
+          <div class="field"><label for="fEmail">Email <span class="opt">(optional)</span></label><input id="fEmail" type="email" value="${esc(b.email || '')}" /></div>
         </div>
         <div class="grid2" style="margin-top:12px">
-          <div class="field"><label for="fId">ID / passport no.</label><input id="fId" value="${esc(b.idNumber || '')}" /></div>
-          <div class="field"><label for="fVehicle">Vehicle & registration</label><input id="fVehicle" value="${esc(b.vehicle || '')}" placeholder="For the Marloth gate" /></div>
+          <div class="field"><label for="fId">ID / passport no. <span class="opt">(optional)</span></label><input id="fId" value="${esc(b.idNumber || '')}" /></div>
+          <div class="field"><label for="fVehicle">Vehicle & registration <span class="opt">(optional)</span></label><input id="fVehicle" value="${esc(b.vehicle || '')}" placeholder="For the Marloth gate" /></div>
         </div>
-        <div class="field" style="margin-top:12px"><label for="fAddress">Home town / address</label><input id="fAddress" value="${esc(b.address || '')}" /></div>
+        <div class="field" style="margin-top:12px"><label for="fAddress">Home town / address <span class="opt">(optional)</span></label><input id="fAddress" value="${esc(b.address || '')}" /></div>
         <div class="grid3" style="margin-top:12px">
           <div class="field"><label for="fAdults">Adults</label><input id="fAdults" type="number" min="0" max="30" value="${b.adults ?? 2}" /></div>
           <div class="field"><label for="fKids">Children</label><input id="fKids" type="number" min="0" max="30" value="${b.children ?? 0}" /></div>
