@@ -79,6 +79,10 @@ A "whole house" option that includes rooms sold separately (Afrika Safari Gasteh
 
 The "Map of Marloth Park" section draws `images/map/marloth-park.svg` (built by `python -I tools/build_map.py` from the OpenStreetMap extract in `tools/map/`) and places the pins listed in `MAP` in `assets/js/data.js`. To add a stay or shop, add an entry with its `lat`/`lng` (right-click the spot in Google Maps to copy them) and a `where` line. Each name opens Google Maps at that spot, and a stay with a pin gets a "Where it is" map on its page. After changing pins, run `python -I tools/make_map_poster.py` to refresh the downloadable map picture (`images/map/marloth-park-map.jpg`, drawn from `tools/map-poster.html`).
 
+## Bookings backup
+
+Every dashboard save is a commit in the bookings repository (full history on GitHub). On top of that, the Windows task **"Kruger Marloth bookings backup"** on Henry's PC runs `tools/backup-bookings.ps1` every Sunday at 10:00 (or at the next logon if the PC was off). It saves `bookings-YYYY-MM-DD (encrypted).json` and `availability-YYYY-MM-DD.json` to `G:\My Drive\krugermarlothservicesandbookings.co.za\Backups`, which Google Drive for desktop uploads, and writes `backup-log.txt` there. About a year of copies is kept. To restore: dashboard → Settings → Backup → **Restore backup** and pick the file (it opens with the current owner password). Run it by hand with `powershell -NoProfile -ExecutionPolicy Bypass -File toolsackup-bookings.ps1`.
+
 ## Link previews (WhatsApp, Facebook) and Google
 
 - Every property has its own page, e.g. `stays/kruger-naledi/`. Shared links show that property's photo, name and description; the home page shows a collage with the logo. The share button and the property cards use these addresses.

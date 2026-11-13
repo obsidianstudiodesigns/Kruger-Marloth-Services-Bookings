@@ -987,7 +987,7 @@ function renderSettings() {
       </div>
       <div class="panel"><div class="panel-head"><h2>Backup</h2></div>
         <div class="set-body">
-          <p>Download a copy of all bookings and guest history. Keep it somewhere safe — it contains guests’ personal details.</p>
+          <p>Download a copy of all bookings and guest history. Keep it somewhere safe — it contains guests’ personal details. An encrypted copy is also saved automatically every week to the <b>Backups</b> folder on Google Drive; <b>Restore backup</b> accepts either file.</p>
           <div class="page-actions">
             <button class="btn btn-ghost" id="sExport">${icon('download')}Download backup (.json)</button>
             <button class="btn btn-ghost" id="sCsv">${icon('download')}Export spreadsheet (.csv)</button>
@@ -1040,7 +1040,12 @@ function afterSettings() {
     const file = e.target.files[0];
     if (!file) return;
     try {
-      const data = JSON.parse(await file.text());
+      let data = JSON.parse(await file.text());
+      // The weekly Google Drive copies are the encrypted bookings file: open it with the current password
+      if (data && data.salt && data.iv && data.data) {
+        try { data = await decryptVault(data, app.passphrase); }
+        catch (decErr) { toast('This backup was saved with a different password, so it can’t be opened while signed in with the current one.', true, 7000); imp.value = ''; return; }
+      }
       const list = Array.isArray(data) ? data : data.bookings;
       if (!Array.isArray(list) || list.some(b => !b.stayId || !b.checkin || !b.checkout)) throw new Error('bad file');
       if (!await confirmDialog({ title: 'Restore this backup?', text: `${list.length} bookings will replace the ${app.bookings.length} bookings currently saved.`, ok: 'Restore' })) return;
