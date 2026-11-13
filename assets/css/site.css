@@ -443,6 +443,10 @@ footer a:hover{opacity:1;color:var(--sun)}
 .cal-d.booked.held.on:hover{background:var(--sand-2)}
 .book-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .field .opt{font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0}
+.send-fail{margin-top:10px;padding:12px;border-radius:12px;background:#fff6e5;border:1px solid #f0d3a0;font-size:.85rem}
+.send-fail p{margin-bottom:10px;line-height:1.45}
+.send-fail .send-fail-alt{margin:10px 0 0;text-align:center;color:var(--muted);font-size:.8rem}
+.send-fail .send-fail-alt a,.send-fail .link-btn{color:var(--sun-dark);font-weight:600;text-decoration:underline}
 .sent{text-align:center;padding:18px 6px 4px}
 .sent-icon{display:inline-grid;place-items:center;width:52px;height:52px;border-radius:50%;background:#e6f2e8;color:var(--ok);margin-bottom:10px}
 .sent-icon .ic{width:26px;height:26px}

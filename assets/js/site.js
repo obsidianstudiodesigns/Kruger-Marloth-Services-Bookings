@@ -556,7 +556,7 @@ function sendRequest(channel) {
 /* Booking request by email: posted straight to the owner's inbox through FormSubmit (free, no
    account). If that fails, fall back to opening the guest's email app with the request filled in. */
 async function emailRequest(r) {
-  const btn = document.querySelector('[data-book-email]');
+  const btn = document.querySelector('.book-actions [data-book-email]');
   const subject = `Booking request — ${stayLabel(r.stay)}, ${fmtRange(r.ci, r.co)}`;
   const fields = {
     Stay: stayLabel(r.stay),
@@ -570,6 +570,7 @@ async function emailRequest(r) {
     'Estimated total': r.total,
     Link: stayUrl(r.stay.id),
   };
+  $('#sendFail')?.remove();
   btn.disabled = true;
   btn.innerHTML = icon('refresh') + 'Sending…';
   try {
@@ -588,11 +589,17 @@ async function emailRequest(r) {
       <a class="btn btn-wa btn-block" target="_blank" rel="noopener" href="${waHref(SITE.whatsapp, `Hi ${SITE.contactName}, I've just sent a booking request for ${stayLabel(r.stay)} (${fmtRange(r.ci, r.co)}).`)}">${icon('whatsapp')}Follow up on WhatsApp</a>
     </div>`;
   } catch (e) {
+    // Stay on the page: offer WhatsApp (most guests have it), with the email app only as a link
     btn.disabled = false;
     btn.innerHTML = icon('mail') + 'Send request';
     const body = Object.entries(fields).map(([k, v]) => `${k}: ${v}`).join('\n');
-    location.href = `mailto:${SITE.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(`Hi ${SITE.contactName}, I'd like to book.\n\n${body}`)}`;
-    toast(`We couldn't send it automatically, so your email app opened with the request — press send, or use WhatsApp.`, 7000);
+    const intro = `Hi ${SITE.contactName}, I'd like to book.\n\n${body}`;
+    $('#sendFail')?.remove();
+    btn.closest('.book-actions').insertAdjacentHTML('afterend', `<div class="send-fail" id="sendFail" role="alert">
+      <p><b>Your request couldn't be sent from the website just now.</b> Send it to ${esc(SITE.contactName)} on WhatsApp instead — it's already written for you.</p>
+      <a class="btn btn-wa btn-block" target="_blank" rel="noopener" href="${waHref(SITE.whatsapp, intro)}">${icon('whatsapp')}Send on WhatsApp</a>
+      <p class="send-fail-alt">Or <a href="mailto:${SITE.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(intro)}">open it in your email app</a> · <button type="button" class="link-btn" data-book-email>try again</button></p>
+    </div>`);
   }
 }
 
