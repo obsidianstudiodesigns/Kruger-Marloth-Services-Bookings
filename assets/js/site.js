@@ -487,7 +487,7 @@ function updateQuote() {
   $('#quote').innerHTML = nights ? `
     <div><span>${even ? `${money(rate)} × ${nights} night${nights > 1 ? 's' : ''}` : `${nights} nights at seasonal rates`}</span><span>${money(total)}</span></div>
     <div class="total"><span>Estimated total</span><span>${money(total)}</span></div>
-    <small>Indicative rate — ${SITE.contactName} confirms the final price${stay.peakPrice ? ` (${esc(stay.peakLabel)}: ${money(stay.peakPrice)} / night)` : ''}${stay.seasons ? '. School holiday, long weekend and Easter rates apply on those dates' : ''}.</small>` : '';
+    <small>Indicative rate — ${SITE.contactName} confirms the final price${stay.peakPrice ? ` (${esc(stay.peakLabel)}: ${money(stay.peakPrice)} / night)` : ''}${stay.seasons ? `. ${esc(stay.holidayNote || 'School holiday, long weekend and Easter rates apply on those dates')}` : ''}.</small>` : '';
 }
 
 /* Stays priced by group size list `rates`: one table per season, rows of [guests, price per night] */
@@ -499,7 +499,11 @@ function nightlyRate(stay, guests) {
 }
 // Seasonal pricing: seasons with from/to ('MM-DD') set the price of the nights that fall in them
 function nightsOf(ci, co) { const out = []; for (let d = ci; d < co; d = addDays(d, 1)) out.push(d); return out; }
-function seasonFor(stay, iso) { return (stay.seasons || []).find(x => x.from && iso.slice(5) >= x.from && iso.slice(5) <= x.to); }
+// A season applies to a night by date range (from/to 'MM-DD') or by weekday of that night (days: 0 = Sun … 6 = Sat)
+function seasonFor(stay, iso) {
+  const md = iso.slice(5), dow = parseISO(iso).getDay();
+  return (stay.seasons || []).find(x => (x.from && md >= x.from && md <= x.to) || (x.days && x.days.includes(dow)));
+}
 function stayTotal(stay, ci, co, guests) {
   return nightsOf(ci, co).reduce((t, d) => t + (seasonFor(stay, d)?.price ?? nightlyRate(stay, guests)), 0);
 }
@@ -507,9 +511,10 @@ function minNightsFor(stay, ci, co) {
   return Math.max(stayRules(stay).minNights, ...(ci && co ? nightsOf(ci, co).map(d => seasonFor(stay, d)?.min || 0) : [0]));
 }
 function seasonTable(s) {
+  const mins = s.seasons.some(r => r.min);
   return `<table class="rate-table">
-    <thead><tr><th>Season</th><th>Min stay</th><th>Per night</th></tr></thead>
-    <tbody>${s.seasons.map(r => `<tr><td>${esc(r.label)}</td><td>${r.min} nights</td><td>${money(r.price)}</td></tr>`).join('')}</tbody>
+    <thead><tr><th>Season</th>${mins ? '<th>Min stay</th>' : ''}<th>Per night</th></tr></thead>
+    <tbody>${s.seasons.map(r => `<tr><td>${esc(r.label)}</td>${mins ? `<td>${r.min ? `${r.min} nights` : '—'}</td>` : ''}<td>${money(r.price)}</td></tr>`).join('')}</tbody>
   </table>${s.seasonNote ? `<div class="peak-note">${esc(s.seasonNote)}</div>` : ''}`;
 }
 function rateTable(s) {

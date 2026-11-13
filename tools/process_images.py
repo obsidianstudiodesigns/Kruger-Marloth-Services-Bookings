@@ -100,6 +100,12 @@ STAYS = {
   'phai-thong':       ('Phai Thong Hide Away', 'IMG-20260812-WA0269.jpg', 'file_00000000c1a0824386393e7cec6fc66d.png', ['IMG-20260812-WA0257.jpg'], []),
   'porcupine':        ('Porcupine@Marloth', 'IMG-20260828-WA0229.jpg', 'file_000000003ab88210a3576cddd350b5a9.png', [], ['IMG-20260828-WA0221.jpg', 'IMG-20260828-WA0223.jpg']),
   'salamah':          ('Salamah', 'IMG-20260721-WA0368.jpg', None, ['Screenshot_20260724_072322_WhatsApp.jpg', 'Screenshot_20260724_072329_WhatsApp.jpg'], []),
+  # Phone screenshots and the safari-vehicle advert left out
+  'sunset-bush-retreat': ('Sunset Bush Retreat',
+                       ['IMG-20261113-WA0091.jpg', 'IMG-20261113-WA0090.jpg', 'IMG-20261113-WA0226.jpg', 'IMG-20261113-WA0218.jpg',
+                        'IMG-20261113-WA0224.jpg', 'IMG-20261113-WA0216.jpg', 'IMG-20261113-WA0222.jpg', 'IMG-20261113-WA0223.jpg',
+                        'IMG-20261113-WA0214.jpg', 'IMG-20261113-WA0225.jpg'], None,
+                       ['IMG-20261113-WA0100.jpg', 'IMG-20261113-WA0215.jpg', 'IMG-20261113-WA0238.jpg'], []),
   'shingwedzi':       ('Shingwedzi@Marloth', 'Screenshot_20250801_134330_Chrome.jpg', None, [], 'ALL_SCREENSHOTS'),
   'waterpeer':        ('Waterpeer@Marloth', 'IMG-20250827-WA0182(2).jpg', 'file_00000000c5a48243a19912c4aae79e30.png', ['IMG-20250827-WA0180(3).jpg'], []),
   'wild-about-shawu': ('Wild about Shawu', 'IMG-20261029-WA0190.jpg', 'IMG-20260912-WA0025.jpg', ['Screenshot_20261029_231146_Samsung Notes.jpg'], []),
