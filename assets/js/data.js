@@ -757,7 +757,7 @@ const STAYS = [
     tagline: 'Luxury bush house with a lookout tower over the Crocodile River',
     description: 'A private, modern bush house a stone’s throw from the Crocodile River, with 180° views into the Kruger from its own lookout tower. Downstairs is an open-plan lounge and kitchen with a Nespresso machine and gas stove; upstairs, two queen bedrooms each have an en-suite with an outdoor shower looking into the bush. The deck has a pool with loungers, a boma and braai (plus a gas braai for rainy days), and game roams freely around the house. Daily housekeeping is included (except Sundays and Christmas Day), and safari drives can be arranged with Sunset Adventure Travel.',
     sleeps: 4, bedrooms: 2, bathrooms: 2,
-    price: 3800, priceFrom: true,
+    price: 4000,
     rules: {
       checkIn: '13:00',
       notes: [
@@ -774,7 +774,7 @@ const STAYS = [
       ['tv', 'Smart TV · Netflix, Prime & Disney+'], ['dish', 'Full kitchen with Nespresso'], ['sparkle', 'Daily housekeeping'],
       ['car', 'Carport for 2 with EV charger'], ['paw', 'Game roams around the house'],
     ],
-    draft: ['price'],
+    draft: [],
   },
   {
     id: 'shingwedzi',
