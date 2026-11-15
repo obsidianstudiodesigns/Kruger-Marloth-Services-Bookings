@@ -13,10 +13,22 @@ const SITE = {
   whatsapp: '27615129208',          // international format, no + or spaces
   email: 'whndistributors@gmail.com',
   location: 'Marloth Park, Mpumalanga, South Africa',
-  // Red call buttons in the header (iSecure's numbers)
+  // Red call buttons in the header: each opens a list of numbers to try in turn
   emergency: [
-    { label: '24/7 Security', short: 'Security', phone: '013 110 2595', icon: 'shield', who: 'iSecure 24/7 security' },
-    { label: 'Medical', short: 'Medical', phone: '064 511 2263', icon: 'medical', who: 'iSecure emergency medical services' },
+    { label: '24/7 Security', short: 'Security', icon: 'shield', contacts: [
+      { name: 'Securicon', note: '24-hour control room', phone: '082 567 2350' },
+      { name: 'Field Security', note: '24/7 control room', phone: '082 828 1043' },
+      { name: 'iSecure', note: '24/7 security', phone: '013 110 2595' },
+      { name: 'iSecure', note: '24/7 security (cell)', phone: '061 527 9330' },
+      { name: 'Police (SAPS)', note: 'National emergency', phone: '10111' },
+    ] },
+    { label: 'Medical', short: 'Medical', icon: 'medical', contacts: [
+      { name: 'Securicon ambulance', note: 'Medical emergency & ambulance', phone: '079 883 3350' },
+      { name: 'iSecure EMS', note: 'Emergency medical services', phone: '064 511 2263' },
+      { name: 'Marloth Park Medical Practice', note: 'Doctor', phone: '067 402 9139' },
+      { name: 'Ambulance (national)', note: 'Public ambulance service', phone: '10177' },
+      { name: 'Emergency from any cellphone', note: 'National emergency line', phone: '112' },
+    ] },
   ],
   // Public address of the site — used for link previews, Google and the sitemap.
   // Change it when the site moves to its own domain, then run: node tools/build-pages.cjs

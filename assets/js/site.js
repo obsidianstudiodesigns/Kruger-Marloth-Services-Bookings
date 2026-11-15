@@ -25,9 +25,28 @@ function toast(msg, ms = 4200) {
 function renderChrome() {
   $('#navWhatsapp').href = waHref(SITE.whatsapp, 'Hi ' + SITE.contactName + ', I found you on the Kruger Marloth website.');
   $('#navWhatsapp').innerHTML = icon('whatsapp') + '<span>WhatsApp us</span>';
-  // Red emergency buttons: a tap opens the phone's dialler with the number filled in
-  $('#navSos').innerHTML = (SITE.emergency || []).map(e =>
-    `<a class="btn sos-btn" href="${telHref(e.phone)}" aria-label="Call ${esc(e.who)}: ${esc(e.phone)}" title="${esc(e.who)} · ${esc(e.phone)}">${icon(e.icon)}<span class="sos-long">${esc(e.label)}</span><span class="sos-short">${esc(e.short)}</span></a>`).join('');
+  // Red emergency buttons: each opens a list of named numbers; tapping one opens the phone's dialler
+  const sosTel = ph => /^\d{3,5}$/.test(ph) ? `tel:${ph}` : telHref(ph);   // short national numbers stay as they are
+  $('#navSos').innerHTML = (SITE.emergency || []).map((e, i) => `
+    <div class="sos-wrap">
+      <button type="button" class="btn sos-btn" data-sos="${i}" aria-haspopup="true" aria-expanded="false" aria-controls="sosMenu${i}">${icon(e.icon)}<span class="sos-long">${esc(e.label)}</span><span class="sos-short">${esc(e.short)}</span></button>
+      <div class="sos-menu" id="sosMenu${i}" role="menu" aria-label="${esc(e.label)} numbers" hidden>
+        <p class="sos-head">${icon(e.icon)}<span><b>${esc(e.label)}</b> — tap to call. If nobody answers, try the next number.</span></p>
+        ${e.contacts.map(c => `<a class="sos-item" role="menuitem" href="${sosTel(c.phone)}">
+          <span class="sos-who"><strong>${esc(c.name)}</strong><small>${esc(c.note)}</small></span>
+          <span class="sos-num">${icon('phone')}${esc(c.phone)}</span></a>`).join('')}
+      </div>
+    </div>`).join('');
+  const closeSos = () => document.querySelectorAll('.sos-menu').forEach(m => { m.hidden = true; m.previousElementSibling.setAttribute('aria-expanded', 'false'); });
+  $('#navSos').addEventListener('click', e => {
+    const b = e.target.closest('[data-sos]');
+    if (!b) return;
+    const menu = $(`#sosMenu${b.dataset.sos}`), open = menu.hidden;
+    closeSos();
+    if (open) { menu.hidden = false; b.setAttribute('aria-expanded', 'true'); menu.querySelector('.sos-item')?.focus({ preventScroll: true }); }
+  });
+  document.addEventListener('click', e => { if (!e.target.closest('.sos-wrap')) closeSos(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSos(); });
   $('#menuBtn').innerHTML = icon('menu');
   $('#heroEyebrow').innerHTML = icon('pin') + 'Marloth Park · Mpumalanga';
   $('#searchBtn').innerHTML = icon('search') + 'Check availability';
