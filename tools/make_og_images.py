@@ -12,7 +12,7 @@ SITE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STAYS = os.path.join(SITE, 'images', 'stays')
 OUT = os.path.join(SITE, 'images', 'og')
 W, H = 1200, 630
-HOME_PHOTOS = ['phai-thong', 'kruger-naledi', 'moepel']   # big left, top right, bottom right
+HOME_PHOTOS = ['phai-thong', 'old-hippo', 'moepel']   # big left, top right, bottom right
 
 
 def cover(stay_id, size):

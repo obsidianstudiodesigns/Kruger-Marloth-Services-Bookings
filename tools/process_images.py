@@ -80,7 +80,6 @@ STAYS = {
   'marloth-bush-escape': ('Marloth Bush Escape', 'IMG-20261022-WA0092.jpg', 'IMG-20261022-WA0147.jpg', [], []),
   'hyena-bush-retreat': ('Hyena Bush Retreat/website', ['05_ea79e1b7.jpg', '01_39b1d551.jpg', '06_88c08d98.jpg', '07_395b4beb.jpg', '10_a8a749a8.jpg', '12_e05cad27.jpg', '25_90e5f798.jpg', '20_f6e57df2.jpg', '11_8310fbb9.jpg', '28_4fc21e3a.jpg', '29_c00619ce.jpg', '31_f687f821.jpg', '15_640856a2.jpg', '16_09ce9118.jpg', '13_20d6ad86.jpg', '08_a1a9f8a9.jpg', '18_e8c7b76c.jpg', '40_91b2ffbc.jpg', '38_e338cb41.jpg', '03_baeb5d7d.jpg', '02_4d6b896b.jpg'], None, '*', []),
   'indabush':         ('Indabush', 'IMG-20260313-WA0039.jpg', 'IMG-20260815-WA0090.jpg', ['IMG-20260815-WA0090(1).jpg'], []),
-  'kruger-naledi':    ('Kruger Naledi', 'IMG-20260818-WA0310.jpg', 'file_00000000b9b081f68da97969255d64e2.png', ['IMG-20260820-WA0079.jpg'], []),
   'mamba-house':      ('Mamba house', 'IMG-20260924-WA0075.jpg', None,
                        ['IMG-20260924-WA0045.jpg', 'IMG-20260924-WA0046.jpg', 'IMG-20260924-WA0055.jpg',
                         'IMG-20260924-WA0058.jpg', 'IMG-20260924-WA0059.jpg', 'IMG-20260924-WA0068.jpg',
