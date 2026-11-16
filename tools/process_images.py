@@ -19,7 +19,12 @@ SVC = os.path.join(SRC, '02 - Service Directories')
 # slug: (folder, cover — or a list of first photos in order, flyer, excluded files,
 #        files to trim black bars from[, extra photos from other folders])
 STAYS = {
-  'tarentaal':        ('2794 Tarentaal@Marloth', 'IMG-20261021-WA0310.jpg', 'IMG-20261021-WA0314.jpg', [], []),
+  # Tarentaal: the owner's new interior photos (16 Nov 2026) plus the original outside shots; near-identical repeats left out
+  'tarentaal':        ('2794 Tarentaal@Marloth',
+                       ['IMG-20261021-WA0310.jpg', 'WhatsApp Image 2026-11-16 at 13.38.48.jpeg', 'WhatsApp Image 2026-11-16 at 13.38.47 (2).jpeg', 'WhatsApp Image 2026-11-16 at 13.38.39.jpeg', 'WhatsApp Image 2026-11-16 at 13.38.41.jpeg',
+                        'WhatsApp Image 2026-11-16 at 13.38.38.jpeg', 'WhatsApp Image 2026-11-16 at 13.38.42 (2).jpeg', 'WhatsApp Image 2026-11-16 at 13.38.37 (1).jpeg', 'WhatsApp Image 2026-11-16 at 13.38.42.jpeg', 'WhatsApp Image 2026-11-16 at 13.38.37.jpeg',
+                        'WhatsApp Image 2026-11-16 at 13.38.42 (1).jpeg', '20261021_081305.jpg', '20261021_081310.jpg', '20261021_081330.jpg',
+                        'WhatsApp Image 2026-11-16 at 13.38.34.jpeg'], 'IMG-20261021-WA0314.jpg', '*', []),
   # Afrika Safari: photos from the guesthouse's own website (in 'website'), rooms bookable one by one
   'afrika-safari':    ('Afrika Safari Gastehuis/website',
                        ['g-lounge-wide.jpeg', 'gal-pool-table.jpeg', 'g-bar-counter.jpeg', 'gal-boma-bar.jpeg', 'g-kitchen.jpeg',
