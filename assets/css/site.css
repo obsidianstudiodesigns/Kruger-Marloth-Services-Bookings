@@ -426,6 +426,15 @@ footer a:hover{opacity:1;color:var(--sun)}
 .book-price strong{font-size:1.6rem;font-family:'Playfair Display'}
 .book-price span{color:var(--muted);font-size:.9rem}
 .peak-note{font-size:.82rem;color:var(--sun-dark);font-weight:600;margin-top:2px}
+.peak-badge{display:inline-flex;align-items:center;gap:6px;margin-bottom:8px;padding:5px 12px;border-radius:999px;background:#fff1de;color:#a3580f;font-size:.76rem;font-weight:700;letter-spacing:.02em}
+.peak-badge .ic{width:15px;height:15px}
+.peak-off{font-size:.82rem;color:var(--muted);margin:2px 0 6px}
+.peak-callout{display:flex;gap:8px;align-items:flex-start;margin:8px 0 6px;padding:10px 12px;border-radius:12px;background:#fff1de;border:1px solid #f3cf9b;color:#7a4410;font-size:.9rem;line-height:1.35}
+.peak-callout b{color:#a3580f}
+.peak-callout .ic{width:18px;height:18px;flex:none;color:#d07a1c;margin-top:1px}
+.peak-tag{display:block;margin-top:2px;font-family:'Inter',sans-serif;font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#c06a12;text-align:right}
+.peak-inline{font-style:normal;font-size:.72rem;font-weight:700;color:#c06a12;text-transform:uppercase;letter-spacing:.05em}
+.rate-table .peak-row td{font-weight:700;color:#a3580f;background:#fff7ec}
 .rate-table{width:100%;border-collapse:collapse;margin:10px 0 4px;font-size:.82rem}
 .rate-table th,.rate-table td{padding:6px 8px;text-align:right;border-bottom:1px solid var(--line)}
 .rate-table th:first-child,.rate-table td:first-child{text-align:left}

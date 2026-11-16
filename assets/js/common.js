@@ -235,13 +235,32 @@ function stayRules(s) {
   const p = s.parent && stayById(s.parent);
   return { ...DEFAULT_RULES, ...(p && p.rules), ...s.rules };
 }
+/* Peak season (SITE.peak, e.g. 1 Nov – 1 Jan): stays with a peakPrice charge it for nights in that window,
+   and show it as their headline price while the window is on. Stays priced by group size use the
+   rates table named by peakRates instead. */
+function inPeak(iso) {
+  const p = SITE.peak;
+  if (!p) return false;
+  const md = iso.slice(5);
+  return p.from <= p.to ? md >= p.from && md <= p.to : md >= p.from || md <= p.to;
+}
+function peakNow() { return inPeak(todayISO()); }
+function hasPeak(s) { return !!(s.peakPrice || (s.rates && s.peakRates != null)); }
+function currentPrice(s) {
+  if (peakNow()) {
+    if (s.peakPrice) return s.peakPrice;
+    if (s.rates && s.peakRates != null) return s.rates[s.peakRates].rows[0][1];
+  }
+  return s.price;
+}
 // Price and size for a card: a property with units shows its cheapest unit and its guest range
 function listingSummary(s) {
   const units = unitsOf(s.id);
-  if (!units.length) return { units, price: s.price, priceFrom: !!s.priceFrom, minSleeps: s.sleeps, sleeps: s.sleeps };
+  if (!units.length) return { units, price: currentPrice(s), priceFrom: !!s.priceFrom || !!s.rates, peak: peakNow() && hasPeak(s), minSleeps: s.sleeps, sleeps: s.sleeps };
   return {
     units,
-    price: Math.min(...units.map(u => u.price)),
+    price: Math.min(...units.map(currentPrice)),
+    peak: peakNow() && units.some(hasPeak),
     priceFrom: true,
     minSleeps: Math.min(...units.map(u => u.sleeps)),
     sleeps: Math.max(...units.map(u => u.sleeps)),

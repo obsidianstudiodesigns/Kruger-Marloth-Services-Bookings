@@ -178,7 +178,7 @@ function renderStays() {
         <span class="photo-count">${icon('images')}${s.photos}</span>
       </div>
       <div class="stay-info">
-        <div class="stay-title"><h3>${esc(s.name)}</h3><div class="stay-price">${sum.priceFrom ? '<small>from</small> ' : ''}${money(sum.price)} <small>/night</small></div></div>
+        <div class="stay-title"><h3>${esc(s.name)}</h3><div class="stay-price">${sum.priceFrom ? '<small>from</small> ' : ''}${money(sum.price)} <small>/night</small>${sum.peak ? `<span class="peak-tag">${esc(SITE.peak.label)}</span>` : ''}</div></div>
         <p class="stay-tagline">${esc(s.tagline)}</p>
         <ul class="facts">${n ? `
           <li>${icon('home')}${n} ${unitWord}s</li>
@@ -275,7 +275,7 @@ function openStay(id, push = true) {
               <div class="unit-media"><img src="${stayImg(u.id, 1, true)}" alt="${esc(u.name)}" loading="lazy" />
                 ${state.search ? `<span class="avail-flag ${free ? '' : 'no'}">${icon(free ? 'check' : 'x')}${free ? 'Available' : u.sleeps < state.search.guests ? 'Too small' : 'Unavailable'}</span>` : ''}</div>
               <div class="unit-body">
-                <div class="stay-title"><h4>${esc(u.name)}</h4><div class="stay-price">${money(u.price)} <small>/night</small></div></div>
+                <div class="stay-title"><h4>${esc(u.name)}</h4><div class="stay-price">${money(currentPrice(u))} <small>/night</small>${peakNow() && hasPeak(u) ? `<span class="peak-tag">${esc(SITE.peak.label)}</span>` : ''}</div></div>
                 <p class="stay-tagline">${esc(u.tagline)}</p>
                 <ul class="facts">
                   <li>${icon('users')}${u.sleeps} guests</li>
@@ -321,13 +321,13 @@ function openStay(id, push = true) {
         </div>
         ${units.length ? `
         <aside class="book-card" id="bookCard">
+          ${sum.peak ? `<div class="peak-badge">${icon('sun')}${esc(SITE.peak.label)} · ${esc(SITE.peak.range)}</div>` : ''}
           <div class="book-price"><span>From</span><strong>${money(sum.price)}</strong><span>/ night</span></div>
           <p class="peak-note">${units.length} ${esc(unitWord)}s, each with its own calendar. Choose one to check dates and book.</p>
-          <ul class="unit-mini">${units.map(u => `<li><button type="button" data-unit="${u.id}"><span>${esc(u.name)}</span><small>Sleeps ${u.sleeps} · ${money(u.price)}</small></button></li>`).join('')}</ul>
+          <ul class="unit-mini">${units.map(u => `<li><button type="button" data-unit="${u.id}"><span>${esc(u.name)}</span><small>Sleeps ${u.sleeps} · ${money(currentPrice(u))}</small></button></li>`).join('')}</ul>
         </aside>` : `
         <aside class="book-card" id="bookCard">
-          <div class="book-price">${s.priceFrom ? '<span>From</span>' : ''}<strong>${money(s.price)}</strong><span>/ night</span></div>
-          ${s.peakPrice ? `<div class="peak-note">${esc(s.peakLabel)}: ${money(s.peakPrice)} / night</div>` : ''}
+          ${priceBlock(s)}
           ${s.priceNote ? `<div class="peak-note">${esc(s.priceNote)}</div>` : ''}
           ${s.rates ? rateTable(s) : ''}
           ${s.seasons ? seasonTable(s) : ''}
@@ -361,7 +361,7 @@ function openStay(id, push = true) {
       </div>
     </div></div>
     <div class="mobile-book">
-      <div>${sum.priceFrom ? '<span>From</span> ' : ''}<strong>${money(sum.price)}</strong> <span>per night · indicative</span></div>
+      <div>${sum.priceFrom ? '<span>From</span> ' : ''}<strong>${money(sum.price)}</strong> <span>per night · ${sum.peak ? esc(SITE.peak.label.toLowerCase()) : 'indicative'}</span></div>
       ${units.length
         ? `<button class="btn btn-primary" data-jump-units>${icon('home')}Choose a ${esc(unitWord)}</button>`
         : `<button class="btn btn-primary" data-jump>${icon('calendar')}Check dates</button>`}
@@ -500,13 +500,14 @@ function updateQuote() {
   else if (!co) msg.textContent = 'Now select your check-out date.';
   else if (nights < minNightsFor(stay, ci, co)) { msg.textContent = `Minimum stay is ${minNightsFor(stay, ci, co)} nights for these dates.`; msg.classList.add('warn'); }
   else msg.textContent = `${nights} nights selected — these dates are open.`;
-  const rate = nightlyRate(stay, guestCount());
+  const rate = ci ? nightPrice(stay, ci, guestCount()) : nightlyRate(stay, guestCount());
   const total = nights ? stayTotal(stay, ci, co, guestCount()) : 0;
   const even = total === rate * nights;
+  const allPeak = nights && nightsOf(ci, co).every(inPeak) && hasPeak(stay);
   $('#quote').innerHTML = nights ? `
-    <div><span>${even ? `${money(rate)} × ${nights} night${nights > 1 ? 's' : ''}` : `${nights} nights at seasonal rates`}</span><span>${money(total)}</span></div>
+    <div><span>${even ? `${money(rate)} × ${nights} night${nights > 1 ? 's' : ''}${allPeak ? ` <em class="peak-inline">${esc(SITE.peak.label.toLowerCase())}</em>` : ''}` : `${nights} nights at seasonal rates`}</span><span>${money(total)}</span></div>
     <div class="total"><span>Estimated total</span><span>${money(total)}</span></div>
-    <small>Indicative rate — ${SITE.contactName} confirms the final price${stay.peakPrice ? ` (${esc(stay.peakLabel)}: ${money(stay.peakPrice)} / night)` : ''}${stay.seasons ? `. ${esc(stay.holidayNote || 'School holiday, long weekend and Easter rates apply on those dates')}` : ''}.</small>` : '';
+    <small>Indicative rate — ${SITE.contactName} confirms the final price${hasPeak(stay) ? `. ${esc(SITE.peak.label)} (${esc(SITE.peak.range)}) nights are charged at the peak rate` : ''}${stay.seasons ? `. ${esc(stay.holidayNote || 'School holiday, long weekend and Easter rates apply on those dates')}` : ''}.</small>` : '';
 }
 
 /* Stays priced by group size list `rates`: one table per season, rows of [guests, price per night] */
@@ -523,8 +524,38 @@ function seasonFor(stay, iso) {
   const md = iso.slice(5), dow = parseISO(iso).getDay();
   return (stay.seasons || []).find(x => (x.from && md >= x.from && md <= x.to) || (x.days && x.days.includes(dow)));
 }
+// Price of one night: a dated season wins, then peak season, then a weekday season, then the normal rate
+function nightPrice(stay, iso, guests) {
+  const md = iso.slice(5), seasons = stay.seasons || [];
+  const dated = seasons.find(x => x.from && md >= x.from && md <= x.to);
+  if (dated) return dated.price;
+  if (inPeak(iso)) {
+    if (stay.peakPrice) return stay.peakPrice;
+    if (stay.rates && stay.peakRates != null) {
+      const rows = stay.rates[stay.peakRates].rows;
+      return (rows.find(([n]) => n >= guests) || rows[rows.length - 1])[1];
+    }
+  }
+  const dow = parseISO(iso).getDay();
+  const weekday = seasons.find(x => x.days && x.days.includes(dow));
+  if (weekday) return weekday.price;
+  return nightlyRate(stay, guests);
+}
 function stayTotal(stay, ci, co, guests) {
-  return nightsOf(ci, co).reduce((t, d) => t + (seasonFor(stay, d)?.price ?? nightlyRate(stay, guests)), 0);
+  return nightsOf(ci, co).reduce((t, d) => t + nightPrice(stay, d, guests), 0);
+}
+// Headline price on the booking card: the peak price is the big number during peak season
+function priceBlock(s) {
+  const P = SITE.peak, peak = hasPeak(s);
+  const from = s.priceFrom || s.rates ? '<span>From</span>' : '';
+  const peakVal = s.peakPrice ? money(s.peakPrice) : peak ? `from ${money(s.rates[s.peakRates].rows[0][1])}` : '';
+  if (peak && peakNow()) return `
+          <div class="peak-badge">${icon('sun')}${esc(P.label)} · ${esc(P.range)}</div>
+          <div class="book-price">${s.rates ? '<span>From</span>' : ''}<strong>${money(currentPrice(s))}</strong><span>/ night</span></div>
+          <div class="peak-off">Rest of the year: ${s.priceFrom || s.rates ? 'from ' : ''}${money(s.price)} / night</div>`;
+  return `
+          <div class="book-price">${from}<strong>${money(s.price)}</strong><span>/ night</span></div>
+          ${peak ? `<div class="peak-callout">${icon('sun')}<span><b>${esc(P.label)} (${esc(P.range)}):</b> ${peakVal} / night</span></div>` : ''}`;
 }
 function minNightsFor(stay, ci, co) {
   return Math.max(stayRules(stay).minNights, ...(ci && co ? nightsOf(ci, co).map(d => seasonFor(stay, d)?.min || 0) : [0]));
@@ -533,7 +564,7 @@ function seasonTable(s) {
   const mins = s.seasons.some(r => r.min);
   return `<table class="rate-table">
     <thead><tr><th>Season</th>${mins ? '<th>Min stay</th>' : ''}<th>Per night</th></tr></thead>
-    <tbody>${s.seasons.map(r => `<tr><td>${esc(r.label)}</td>${mins ? `<td>${r.min ? `${r.min} nights` : '—'}</td>` : ''}<td>${money(r.price)}</td></tr>`).join('')}</tbody>
+    <tbody>${s.seasons.map(r => `<tr><td>${esc(r.label)}</td>${mins ? `<td>${r.min ? `${r.min} nights` : '—'}</td>` : ''}<td>${money(r.price)}</td></tr>`).join('')}${s.peakPrice ? `<tr class="peak-row"><td>${esc(SITE.peak.label)} (${esc(SITE.peak.range)})</td>${mins ? '<td>—</td>' : ''}<td>${money(s.peakPrice)}</td></tr>` : ''}</tbody>
   </table>${s.seasonNote ? `<div class="peak-note">${esc(s.seasonNote)}</div>` : ''}`;
 }
 function rateTable(s) {

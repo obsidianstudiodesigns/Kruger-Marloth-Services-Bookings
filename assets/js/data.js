@@ -13,6 +13,9 @@ const SITE = {
   whatsapp: '27615129208',          // international format, no + or spaces
   email: 'whndistributors@gmail.com',
   location: 'Marloth Park, Mpumalanga, South Africa',
+  // Peak season for every stay with a peakPrice: nights from `from` to `to` ('MM-DD', the last night) are charged
+  // at the peak rate, and the peak rate is the headline price while the season is on.
+  peak: { from: '11-01', to: '12-31', label: 'Peak season', range: '1 Nov – 1 Jan' },
   // Red call buttons in the header: each opens a list of numbers to try in turn
   emergency: [
     { label: '24/7 Security', short: 'Security', icon: 'shield', contacts: [
@@ -58,7 +61,7 @@ const STAYS = [
     tagline: 'Modern self-catering bush home close to the river',
     description: 'A bright, modern bush home with three en-suite bedrooms, an open-plan living area and a covered patio that opens onto the pool deck. Backup water and power keep everything running during load shedding, so evenings are spent at the boma listening to lions roar and hippos calling from the river.',
     sleeps: 6, bedrooms: 3, bathrooms: 3,
-    price: 1950, peakPrice: 3300, peakLabel: 'Peak season',
+    price: 1950, peakPrice: 3300,
     photos: 9, flyer: true,
     filters: ['pool', 'river', 'power'],
     amenities: [
@@ -133,7 +136,7 @@ const STAYS = [
     tagline: 'En-suite double room',
     description: 'A quiet en-suite double room with a live-edge hardwood bench and African art on the walls. Like every room it has air-conditioning and a fan, a wardrobe, a desk and seating, tea and coffee facilities with a kettle, and a private en-suite bathroom with a shower and toilet (no bath). Fresh linen, towels and toiletries are provided, and guests share the lounge, bar, pool and boma.',
     sleeps: 2, bedrooms: 1, bathrooms: 1,
-    price: 1200,
+    price: 1200, peakPrice: 1500,
     photos: 4, flyer: false,
     filters: ['pool', 'couples'],
     amenities: [
@@ -191,8 +194,8 @@ const STAYS = [
     tagline: 'Thatched bush home for 13 with pool, boma & loft',
     description: 'A big thatched face-brick bush home that sleeps thirteen — made for large families and groups. Inside are air-conditioned bedrooms, a loft, an open-plan lounge and a fully equipped kitchen; outside, a sparkling pool, a covered patio with plenty of seating, an outdoor dining area and a sunken boma for fires under the stars. Zebra regularly come right up to the deck.',
     sleeps: 13, bedrooms: 5, bathrooms: 3,
-    price: 1800, peakPrice: 2200, peakLabel: 'Long weekends & holidays',
-    priceNote: 'Weekends: R1 800 for up to 6 guests, R2 000 for more · Midweek out of season: R1 200 (minimum 5 nights)',
+    price: 1800, peakPrice: 2200,
+    priceNote: 'Weekends: R1 800 for up to 6 guests, R2 000 for more · Midweek out of season: R1 200 (minimum 5 nights) · Long weekends & school holidays: R2 200',
     photos: 26, flyer: false,
     filters: ['pool', 'groups', 'kids'],
     amenities: [
@@ -209,7 +212,7 @@ const STAYS = [
     tagline: 'Stylish, very private bush getaway near the river',
     description: 'Your bush getaway with style and comfort — a very private double-storey home within walking distance of the river. Four spacious bedrooms and two modern bathrooms, air-conditioning and ceiling fans, a smart TV with Netflix and uncapped Wi-Fi. Outside there’s a braai area with boma, a jacuzzi and a deck where zebra, kudu and wildebeest wander past. A 5 000-litre JoJo tank provides back-up water, and there’s an alarm system.',
     sleeps: 10, bedrooms: 4, bathrooms: 2,
-    price: 1450, priceFrom: true,
+    price: 1450, priceFrom: true, peakRates: 1,
     rates: [
       { label: 'Out of season', rows: [[2, 1450], [4, 1650], [6, 1850], [8, 2100], [10, 2400]], note: 'pensioners R980 a night (minimum 4 nights)' },
       { label: 'Holidays & long weekends', rows: [[2, 1550], [4, 1750], [6, 1950], [8, 2200], [10, 2500]] },
@@ -232,7 +235,7 @@ const STAYS = [
     tagline: 'Thatched lapa, plunge pool and lions at night',
     description: 'A relaxed bushveld home with a double-volume lounge, loft sleeping area and a huge thatched outdoor lapa for braais and get-togethers. Enjoy an evening at the boma listening to lions roaring nearby while plenty of animals wander through the area.',
     sleeps: 8, bedrooms: 3, bathrooms: 2,
-    price: 1600, priceFrom: true,
+    price: 1600, priceFrom: true, peakPrice: 2400,
     seasons: [
       { label: 'Weekends (Fri & Sat nights)', price: 2000, days: [5, 6] },
       { label: 'Midweek (Sun – Thu nights)', price: 1600 },
@@ -338,7 +341,7 @@ const STAYS = [
     tagline: 'Fresh, modern home with pool and sunken boma',
     description: 'A light-filled, modern home with an open-plan kitchen and lounge, air-conditioned bedrooms and crisp white linen. Outside, a sparkling pool and a sunken boma make the most of Marloth Park’s famous sunsets.',
     sleeps: 6, bedrooms: 3, bathrooms: 2,
-    price: 1950,
+    price: 1950, peakPrice: 2400,
     photos: 8, flyer: false,
     filters: ['pool'],
     amenities: [
@@ -354,7 +357,7 @@ const STAYS = [
     tagline: 'Thatched bush home with a loft and upstairs deck',
     description: 'A warm, thatched face-brick home with three air-conditioned bedrooms: a queen room with en-suite bathroom, a second queen room and a loft with two three-quarter beds. The open-plan kitchen is fully equipped, the upstairs deck seats six for sundowners, and the patio opens onto a small splash pool and fire pit. There’s no TV — just the sounds of the bush.',
     sleeps: 6, bedrooms: 3, bathrooms: 2,
-    price: 1500, peakPrice: 1700, peakLabel: 'December',
+    price: 1500, peakPrice: 1700,
     photos: 23, flyer: false,
     filters: ['pool'],
     amenities: [
@@ -372,7 +375,7 @@ const STAYS = [
     tagline: 'Very private house for big groups — pool, boma & games',
     description: 'A spacious, very private self-catering house with no neighbours in close proximity. Two air-conditioned bedrooms downstairs, an upstairs bedroom and a large loft with four single and three-quarter beds. The big stoep, boma and pool are perfect for groups, with darts, beer pong and a gas braai for rainy days.',
     sleeps: 10, bedrooms: 4, bathrooms: 2,
-    price: 1800,
+    price: 1800, peakPrice: 1800,
     photos: 28, flyer: true,
     filters: ['pool', 'groups', 'power'],
     amenities: [
@@ -495,14 +498,13 @@ const STAYS = [
     tagline: 'Bush-style family home on Butterfly Street',
     description: 'Escape to the heart of the bushveld in this traditional bush-style home on Butterfly Street, about 800 m from the river. Three double bedrooms, a loft with two single beds and a balcony, and a kids’ room full of toys make it a firm favourite with families. There are two bathrooms, aircons in every bedroom and the living area, a fully equipped kitchen, a six-seater dining table and a bar, plus a lapa with a built-in braai and a splash pool outside — with kudu and warthogs right at your doorstep. A petrol generator keeps the lights on during load-shedding (bring your own petrol).',
     sleeps: 8, bedrooms: 3, bathrooms: 2,
-    price: 1500, priceFrom: true,
+    price: 1500, priceFrom: true, peakPrice: 2400,
     seasons: [
       { label: 'Out of season', price: 1500 },
       { label: 'School holidays & long weekends', price: 1800 },
-      { label: 'December holidays', price: 2400 },
     ],
     seasonNote: 'Book 6 nights or more and get 1 night free.',
-    holidayNote: 'School holiday, long weekend (R1 800) and December holiday (R2 400) rates apply on those dates. Book 6+ nights and get 1 night free',
+    holidayNote: 'School holiday and long weekend nights are R1 800. Book 6+ nights and get 1 night free',
     rules: {
       checkIn: '14:00', checkOut: '10:00',
       deposit: '50% deposit secures the booking. A refundable R1 500 breakage deposit is returned about 7 days after the post-stay inspection.',
@@ -530,7 +532,7 @@ const STAYS = [
     tagline: 'Double-storey thatched home with pool and big lapa',
     description: 'A spacious double-storey bush home made for groups of up to eight. A huge thatched lapa with lounge seating looks onto the pool, the rustic kitchen is built for big family meals, and the bedrooms have netted four-poster beds — one with a corner bath en-suite. Evenings are spent around the fire circle while giraffe and warthogs wander right up to the house.',
     sleeps: 8, bedrooms: 4, bathrooms: 3,
-    price: 3400, priceNote: 'Rate is for up to 8 guests',
+    price: 3400, peakPrice: 6000, priceNote: 'Rate is for up to 8 guests',
     photos: 16, flyer: false,
     filters: ['pool', 'groups'],
     amenities: [
@@ -547,7 +549,7 @@ const STAYS = [
     tagline: 'Thatched bush home with a private pool and boma',
     description: 'A homely thatched bush house with a private pool right outside the lounge, a covered patio with cosy seating and a boma fire pit in a garden full of aloes. Kudu and zebra are regular visitors. Wi-Fi, an inverter and borehole water keep things running, and a housekeeper can be arranged during your stay on request.',
     sleeps: 4, bedrooms: 2, bathrooms: 1,
-    price: 1100, peakPrice: 1500, peakLabel: 'In season',
+    price: 1100, peakPrice: 1500,
     photos: 21, flyer: false,
     filters: ['pool', 'power'],
     amenities: [
@@ -564,7 +566,7 @@ const STAYS = [
     tagline: 'Upper-level 2-bedroom apartment with a cuddle-puddle gazebo',
     description: 'A bespoke self-catering apartment on the upper level of the house, with its own private entrance. Two bedrooms sleep four, and the bedrooms and living area are air-conditioned. It runs off the grid on solar power with Roto-tank back-up water, and has fibre internet and DStv. Outside there’s a separate gazebo with a cuddle puddle, a complete braai area, a pool deck with loungers and a bush balcony for morning coffee with wildlife views.',
     sleeps: 4, bedrooms: 2, bathrooms: 2,
-    price: 1800, peakPrice: 2200, peakLabel: 'In season',
+    price: 1800, peakPrice: 2000,
     photos: 21, flyer: false,
     filters: ['pool', 'power', 'couples'],
     amenities: [
@@ -582,7 +584,7 @@ const STAYS = [
     tagline: 'Three-bedroom holiday home near the Crocodile River',
     description: 'A spacious three-bedroom holiday home with three modern bathrooms — including a romantic outdoor bath — a private pool and a covered patio for long lunches. WiFi and inverter backup power keep you connected through load-shedding, and the aircons run on prepaid electricity. Animals roam freely around the property.',
     sleeps: 6, bedrooms: 3, bathrooms: 3,
-    price: 1800,
+    price: 1800, peakPrice: 2000,
     rules: { notes: [['Power', 'The house has inverter backup power. The aircons are on prepaid electricity, paid extra.']] },
     photos: 11, flyer: true,
     filters: ['pool', 'river', 'power'],
@@ -600,7 +602,7 @@ const STAYS = [
     tagline: 'Award-winning thatched bush house with plunge pool',
     description: 'A homely thatched bush house that has held Lekkeslaap’s “Been Lekke” award since 2021. Bedrooms are air-conditioned, the open-plan lounge and kitchen are cosy and well equipped, and outside there’s a shaded plunge pool, a braai area and a fireplace for chilly evenings — with kudu strolling right up to the door.',
     sleeps: 6, bedrooms: 3, bathrooms: 1,
-    price: 1050, peakPrice: 1350, peakLabel: 'In season',
+    price: 1050, peakPrice: 1400,
     photos: 12, flyer: false,
     filters: ['pool'],
     amenities: [
@@ -617,7 +619,7 @@ const STAYS = [
     tagline: 'Your home away from home — splash pool & outdoor shower',
     description: 'Relax, unwind and reconnect with nature in this peaceful bushveld retreat — the perfect getaway for couples, friends or small families. A double bedroom and a twin room sleep four, with a cosy lounge, an equipped kitchenette and a bathroom with bath, plus an outdoor shower. Wake up to birdsong, sip your coffee on the deck and end the day at the boma beside the splash pool.',
     sleeps: 4, bedrooms: 2, bathrooms: 1,
-    price: 1000, priceFrom: true, priceNote: 'R1 000 – R1 300 per night',
+    price: 1000, priceFrom: true, peakPrice: 1500, priceNote: 'R1 000 – R1 300 per night',
     photos: 14, flyer: true,
     filters: ['pool', 'couples', 'kids'],
     amenities: [
@@ -653,7 +655,7 @@ const STAYS = [
     tagline: 'Your private bush escape — pool, boma & deck',
     description: 'A fresh, contemporary two-bedroom house with en-suite bathrooms, stacking doors onto a shaded deck with loungers, and a private pool. Evenings are for the fire pit and the sounds of the bush — very private and perfect for a peaceful, relaxing stay.',
     sleeps: 4, bedrooms: 2, bathrooms: 2,
-    price: 1600,
+    price: 1600, peakPrice: 2100,
     photos: 11, flyer: true,
     filters: ['pool', 'couples'],
     amenities: [
@@ -670,7 +672,7 @@ const STAYS = [
     tagline: 'Nature at your doorstep — zebra visit daily',
     description: 'A thatched face-brick chalet with a big deck overlooking the bush, where herds of zebra are regular visitors. Three bedrooms, three bathrooms and a loft sleep up to eight, with solar power and an inverter, a pool, double braai and boma — all within walking distance of the Crocodile River.',
     sleeps: 8, bedrooms: 3, bathrooms: 3,
-    price: 2500,
+    price: 2500, peakPrice: 2800,
     photos: 9, flyer: true,
     filters: ['pool', 'river', 'groups', 'power'],
     amenities: [
@@ -688,13 +690,11 @@ const STAYS = [
     tagline: 'Single-storey bush home with a canvas room overlooking the Kruger',
     description: 'A single-storey family home on Seekoei Street at the Two Trees lookout point, with panoramic views over the river into the Kruger. A canvas room with two single beds looks straight out over the bush, and there are two queen bedrooms (one en-suite) and a room with two ¾ beds, all with aircon and fans. The open-plan kitchen has a gas stove, dishwasher, air fryer and two fridge/freezers. Outside you’ll find a pool, an indoor and an outdoor braai, a bonfire pit and a jungle gym — and zebra, wildebeest and giraffe at the fence. Full solar power, a JoJo water tank and stainless-steel mesh on every window and door keep things running and the mosquitoes out.',
     sleeps: 8, bedrooms: 4, bathrooms: 2,
-    price: 2800, priceFrom: true,
+    price: 2800, priceFrom: true, peakPrice: 4200,
     seasons: [
       { label: 'Weekends out of season', min: 2, price: 2800 },
       { label: 'School holidays & long weekends', min: 3, price: 3500 },
       { label: 'Easter', min: 3, price: 4200 },
-      { label: '1–15 December', min: 3, price: 3300, from: '12-01', to: '12-15' },
-      { label: '16–31 December', min: 3, price: 4200, from: '12-16', to: '12-31' },
     ],
     seasonNote: 'Book 5 nights or longer for a discounted rate.',
     rules: {
@@ -772,7 +772,7 @@ const STAYS = [
     tagline: 'Luxury bush house with a lookout tower over the Crocodile River',
     description: 'A private, modern bush house a stone’s throw from the Crocodile River, with 180° views into the Kruger from its own lookout tower. Downstairs is an open-plan lounge and kitchen with a Nespresso machine and gas stove; upstairs, two queen bedrooms each have an en-suite with an outdoor shower looking into the bush. The deck has a pool with loungers, a boma and braai (plus a gas braai for rainy days), and game roams freely around the house. Daily housekeeping is included (except Sundays and Christmas Day), and safari drives can be arranged with Sunset Adventure Travel.',
     sleeps: 4, bedrooms: 2, bathrooms: 2,
-    price: 4000,
+    price: 4000, peakPrice: 4000,
     rules: {
       checkIn: '13:00',
       notes: [
@@ -798,7 +798,7 @@ const STAYS = [
     tagline: 'A modern bush home with a huge stoep and pool',
     description: 'Come and enjoy an unforgettable stay in this modern bush home. Three bedrooms (one en-suite with a freestanding bath), a sleeper couch, an open-plan kitchen and lounge, and a huge stoep overlooking the pool — with bushbabies and plenty of other animals roaming the area.',
     sleeps: 8, bedrooms: 3, bathrooms: 2,
-    price: 4000,
+    price: 4000, peakPrice: 4500,
     photos: 12, flyer: false,
     filters: ['pool', 'groups'],
     amenities: [
@@ -814,7 +814,7 @@ const STAYS = [
     tagline: 'Your private bush escape, ~300 m from the river',
     description: 'A fully equipped, very private self-catering house with two en-suite bedrooms with queen-size beds (plus an extra single mattress if needed). The pool has a proper pump and filter, there’s uncapped internet and a smart TV with Netflix — and bushbabies drop by the house regularly. Safe for small children.',
     sleeps: 4, bedrooms: 2, bathrooms: 2,
-    price: 1500,
+    price: 1500, peakPrice: 1800,
     photos: 10, flyer: true,
     filters: ['pool', 'river', 'kids', 'power'],
     amenities: [
@@ -832,7 +832,7 @@ const STAYS = [
     tagline: 'Self-catering one-bedroom flat with private entrance',
     description: 'A neat, self-catering one-bedroom flat for two adults and two children up to 12 years old. It has a queen bed, a bunk bed for the kids, a modern bathroom with shower (towels supplied) and a small kitchen. With its own private entrance, carport, private braai area and use of the swimming pool on the premises, it’s an easy, good-value base in Marloth Park.',
     sleeps: 4, bedrooms: 1, bathrooms: 1,
-    price: 1100, priceNote: 'R1 100 for 2 guests · R1 300 for 4 guests per night',
+    price: 1100, peakPrice: 1400, priceNote: 'R1 100 for 2 guests · R1 300 for 4 guests per night',
     photos: 7, flyer: true,
     filters: ['couples', 'kids'],
     amenities: [
