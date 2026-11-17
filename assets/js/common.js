@@ -246,7 +246,13 @@ function inPeak(iso) {
 }
 function peakNow() { return inPeak(todayISO()); }
 function hasPeak(s) { return !!(s.peakPrice || (s.rates && s.peakRates != null)); }
+// Specials (s.special: label, price, from/to as full dates, the last night included) end by themselves
+function specialOn(s, iso) { const x = s.special; return !!x && iso >= x.from && iso <= x.to; }
+function specialNow(s) { return specialOn(s, todayISO()); }
+// What tonight would cost without the special, shown crossed out next to it
+function regularPrice(s) { return peakNow() && s.peakPrice ? s.peakPrice : s.price; }
 function currentPrice(s) {
+  if (specialNow(s)) return s.special.price;
   if (peakNow()) {
     if (s.peakPrice) return s.peakPrice;
     if (s.rates && s.peakRates != null) return s.rates[s.peakRates].rows[0][1];
@@ -256,7 +262,11 @@ function currentPrice(s) {
 // Price and size for a card: a property with units shows its cheapest unit and its guest range
 function listingSummary(s) {
   const units = unitsOf(s.id);
-  if (!units.length) return { units, price: currentPrice(s), priceFrom: !!s.priceFrom || !!s.rates, peak: peakNow() && hasPeak(s), minSleeps: s.sleeps, sleeps: s.sleeps };
+  if (!units.length) {
+    const special = specialNow(s) ? s.special : null;
+    return { units, price: currentPrice(s), priceFrom: !!s.priceFrom || !!s.rates, peak: !special && peakNow() && hasPeak(s),
+      special, was: special && regularPrice(s) > special.price ? regularPrice(s) : 0, minSleeps: s.sleeps, sleeps: s.sleeps };
+  }
   return {
     units,
     price: Math.min(...units.map(currentPrice)),

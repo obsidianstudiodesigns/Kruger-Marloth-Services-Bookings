@@ -174,11 +174,12 @@ function renderStays() {
       <div class="stay-media">
         <img src="${stayImg(s.id, 1, true)}" alt="${esc(s.name)}" loading="lazy" />
         <span class="badge">${esc(s.tag)}</span>
+        ${sum.special ? `<span class="bn-sash">${esc(sum.special.short)}</span>` : ''}
         ${flag}
         <span class="photo-count">${icon('images')}${s.photos}</span>
       </div>
       <div class="stay-info">
-        <div class="stay-title"><h3>${esc(s.name)}</h3><div class="stay-price">${sum.priceFrom ? '<small>from</small> ' : ''}${money(sum.price)} <small>/night</small>${sum.peak ? `<span class="peak-tag">${esc(SITE.peak.label)}</span>` : ''}</div></div>
+        <div class="stay-title"><h3>${esc(s.name)}</h3><div class="stay-price">${sum.priceFrom ? '<small>from</small> ' : ''}${sum.was ? `<s class="was">${money(sum.was)}</s> ` : ''}${money(sum.price)} <small>/night</small>${sum.special ? `<span class="bn-tag">${esc(sum.special.label)}</span>` : sum.peak ? `<span class="peak-tag">${esc(SITE.peak.label)}</span>` : ''}</div></div>
         <p class="stay-tagline">${esc(s.tagline)}</p>
         <ul class="facts">${n ? `
           <li>${icon('home')}${n} ${unitWord}s</li>
@@ -250,6 +251,7 @@ function openStay(id, push = true) {
       <div class="gallery">
         ${photos.slice(0, 5).map((n, i) => `<button data-photo="${i}" aria-label="View photo ${n}"><img src="${stayImg(s.id, n, i > 0)}" alt="" ${i ? 'loading="lazy"' : ''} /></button>`).join('')}
         <button class="gallery-all" data-photo="0">${icon('grid')}View all ${s.photos} photos</button>
+        ${sum.special ? `<span class="bn-sash big">${esc(sum.special.short)}</span>` : ''}
       </div>
       <div class="detail-grid detail">
         <div>
@@ -361,7 +363,7 @@ function openStay(id, push = true) {
       </div>
     </div></div>
     <div class="mobile-book">
-      <div>${sum.priceFrom ? '<span>From</span> ' : ''}<strong>${money(sum.price)}</strong> <span>per night · ${sum.peak ? esc(SITE.peak.label.toLowerCase()) : 'indicative'}</span></div>
+      <div>${sum.priceFrom ? '<span>From</span> ' : ''}<strong>${money(sum.price)}</strong> <span>per night · ${sum.special ? esc(sum.special.label) : sum.peak ? esc(SITE.peak.label.toLowerCase()) : 'indicative'}</span></div>
       ${units.length
         ? `<button class="btn btn-primary" data-jump-units>${icon('home')}Choose a ${esc(unitWord)}</button>`
         : `<button class="btn btn-primary" data-jump>${icon('calendar')}Check dates</button>`}
@@ -503,11 +505,12 @@ function updateQuote() {
   const rate = ci ? nightPrice(stay, ci, guestCount()) : nightlyRate(stay, guestCount());
   const total = nights ? stayTotal(stay, ci, co, guestCount()) : 0;
   const even = total === rate * nights;
-  const allPeak = nights && nightsOf(ci, co).every(inPeak) && hasPeak(stay);
+  const allSpecial = nights && nightsOf(ci, co).every(d => specialOn(stay, d));
+  const allPeak = !allSpecial && nights && nightsOf(ci, co).every(inPeak) && hasPeak(stay);
   $('#quote').innerHTML = nights ? `
-    <div><span>${even ? `${money(rate)} × ${nights} night${nights > 1 ? 's' : ''}${allPeak ? ` <em class="peak-inline">${esc(SITE.peak.label.toLowerCase())}</em>` : ''}` : `${nights} nights at seasonal rates`}</span><span>${money(total)}</span></div>
+    <div><span>${even ? `${money(rate)} × ${nights} night${nights > 1 ? 's' : ''}${allSpecial ? ` <em class="bn-inline">${esc(stay.special.label)}</em>` : allPeak ? ` <em class="peak-inline">${esc(SITE.peak.label.toLowerCase())}</em>` : ''}` : `${nights} nights at seasonal rates`}</span><span>${money(total)}</span></div>
     <div class="total"><span>Estimated total</span><span>${money(total)}</span></div>
-    <small>Indicative rate — ${SITE.contactName} confirms the final price${hasPeak(stay) ? `. ${esc(SITE.peak.label)} (${esc(SITE.peak.range)}) nights are charged at the peak rate` : ''}${stay.seasons ? `. ${esc(stay.holidayNote || 'School holiday, long weekend and Easter rates apply on those dates')}` : ''}.</small>` : '';
+    <small>Indicative rate — ${SITE.contactName} confirms the final price${stay.special && stay.special.to >= todayISO() ? `. ${esc(stay.special.label)}: ${money(stay.special.price)} a night for nights up to ${esc(stay.special.until)}` : ''}${hasPeak(stay) ? `. ${esc(SITE.peak.label)} (${esc(SITE.peak.range)}) nights are charged at the peak rate` : ''}${stay.seasons ? `. ${esc(stay.holidayNote || 'School holiday, long weekend and Easter rates apply on those dates')}` : ''}.</small>` : '';
 }
 
 /* Stays priced by group size list `rates`: one table per season, rows of [guests, price per night] */
@@ -524,8 +527,9 @@ function seasonFor(stay, iso) {
   const md = iso.slice(5), dow = parseISO(iso).getDay();
   return (stay.seasons || []).find(x => (x.from && md >= x.from && md <= x.to) || (x.days && x.days.includes(dow)));
 }
-// Price of one night: a dated season wins, then peak season, then a weekday season, then the normal rate
+// Price of one night: a special wins, then a dated season, then peak season, then a weekday season, then the normal rate
 function nightPrice(stay, iso, guests) {
+  if (specialOn(stay, iso)) return stay.special.price;
   const md = iso.slice(5), seasons = stay.seasons || [];
   const dated = seasons.find(x => x.from && md >= x.from && md <= x.to);
   if (dated) return dated.price;
@@ -549,6 +553,13 @@ function priceBlock(s) {
   const P = SITE.peak, peak = hasPeak(s);
   const from = s.priceFrom || s.rates ? '<span>From</span>' : '';
   const peakVal = s.peakPrice ? money(s.peakPrice) : peak ? `from ${money(s.rates[s.peakRates].rows[0][1])}` : '';
+  if (specialNow(s)) {
+    const x = s.special, was = regularPrice(s);
+    return `
+          <div class="bn-ribbon"><strong>${esc(x.label)}</strong><span>Book nights up to ${esc(x.until)}</span></div>
+          <div class="book-price"><strong>${money(x.price)}</strong><span>/ night</span>${was > x.price ? `<s class="was">${money(was)}</s>` : ''}</div>
+          <div class="peak-off">${peak ? `After the special: ${esc(P.label.toLowerCase())} rate of ${peakVal} / night until ${esc(P.range.split('– ')[1] || '1 Jan')}, then ${money(s.price)}` : `After the special: ${money(s.price)} / night`}</div>`;
+  }
   if (peak && peakNow()) return `
           <div class="peak-badge">${icon('sun')}${esc(P.label)} · ${esc(P.range)}</div>
           <div class="book-price">${s.rates ? '<span>From</span>' : ''}<strong>${money(currentPrice(s))}</strong><span>/ night</span></div>

@@ -92,7 +92,13 @@ STAYS = {
                         'Screenshot_20261029_155619_Samsung Notes.jpg'], []),
   'melmar-estate':    ('Melmar Estate', 'FB_IMG_1779909924637.jpg', 'FB_IMG_1779909914677.jpg', [], []),
   'moepel':           ('Moepel 187', 'IMG-20260727-WA0055.jpg', 'file_00000000d3b081f4ad7571022f7dab76.png', ['file_00000000d3b081f4ad7571022f7dab76(1).png'], []),
-  'my-africa-chalet': ('My Africa Chalet', 'Screenshot_20260911_105518_Gallery.jpg', 'file_0000000085b48211b56d480859fd890c.png', [], []),
+  # My Africa Chalet: the owner's new outside photos (17 Nov 2026) replace the old outside ones; old inside photos kept.
+  # The 12 Nov garden photos are left out (one shows workers and a vehicle)
+  'my-africa-chalet': ('My Africa Chalet',
+                       ['WhatsApp Image 2026-11-17 at 10.21.50 (1).jpeg', 'WhatsApp Image 2026-11-17 at 10.21.49 (2).jpeg', 'WhatsApp Image 2026-11-17 at 10.21.49.jpeg', 'WhatsApp Image 2026-11-17 at 10.24.10.jpeg', 'WhatsApp Image 2026-11-17 at 10.24.11.jpeg',
+                        'Screenshot_20260911_105503_Gallery.jpg', 'Screenshot_20260911_105416_Gallery.jpg', 'Screenshot_20260911_105206_Gallery.jpg', 'Screenshot_20260911_105236_Gallery.jpg',
+                        'Screenshot_20260911_105332_Gallery.jpg', 'WhatsApp Image 2026-11-17 at 10.21.50.jpeg', 'WhatsApp Image 2026-11-17 at 10.21.49 (1).jpeg', 'WhatsApp Image 2026-11-17 at 10.21.50 (2).jpeg',
+                        'WhatsApp Image 2026-11-17 at 10.21.51 (1).jpeg', 'WhatsApp Image 2026-11-17 at 10.21.51.jpeg'], 'file_0000000085b48211b56d480859fd890c.png', '*', []),
   # Owner's WhatsApp photos; the handwritten rate sheet and info screenshots are text, not photos
   'old-hippo':        ('Old Hippo River House',
                        ['IMG-20261112-WA0182.jpg', 'IMG-20261112-WA0183.jpg', 'IMG-20260519-WA0158.jpg', 'IMG-20260519-WA0163.jpg',

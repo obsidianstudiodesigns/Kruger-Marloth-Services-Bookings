@@ -426,6 +426,16 @@ footer a:hover{opacity:1;color:var(--sun)}
 .book-price strong{font-size:1.6rem;font-family:'Playfair Display'}
 .book-price span{color:var(--muted);font-size:.9rem}
 .peak-note{font-size:.82rem;color:var(--sun-dark);font-weight:600;margin-top:2px}
+.bn-sash{position:absolute;top:42px;right:-45px;width:200px;transform:rotate(45deg);background:#111;color:#f2c464;text-align:center;padding:6px 0;font-size:.64rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;box-shadow:0 4px 12px rgba(0,0,0,.35);border-top:1px solid #f2c464;border-bottom:1px solid #f2c464;z-index:2;pointer-events:none}
+.bn-sash.big{top:52px;right:-62px;width:270px;padding:9px 0;font-size:.8rem}
+.stay-media .bn-sash ~ .avail-flag{top:auto;bottom:12px;left:12px;right:auto}
+.bn-tag{display:block;margin-top:3px;margin-left:auto;width:max-content;padding:2px 8px;border-radius:4px;background:#111;color:#f2c464;font-family:'Inter',sans-serif;font-size:.64rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.stay-price .was,.book-price .was{color:var(--muted);font-weight:500;font-size:.8em;text-decoration-thickness:1.5px}
+.book-price .was{margin-left:4px;align-self:center}
+.bn-ribbon{display:flex;flex-direction:column;gap:2px;margin:-4px 0 12px;padding:12px 14px;border-radius:12px;background:#111;color:#fff;border:1px solid #f2c464;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.bn-ribbon strong{color:#f2c464;font-size:.95rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+.bn-ribbon span{font-size:.8rem;opacity:.85}
+.bn-inline{font-style:normal;font-size:.7rem;font-weight:800;color:#fff;background:#111;padding:1px 6px;border-radius:4px;letter-spacing:.04em;text-transform:uppercase}
 .peak-badge{display:inline-flex;align-items:center;gap:6px;margin-bottom:8px;padding:5px 12px;border-radius:999px;background:#fff1de;color:#a3580f;font-size:.76rem;font-weight:700;letter-spacing:.02em}
 .peak-badge .ic{width:15px;height:15px}
 .peak-off{font-size:.82rem;color:var(--muted);margin:2px 0 6px}

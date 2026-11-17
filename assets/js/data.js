@@ -62,6 +62,7 @@ const STAYS = [
     description: 'A bright, modern bush home with three en-suite bedrooms, an open-plan living area and a covered patio that opens onto the pool deck. Backup water and power keep everything running during load shedding, so evenings are spent at the boma listening to lions roar and hippos calling from the river.',
     sleeps: 6, bedrooms: 3, bathrooms: 3,
     price: 1950, peakPrice: 3300,
+    special: { label: 'Black November special', short: 'Black November', price: 1950, from: '2026-11-01', to: '2026-11-30', until: '30 November' },
     photos: 15, flyer: true,
     filters: ['pool', 'river', 'power'],
     amenities: [
@@ -673,11 +674,13 @@ const STAYS = [
     description: 'A thatched face-brick chalet with a big deck overlooking the bush, where herds of zebra are regular visitors. Three bedrooms, three bathrooms and a loft sleep up to eight, with solar power and an inverter, a pool, double braai and boma — all within walking distance of the Crocodile River.',
     sleeps: 8, bedrooms: 3, bathrooms: 3,
     price: 2500, peakPrice: 2800,
-    photos: 9, flyer: true,
+    // A dated special wins over every other rate for its nights, and shows with a black ribbon until it ends
+    special: { label: 'Black November special', short: 'Black November', price: 1850, from: '2026-11-01', to: '2026-11-30', until: '30 November' },
+    photos: 15, flyer: true,
     filters: ['pool', 'river', 'groups', 'power'],
     amenities: [
       ['bed', '3 bedrooms + loft'], ['bath', '3 bathrooms'], ['pool', 'Pool'], ['wifi', 'WiFi'],
-      ['zap', 'Inverter'], ['sun', 'Solar panels'], ['snow', 'Pre-paid aircons'], ['fan', 'Fans'],
+      ['sun', 'Solar power'], ['zap', 'Inverter'], ['snow', 'Pre-paid aircons'], ['fan', 'Fans'],
       ['flame', 'Double braai & boma'], ['deck', 'Deck & outside furniture'], ['shower', 'Outside shower'],
       ['flame', 'Gas stove & gas geyser'], ['river', 'Walk to the Crocodile River'],
     ],
