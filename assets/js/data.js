@@ -1085,6 +1085,16 @@ const SERVICE_CATEGORIES = [
         email: 'info@bushveldatlantis.com',
       },
       {
+        name: 'Sudwala Experience — Caves, Zipline & Restaurant', image: 'images/services/sudwala.jpg',
+        moreImages: ['images/services/sudwala-restaurant.jpg', 'images/services/sudwala-prices.jpg', 'images/services/sudwala-contact.jpg'],
+        description: 'A great day trip up the N4: walk 600 m into the Sudwala Caves, the oldest known cave system on Earth, on a one-hour guided tour past ancient stalactites and the 180-million-year-old “Screaming Monster”. Tours leave every few minutes. For more thrills, glide 430 m across the Houtbosloop Valley on the zipline, or book the 4-hour Crystal Tour to crawl and climb to a chamber of sparkling crystals. Finish with burgers, ribs and a view at the restaurant.',
+        tags: ['Cave tour · adults R140 · pensioners R120 · kids R70', 'Zipline R400', 'Crystal Cave Tour R1 050 · book ahead', 'Nature Garden & labyrinth · free', 'Restaurant 08:30 – 16:00', 'Open 365 days · 08:30 – 16:30', 'Small pets welcome on a lead'],
+        phones: ['072 497 8268', '013 302 0995', '083 446 0228'],
+        email: 'info@sudwalacaves.com',
+        address: 'R539, Sudwala, near Mbombela (Nelspruit)',
+        website: 'https://www.sudwalaexperience.com/',
+      },
+      {
         name: 'Kambaku Golf', image: 'images/services/kambaku-golf.jpg', moreImages: ['images/services/kambaku-golf-2.jpg'],
         description: 'Golf on the banks of the river at Kambaku in Komatipoort — call or book online for a tee time.',
         tags: ['Golf course', 'Bookings by phone or online'],
