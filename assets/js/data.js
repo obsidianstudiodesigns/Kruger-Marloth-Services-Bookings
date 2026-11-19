@@ -567,7 +567,7 @@ const STAYS = [
     tagline: 'Upper-level 2-bedroom apartment with a cuddle-puddle gazebo',
     description: 'A bespoke self-catering apartment on the upper level of the house, with its own private entrance. Two bedrooms sleep four, and the bedrooms and living area are air-conditioned. It runs off the grid on solar power with Roto-tank back-up water, and has fibre internet and DStv. Outside there’s a separate gazebo with a cuddle puddle, a complete braai area, a pool deck with loungers and a bush balcony for morning coffee with wildlife views.',
     sleeps: 4, bedrooms: 2, bathrooms: 2,
-    price: 1800, peakPrice: 2000,
+    price: 1800, peakPrice: 2200,
     photos: 21, flyer: false,
     filters: ['pool', 'power', 'couples'],
     amenities: [
