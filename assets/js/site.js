@@ -294,7 +294,7 @@ function openStay(id, push = true) {
           <div class="rules">
             <div class="rule">${icon('clock')}<div><strong>Check-in</strong>From ${rules.checkIn}</div></div>
             <div class="rule">${icon('clock')}<div><strong>Check-out</strong>By ${rules.checkOut}</div></div>
-            <div class="rule">${icon('calendar')}<div><strong>Minimum stay</strong>${rules.minNights} nights${s.seasons && s.seasons.some(x => x.min > rules.minNights) ? ` (${Math.max(...s.seasons.map(x => x.min))} nights in season)` : ''}</div></div>
+            <div class="rule">${icon('calendar')}<div><strong>Minimum stay</strong>${rules.minNights} nights${minSeasonNote(s, rules.minNights)}</div></div>
             <div class="rule">${icon('info')}<div><strong>Deposit</strong>${esc(rules.deposit)}</div></div>
             ${(rules.notes || []).map(([title, text]) => `<div class="rule">${icon('info')}<div><strong>${esc(title)}</strong>${esc(text)}</div></div>`).join('')}
           </div>
@@ -567,6 +567,13 @@ function priceBlock(s) {
   return `
           <div class="book-price">${from}<strong>${money(s.price)}</strong><span>/ night</span></div>
           ${peak ? `<div class="peak-callout">${icon('sun')}<span><b>${esc(P.label)} (${esc(P.range)}):</b> ${peakVal} / night</span></div>` : ''}`;
+}
+// "(6 nights in December)" when one season sets the longest minimum, "(3 nights in season)" when several do
+function minSeasonNote(s, base) {
+  const withMin = (s.seasons || []).filter(x => x.min > base);
+  if (!withMin.length) return '';
+  const most = Math.max(...withMin.map(x => x.min)), top = withMin.filter(x => x.min === most);
+  return ` (${most} nights ${top.length === 1 ? 'in ' + esc(top[0].label) : 'in season'})`;
 }
 function minNightsFor(stay, ci, co) {
   return Math.max(stayRules(stay).minNights, ...(ci && co ? nightsOf(ci, co).map(d => seasonFor(stay, d)?.min || 0) : [0]));

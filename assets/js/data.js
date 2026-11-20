@@ -533,7 +533,10 @@ const STAYS = [
     tagline: 'Double-storey thatched home with pool and big lapa',
     description: 'A spacious double-storey bush home made for groups of up to eight. A huge thatched lapa with lounge seating looks onto the pool, the rustic kitchen is built for big family meals, and the bedrooms have netted four-poster beds — one with a corner bath en-suite. Evenings are spent around the fire circle while giraffe and warthogs wander right up to the house.',
     sleeps: 8, bedrooms: 4, bathrooms: 3,
-    price: 3400, peakPrice: 6000, priceNote: 'Rate is for up to 8 guests',
+    price: 3400, priceNote: 'Rate is for up to 8 guests',
+    // Owner's December rate is lower than the normal rate, with a 6-night minimum (no separate peak rate)
+    seasons: [{ label: 'December', min: 6, price: 3000, from: '12-01', to: '12-31' }],
+    holidayNote: 'December nights are R3 000, with a minimum stay of 6 nights',
     photos: 16, flyer: false,
     filters: ['pool', 'groups'],
     amenities: [
