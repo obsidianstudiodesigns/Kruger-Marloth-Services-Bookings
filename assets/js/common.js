@@ -246,6 +246,8 @@ function inPeak(iso) {
 }
 function peakNow() { return inPeak(todayISO()); }
 function hasPeak(s) { return !!(s.peakPrice || (s.rates && s.peakRates != null)); }
+// Price on request (s.priceOnRequest: the date it starts): from then on the stay shows no prices anywhere
+function onRequest(s) { return !!s.priceOnRequest && todayISO() >= s.priceOnRequest; }
 // Specials (s.special: label, price, from/to as full dates, the last night included) end by themselves
 function specialOn(s, iso) { const x = s.special; return !!x && iso >= x.from && iso <= x.to; }
 function specialNow(s) { return specialOn(s, todayISO()); }
@@ -264,6 +266,7 @@ function listingSummary(s) {
   const units = unitsOf(s.id);
   if (!units.length) {
     const special = specialNow(s) ? s.special : null;
+    if (onRequest(s)) return { units, onRequest: true, price: 0, minSleeps: s.sleeps, sleeps: s.sleeps };
     return { units, price: currentPrice(s), priceFrom: !!s.priceFrom || !!s.rates, peak: !special && peakNow() && hasPeak(s),
       special, was: special && regularPrice(s) > special.price ? regularPrice(s) : 0, minSleeps: s.sleeps, sleeps: s.sleeps };
   }

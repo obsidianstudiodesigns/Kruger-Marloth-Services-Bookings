@@ -426,6 +426,8 @@ footer a:hover{opacity:1;color:var(--sun)}
 .book-price strong{font-size:1.6rem;font-family:'Playfair Display'}
 .book-price span{color:var(--muted);font-size:.9rem}
 .peak-note{font-size:.82rem;color:var(--sun-dark);font-weight:600;margin-top:2px}
+.stay-price.por{font-size:.86rem;font-weight:700;color:var(--bush-dark);white-space:nowrap}
+.por-big{font-size:1.6rem!important}
 .bn-sash{position:absolute;top:42px;right:-45px;width:200px;transform:rotate(45deg);background:#111;color:#f2c464;text-align:center;padding:6px 0;font-size:.64rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;box-shadow:0 4px 12px rgba(0,0,0,.35);border-top:1px solid #f2c464;border-bottom:1px solid #f2c464;z-index:2;pointer-events:none}
 .bn-sash.big{top:52px;right:-62px;width:270px;padding:9px 0;font-size:.8rem}
 .stay-media .bn-sash ~ .avail-flag{top:auto;bottom:12px;left:12px;right:auto}

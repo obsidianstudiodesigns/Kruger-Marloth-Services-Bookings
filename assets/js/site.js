@@ -179,7 +179,7 @@ function renderStays() {
         <span class="photo-count">${icon('images')}${s.photos}</span>
       </div>
       <div class="stay-info">
-        <div class="stay-title"><h3>${esc(s.name)}</h3><div class="stay-price">${sum.priceFrom ? '<small>from</small> ' : ''}${sum.was ? `<s class="was">${money(sum.was)}</s> ` : ''}${money(sum.price)} <small>/night</small>${sum.special ? `<span class="bn-tag">${esc(sum.special.label)}</span>` : sum.peak ? `<span class="peak-tag">${esc(SITE.peak.label)}</span>` : ''}</div></div>
+        <div class="stay-title"><h3>${esc(s.name)}</h3>${sum.onRequest ? '<div class="stay-price por">Price on request</div>' : `<div class="stay-price">${sum.priceFrom ? '<small>from</small> ' : ''}${sum.was ? `<s class="was">${money(sum.was)}</s> ` : ''}${money(sum.price)} <small>/night</small>${sum.special ? `<span class="bn-tag">${esc(sum.special.label)}</span>` : sum.peak ? `<span class="peak-tag">${esc(SITE.peak.label)}</span>` : ''}</div>`}</div>
         <p class="stay-tagline">${esc(s.tagline)}</p>
         <ul class="facts">${n ? `
           <li>${icon('home')}${n} ${unitWord}s</li>
@@ -330,9 +330,9 @@ function openStay(id, push = true) {
         </aside>` : `
         <aside class="book-card" id="bookCard">
           ${priceBlock(s)}
-          ${s.priceNote ? `<div class="peak-note">${esc(s.priceNote)}</div>` : ''}
+          ${onRequest(s) ? '' : `${s.priceNote ? `<div class="peak-note">${esc(s.priceNote)}</div>` : ''}
           ${s.rates ? rateTable(s) : ''}
-          ${s.seasons ? seasonTable(s) : ''}
+          ${s.seasons ? seasonTable(s) : ''}`}
           <div class="date-boxes">
             <div><small>Check-in</small><span id="bkIn" class="placeholder">Add date</span></div>
             <div><small>Check-out</small><span id="bkOut" class="placeholder">Add date</span></div>
@@ -363,7 +363,7 @@ function openStay(id, push = true) {
       </div>
     </div></div>
     <div class="mobile-book">
-      <div>${sum.priceFrom ? '<span>From</span> ' : ''}<strong>${money(sum.price)}</strong> <span>per night · ${sum.special ? esc(sum.special.label) : sum.peak ? esc(SITE.peak.label.toLowerCase()) : 'indicative'}</span></div>
+      <div>${sum.onRequest ? '<strong>Price on request</strong> <span>send your dates</span>' : `${sum.priceFrom ? '<span>From</span> ' : ''}<strong>${money(sum.price)}</strong> <span>per night · ${sum.special ? esc(sum.special.label) : sum.peak ? esc(SITE.peak.label.toLowerCase()) : 'indicative'}</span>`}</div>
       ${units.length
         ? `<button class="btn btn-primary" data-jump-units>${icon('home')}Choose a ${esc(unitWord)}</button>`
         : `<button class="btn btn-primary" data-jump>${icon('calendar')}Check dates</button>`}
@@ -502,6 +502,12 @@ function updateQuote() {
   else if (!co) msg.textContent = 'Now select your check-out date.';
   else if (nights < minNightsFor(stay, ci, co)) { msg.textContent = `Minimum stay is ${minNightsFor(stay, ci, co)} nights for these dates.`; msg.classList.add('warn'); }
   else msg.textContent = `${nights} nights selected — these dates are open.`;
+  if (onRequest(stay)) {
+    $('#quote').innerHTML = nights ? `
+    <div class="total"><span>${nights} night${nights > 1 ? 's' : ''}</span><span>Price on request</span></div>
+    <small>Send your dates and ${SITE.contactName} will reply with the price for your stay.</small>` : '';
+    return;
+  }
   const rate = ci ? nightPrice(stay, ci, guestCount()) : nightlyRate(stay, guestCount());
   const total = nights ? stayTotal(stay, ci, co, guestCount()) : 0;
   const even = total === rate * nights;
@@ -553,6 +559,9 @@ function priceBlock(s) {
   const P = SITE.peak, peak = hasPeak(s);
   const from = s.priceFrom || s.rates ? '<span>From</span>' : '';
   const peakVal = s.peakPrice ? money(s.peakPrice) : peak ? `from ${money(s.rates[s.peakRates].rows[0][1])}` : '';
+  if (onRequest(s)) return `
+          <div class="book-price"><strong class="por-big">Price on request</strong></div>
+          <div class="peak-off">Choose your dates and send a request. ${esc(SITE.contactName)} will reply with the price.</div>`;
   if (specialNow(s)) {
     const x = s.special, was = regularPrice(s);
     return `
@@ -607,7 +616,7 @@ function sendRequest(channel) {
   if (!$('#bConsent').checked) { toast('Please tick the box to agree to the privacy notice.'); $('#bConsent').closest('label').classList.add('need'); return; }
   const adults = $('#bAdults').value, kids = $('#bKids').value, notes = $('#bNotes').value.trim();
   const guests = `${adults} adult${adults > 1 ? 's' : ''}${Number(kids) ? `, ${kids} child${kids > 1 ? 'ren' : ''}` : ''}`;
-  const total = money(stayTotal(stay, ci, co, guestCount()));
+  const total = onRequest(stay) ? 'Price on request' : money(stayTotal(stay, ci, co, guestCount()));
   if (channel === 'email') return emailRequest({ stay, ci, co, nights, name, phone, email, guests, notes, total });
   const text = [
     `Hi ${SITE.contactName}, I'd like to book *${stayLabel(stay)}*.`,
@@ -620,7 +629,7 @@ function sendRequest(channel) {
     email ? `Email: ${email}` : null,
     notes ? `Notes: ${notes}` : null,
     '',
-    `Estimated total: ${total}`,
+    onRequest(stay) ? 'Please send me the price for these dates.' : `Estimated total: ${total}`,
     stayUrl(stay.id),
   ].filter(l => l !== null).join('\n');
   window.open(waHref(SITE.whatsapp, text), '_blank', 'noopener');
@@ -950,7 +959,7 @@ function openPop(key) {
     const sum = listingSummary(p.s);
     body = `<img src="${stayImg(p.s.id, 1, true)}" alt="" />
       <div><strong>${esc(p.name)}</strong><small>${esc(p.where)}</small>
-      <small>Sleeps ${sum.minSleeps !== sum.sleeps ? `${sum.minSleeps}–${sum.sleeps}` : sum.sleeps} · ${sum.priceFrom ? 'from ' : ''}${money(sum.price)}/night</small></div>`;
+      <small>Sleeps ${sum.minSleeps !== sum.sleeps ? `${sum.minSleeps}–${sum.sleeps}` : sum.sleeps} · ${sum.onRequest ? 'price on request' : `${sum.priceFrom ? 'from ' : ''}${money(sum.price)}/night`}</small></div>`;
   } else {
     body = `<div><strong>${esc(p.name)}</strong><small>${esc(p.where)}</small><small>${esc(p.here)}</small></div>`;
   }

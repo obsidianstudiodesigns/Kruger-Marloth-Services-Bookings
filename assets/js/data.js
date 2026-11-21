@@ -196,6 +196,8 @@ const STAYS = [
     description: 'A big thatched face-brick bush home that sleeps thirteen — made for large families and groups. Inside are air-conditioned bedrooms, a loft, an open-plan lounge and a fully equipped kitchen; outside, a sparkling pool, a covered patio with plenty of seating, an outdoor dining area and a sunken boma for fires under the stars. Zebra regularly come right up to the deck.',
     sleeps: 13, bedrooms: 5, bathrooms: 3,
     price: 1800, peakPrice: 2200,
+    // Owner asked for "price on request" from Monday 23 Nov 2026: from that date no prices show; the rates below are kept for later
+    priceOnRequest: '2026-11-23',
     priceNote: 'Weekends: R1 800 for up to 6 guests, R2 000 for more · Midweek out of season: R1 200 (minimum 5 nights) · Long weekends & school holidays: R2 200',
     photos: 26, flyer: false,
     filters: ['pool', 'groups', 'kids'],

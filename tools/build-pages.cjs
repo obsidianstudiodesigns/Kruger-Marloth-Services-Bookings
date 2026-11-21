@@ -129,7 +129,7 @@ for (const s of STAYS) {
           '@type': 'LodgingBusiness', '@id': url + '#stay', name: label(s), url, description: s.description, image: photos,
           telephone: PHONE_INTL, address: ADDRESS, numberOfRooms: units.length || s.bedrooms,
           ...(geoOf(s) ? { geo: geoOf(s) } : {}),
-          ...(s.price || units.length ? { priceRange: `From ${rand(s.price || Math.min(...units.map(u => u.price)))} per night` } : {}),
+          ...((s.price || units.length) && !s.priceOnRequest ? { priceRange: `From ${rand(s.price || Math.min(...units.map(u => u.price)))} per night` } : {}),
           amenityFeature: s.amenities.map(([, label]) => ({ '@type': 'LocationFeatureSpecification', name: label, value: true })),
           containedInPlace: parent ? { '@id': `${URL_BASE}stays/${parent.id}/#stay` } : { '@type': 'Place', name: 'Marloth Park' },
           provider: { '@id': URL_BASE + '#business' },
