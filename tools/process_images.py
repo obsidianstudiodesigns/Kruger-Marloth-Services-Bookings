@@ -342,7 +342,6 @@ for slug, (folder, f, crop) in SERVICES.items():
 
 # Photo galleries for houses for sale: images/sale/<slug>/NN.jpg and thumb/
 SALE = {
-  'geelslang': ('Properties for Sale/Geelslang', 'IMG-20260916-WA0184.jpg'),
 }
 for slug, (folder, cover) in SALE.items():
     d = os.path.join(SRC, folder)

@@ -1664,18 +1664,16 @@ const PROPERTY_SALE = {
   agency: 'Blue Lily Properties',
   agent: 'Nadia Green',
   phone: '061 512 9208',
-  image: 'images/sale/blue-lily-properties.jpg',
+  image: 'images/sale/blue-lily-stands.jpg',
   intro: 'Buy your piece of heaven in Marloth Park. Enjoy the freedom of free-roaming animals and the night sounds of the bush, while sipping a glass of wine on your own stoep.',
   // Houses with their own photo gallery (from 'Properties for Sale/<folder>' in the client's files)
-  galleries: [
-    { id: 'geelslang', title: 'Double-storey home in Geelslang Street', text: 'Thatched double-storey home with a balcony, open-plan kitchen and dining room, carports and a round splash pool with braai area.', photos: 17 },
-  ],
+  galleries: [],   // the Geelslang Street house was taken off the market (Nov 2026)
   listings: [
     ['home', '5 bedroom, 5 bathroom house'],
     ['home', '5 bedroom, 3 bathroom house'],
     ['home', '2 bedroom, 2 bathroom house'],
-    ['tree', '4 vacant stands next to parkland'],
-    ['pin', '3 street-facing stands'],
+    ['tree', 'Vacant stands bordering parkland · from R650 000'],
+    ['pin', 'Road-facing stands · from R580 000'],
   ],
 };
 
