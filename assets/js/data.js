@@ -1669,9 +1669,6 @@ const PROPERTY_SALE = {
   // Houses with their own photo gallery (from 'Properties for Sale/<folder>' in the client's files)
   galleries: [],   // the Geelslang Street house was taken off the market (Nov 2026)
   listings: [
-    ['home', '5 bedroom, 5 bathroom house'],
-    ['home', '5 bedroom, 3 bathroom house'],
-    ['home', '2 bedroom, 2 bathroom house'],
     ['tree', 'Vacant stands bordering parkland · from R650 000'],
     ['pin', 'Road-facing stands · from R580 000'],
   ],
