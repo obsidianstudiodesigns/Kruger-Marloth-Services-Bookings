@@ -712,6 +712,31 @@ const STAYS = [
     draft: ['price', 'rules'],
   },
   {
+    id: 'noahs-ark',
+    name: 'Noah’s Ark',
+    tag: 'Sleeps 6',
+    tagline: 'Where the wild comes to your door',
+    description: 'A charming thatched holiday home in the heart of Marloth Park, within walking distance of the Crocodile River and its views into the Kruger National Park. Zebras, kudus, nyalas, impalas and wildebeest come right up to the house, and two bushbabies live in the trees out front — they love smashed bananas. Inside is an open-plan living area and kitchen with a guest toilet. Downstairs are two bedrooms, each with a queen-size bed, its own bathroom with a shower, air-conditioning and a fan. Upstairs, the thatched loft has two single beds and a roof fan. Outside there’s a splash pool, a covered patio and a boma fire for braais under the stars. Solar power means no load shedding, and a backup JoJo tank keeps the water running.',
+    sleeps: 6, bedrooms: 3, bathrooms: 2,
+    price: 2200,
+    rules: {
+      notes: [
+        ['What to bring', 'Insect repellent, braai wood or charcoal (also sold at Spar and Daisy’s Den), swimming towels, sunblock, washing machine detergent and a hairdryer.'],
+        ['Provided on arrival', 'A starter supply only: 1 roll of toilet paper per bathroom, a little dishwashing liquid, some coffee, tea, milk and sugar, one dishwasher pod and one black bag. Bring extra for a longer stay.'],
+        ['Feeding the wildlife', 'Bananas and yoghurt for the bushbabies, polony and Marie biscuits for the mongooses, and apples, carrots or game pellets (from Daisy’s Den or Spar) for the buck. Please follow the Marloth Park feeding guidelines.'],
+      ],
+    },
+    photos: 15, flyer: false,
+    filters: ['pool', 'river', 'power', 'kids'],
+    amenities: [
+      ['bed', '2 queen bedrooms + loft with 2 singles'], ['shower', '2 bathrooms with showers + guest toilet'], ['snow', 'Aircon & fans in the bedrooms'],
+      ['pool', 'Splash pool'], ['flame', 'Boma fire & braai'], ['deck', 'Covered patio'],
+      ['sun', 'Solar power — no load shedding'], ['shield', 'Backup JoJo water tank'], ['dish', 'Open-plan kitchen with dishwasher'],
+      ['washer', 'Small washing machine'], ['paw', 'Bushbabies & game at the house'], ['river', 'Walk to the Crocodile River'],
+    ],
+    draft: ['rules'],
+  },
+  {
     id: 'old-hippo',
     name: 'The Old Hippo River House',
     tag: 'Kruger river views',
@@ -1715,6 +1740,7 @@ const MAP = {
     { stay: 'waterpeer', lat: -25.34460, lng: 31.80790, where: 'Waterpeer Street' },
     { stay: 'wild-about-shawu', lat: -25.35753, lng: 31.76127, where: 'Hornbill Street' },
     { stay: 'kruger-carpediem', lat: -25.36269, lng: 31.80602, where: '3989 Olifant Drive' },
+    { stay: 'noahs-ark', lat: -25.34519, lng: 31.80883, where: 'Near the Crocodile River' },
   ],
   places: [
     { name: 'Giraffe Pub & Grill', lat: -25.34785, lng: 31.77908, where: 'Cnr Sekelbos & Olifant',

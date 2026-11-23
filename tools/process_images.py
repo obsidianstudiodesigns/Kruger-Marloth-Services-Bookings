@@ -112,6 +112,13 @@ STAYS = {
                         'Screenshot_20260911_105332_Gallery.jpg', 'WhatsApp Image 2026-11-17 at 10.21.50.jpeg', 'WhatsApp Image 2026-11-17 at 10.21.49 (1).jpeg', 'WhatsApp Image 2026-11-17 at 10.21.50 (2).jpeg',
                         'WhatsApp Image 2026-11-17 at 10.21.51 (1).jpeg', 'WhatsApp Image 2026-11-17 at 10.21.51.jpeg'], 'file_0000000085b48211b56d480859fd890c.png', '*', []),
   # Owner's WhatsApp photos; the handwritten rate sheet and info screenshots are text, not photos
+  # Noah's Ark: single photos plus the main photo cropped out of each owner collage (crop-*.jpg); the owner's flyer
+  # (old rate and direct contact details) and the price note screenshot are left out
+  'noahs-ark':        ('Noahs Ark',
+                       ['IMG-20260904-WA0143.jpg', 'crop-WA0141.jpg', 'IMG-20260904-WA0147.jpg', 'IMG-20260904-WA0146.jpg',
+                        'IMG-20260904-WA0149.jpg', 'IMG-20260904-WA0148.jpg', 'IMG-20260904-WA0145.jpg', 'IMG-20260904-WA0152.jpg',
+                        'crop-WA0135.jpg', 'crop-WA0134.jpg', 'crop-WA0139.jpg', 'crop-WA0136.jpg',
+                        'crop-WA0138.jpg', 'crop-WA0140.jpg', 'IMG-20260904-WA0150.jpg'], None, '*', []),
   'old-hippo':        ('Old Hippo River House',
                        ['IMG-20261112-WA0182.jpg', 'IMG-20261112-WA0183.jpg', 'IMG-20260519-WA0158.jpg', 'IMG-20260519-WA0163.jpg',
                         'IMG-20260519-WA0157.jpg', 'IMG-20260519-WA0153.jpg', 'IMG-20260519-WA0152.jpg', 'IMG-20260519-WA0133.jpg',
