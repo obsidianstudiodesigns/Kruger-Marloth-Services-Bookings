@@ -1485,7 +1485,7 @@ const SERVICE_CATEGORIES = [
       },
     ] },
   { id: 'events', icon: 'calendar', name: 'What’s On',
-    blurb: 'Markets and events in Marloth Park.',
+    blurb: 'Markets, events and bird walks in Marloth Park.',
     providers: [
       {
         name: 'Henk van Rooyen Fun Xmas Market', image: 'images/services/xmas-market.jpg',
@@ -1500,6 +1500,20 @@ const SERVICE_CATEGORIES = [
         tags: ['Sun 6 Dec 2026 · 11:00–21:30', 'Live music', '2 free glasses of wine pp', 'Booking essential'],
         phones: ['065 828 4687', '061 456 6124'],
         address: 'Renoster Road, Marloth Park',
+      },
+      {
+        name: 'Honorary Rangers Monthly Bird Walk', image: 'images/services/bird-walk.jpg', moreImages: ['images/services/birding-marloth.jpg'],
+        description: 'Join the Marloth Park Honorary Rangers on their bird walk on the first Saturday of the month. Next walk: Saturday 5 December 2026 at 06:00, meeting at the corner of Volstruis and Crocodile. All welcome; donations gratefully accepted, with an optional breakfast at a lodge afterwards at your own cost. Marloth Park is a birding gem: 300+ species, 12 km of Crocodile River frontage, six bird hides and a vulture viewing site in Lionspruit.',
+        tags: ['Next walk · Sat 5 Dec 2026 · 06:00', 'Corner Volstruis & Crocodile', 'All welcome · donations welcome', 'Optional breakfast afterwards', 'For more info · Glyn'],
+        phones: ['071 603 6638'],
+        area: 'Marloth Park',
+      },
+      {
+        name: 'Bird checklist for Marloth Park & Lionspruit — R50', image: 'images/services/bird-checklist.jpg',
+        description: 'An updated, pocket-size bird list from the Marloth Park Honorary Rangers, compiled by local expert Genie Retief: habitats, a 300-species ticklist in English and Afrikaans, and a fold-out map. Contact Glyn for more info on where to get a copy.',
+        tags: ['R50', '300-species ticklist', 'English & Afrikaans', 'Fold-out map', 'Pocket-size'],
+        phones: ['071 603 6638'],
+        area: 'Marloth Park Honorary Rangers',
       },
     ] },
   {
