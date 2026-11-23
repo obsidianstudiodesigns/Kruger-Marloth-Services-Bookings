@@ -24,6 +24,7 @@ STAYS = {
                        ['IMG-20261021-WA0310.jpg', 'WhatsApp Image 2026-11-16 at 13.38.48.jpeg', 'WhatsApp Image 2026-11-16 at 13.38.47 (2).jpeg', 'WhatsApp Image 2026-11-16 at 13.38.39.jpeg', 'WhatsApp Image 2026-11-16 at 13.38.41.jpeg',
                         'WhatsApp Image 2026-11-16 at 13.38.38.jpeg', 'WhatsApp Image 2026-11-16 at 13.38.42 (2).jpeg', 'WhatsApp Image 2026-11-16 at 13.38.37 (1).jpeg', 'WhatsApp Image 2026-11-16 at 13.38.42.jpeg', 'WhatsApp Image 2026-11-16 at 13.38.37.jpeg',
                         'WhatsApp Image 2026-11-16 at 13.38.42 (1).jpeg', '20261021_081305.jpg', '20261021_081310.jpg', '20261021_081330.jpg',
+                        'IMG-20261114-WA0155.jpg', 'IMG-20261114-WA0154.jpg', 'IMG-20261115-WA0022.jpg',
                         'WhatsApp Image 2026-11-16 at 13.38.34.jpeg'], 'IMG-20261021-WA0314.jpg', '*', []),
   # Afrika Safari: photos from the guesthouse's own website (in 'website'), rooms bookable one by one
   'afrika-safari':    ('Afrika Safari Gastehuis/website',
@@ -140,6 +141,12 @@ SERVICES = {
   'phai-tong-thai':       ('Restaurants/PHAI Tong', 'FB_IMG_1793283350601.jpg', None),
   'shawus-boma':          ('Restaurants/Shawu Boma Komatipoort', 'FB_IMG_1793283053775.jpg', None),
   'eat-inn-foods':        ('Private Chefs/Eat Inn', 'IMG-20261029-WA0121.jpg', None),
+  'nyala-cleaning':       ('House Cleaning Services', 'IMG-20261121-WA0059.jpg', None),
+  'bushwave-hair':        ('Hairderesser', 'IMG-20261122-WA0010.jpg', None),
+  'harcourts-lowveld':    ('../Properties for Sale', 'IMG-20261122-WA0005.jpg', None),
+  'tourist-sunset-1':     ('../Tourist Information Centre', 'IMG_2972.JPG', None),
+  'tourist-sunset-2':     ('../Tourist Information Centre', 'IMG_2973.JPG', None),
+  'tourist-sunset-3':     ('../Tourist Information Centre', '20261121_175104.jpg', None),
   'clean-living':         ('House Cleaning Services', 'IMG-20261029-WA0118.jpg', None),
   'marloth-medical':      ('Emergency services/Dr', 'IMG-20261028-WA0101.jpg', None),
   'field-security':       ('Emergency services/Field', 'IMG-20261028-WA0082.jpg', None),
@@ -341,7 +348,9 @@ GALLERIES = {
     ('FB_IMG_1769886310429.jpg', None), ('FB_IMG_1779354171603.jpg', None), ('FB_IMG_1779354162090.jpg', None),
     ('FB_IMG_1779354163933.jpg', None), ('FB_IMG_1787820238568.jpg', None), ('FB_IMG_1783879683979.jpg', None),
     ('FB_IMG_1779821329602.jpg', None), ('FB_IMG_1780571949179.jpg', None), ('FB_IMG_1788036223194.jpg', None),
-    ('FB_IMG_1784380809062.jpg', None), ('FB_IMG_1779001375564.jpg', None), ('FB_IMG_1779303978103.jpg', None)]),
+    ('FB_IMG_1784380809062.jpg', None), ('FB_IMG_1779001375564.jpg', None), ('FB_IMG_1779303978103.jpg', None),
+    ('IMG-20261117-WA0095.jpg', None), ('IMG-20261118-WA0037.jpg', None), ('IMG-20261118-WA0040.jpg', None),
+    ('IMG-20261120-WA0031.jpg', None), ('IMG-20261121-WA0044(1).jpg', None)]),
   'rules': ('Marloth Rules', [('Screenshot_20260402_071549_OneDrive.jpg', None), ('Screenshot_20260402_071540_OneDrive.jpg', None)]),
 }
 for slug, (folder, files) in GALLERIES.items():

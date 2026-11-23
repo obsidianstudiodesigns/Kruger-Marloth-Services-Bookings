@@ -63,7 +63,7 @@ const STAYS = [
     sleeps: 6, bedrooms: 3, bathrooms: 3,
     price: 1950, peakPrice: 3300,
     special: { label: 'Black November special', short: 'Black November', price: 1950, from: '2026-11-01', to: '2026-11-30', until: '30 November' },
-    photos: 15, flyer: true,
+    photos: 18, flyer: true,
     filters: ['pool', 'river', 'power'],
     amenities: [
       ['bed', '3 modern bedrooms'], ['bath', '3 en-suite bathrooms'], ['pool', 'Private pool'],
@@ -1232,6 +1232,13 @@ const SERVICE_CATEGORIES = [
         email: 'cleanlivingmarloth@gmail.com',
         area: 'Marloth Park',
       },
+      {
+        name: 'Nyala Cleaning & Maintenance Services', image: 'images/services/nyala-cleaning.jpg',
+        description: 'Reliable service with love for Marloth Park, from Philip and Annatjie Conradie: house cleaning daily, weekly or as needed, weekly garden and pool care, and thatch-roof maintenance and new splash pools.',
+        tags: ['House cleaning · daily, weekly or as needed', 'Gardens & pools · weekly', 'Thatch-roof maintenance', 'New splash pools built'],
+        phones: ['082 756 4711'],
+        area: 'Marloth Park',
+      },
     ],
   },
   {
@@ -1553,12 +1560,37 @@ const SERVICE_CATEGORIES = [
       },
     ],
   },
+  { id: 'hair', icon: 'sparkle', name: 'Hair & Beauty',
+    blurb: 'Hairdressers and beauty treatments in Marloth Park.',
+    providers: [
+      {
+        name: 'Bushwave Hair Salon', image: 'images/services/bushwave-hair.jpg',
+        description: 'Your hair, our passion — a salon for men and women on Olifant Drive. Bookings by appointment only, with Annatjie Conradie. Tuesday is pensioners’ day, with special rates every Tuesday.',
+        tags: ['Haircuts', 'Colour & highlights', 'Brazilian & Botox', 'Hair treatments', 'Tuesday · pensioners’ rates', 'By appointment only'],
+        phones: ['013 077 1199'],
+        address: '3891 Olifant Drive, Marloth Park',
+      },
+    ],
+  },
+  { id: 'estate-agents', icon: 'home', name: 'Estate Agents',
+    blurb: 'Buying or selling in Marloth Park and the area.',
+    providers: [
+      {
+        name: 'Nadine — Harcourts Lowveld', image: 'images/services/harcourts-lowveld.jpg',
+        description: 'From “For Sale” to “SOLD!” — Nadine at Harcourts Lowveld is a Marloth Park area specialist for selling or buying a home in the park and surroundings.',
+        tags: ['Marloth Park area specialist', 'Selling & buying', 'Harcourts Lowveld'],
+        phones: ['082 672 4545'],
+        area: 'Marloth Park & Lowveld',
+      },
+    ],
+  },
   {
     id: 'info', icon: 'info', name: 'Tourist Information',
     blurb: 'Maps, activities, bookings and local tips.',
     providers: [
       {
-        name: 'Marloth Park Tourist Information Centre', image: 'images/services/tourist-info-centre.jpg',
+        name: 'Marloth Park Tourist Information Centre', image: 'images/services/tourist-info-centre.jpg', photos: true,
+        moreImages: ['images/services/tourist-sunset-1.jpg', 'images/services/tourist-sunset-2.jpg', 'images/services/tourist-sunset-3.jpg'],
         description: 'Your gateway to the Kruger National Park — pop in for maps, activities, bookings and local tips.',
         tags: ['Maps', 'Activities', 'Bookings', 'Local tips'],
         phones: ['084 565 5916'],
@@ -1716,4 +1748,9 @@ const FACTS = [
   { title: 'How to read a safari scene', text: 'Find the first animal, then look beyond it, up and for movement.', tag: 'Kruger' },
   { title: 'Field notes from Kruger', text: 'Why a safari slowly teaches you to notice the small things.', tag: 'Kruger' },
   { title: 'More field notes from Kruger', text: 'How animals position themselves, and why no two sightings are alike.', tag: 'Kruger' },
+  { wide: true, title: 'African fish eagle', text: 'The voice of Africa — a master fisher with spiky toe pads to grip slippery fish.', tag: 'Birds' },
+  { wide: true, title: 'Hippos are semi-aquatic giants', text: 'Up to 16 hours a day in the water, with a natural red “sunscreen” on their skin.', tag: 'Animals' },
+  { title: 'Cheetah', text: 'The fastest land mammal — and it needs half an hour to catch its breath before it can eat.', tag: 'Animals' },
+  { title: 'Black-shouldered kite', text: 'Hovers motionless in the wind to spot mice and shrews below, with piercing red eyes.', tag: 'Birds' },
+  { title: 'Giant bullfrog', text: 'Up to 24 cm and 1.4 kg — fathers guard their tadpoles and dig channels to save them.', tag: 'Animals' },
 ];
