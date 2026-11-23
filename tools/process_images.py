@@ -86,6 +86,17 @@ STAYS = {
   'marloth-bush-escape': ('Marloth Bush Escape', 'IMG-20261022-WA0092.jpg', 'IMG-20261022-WA0147.jpg', [], []),
   'hyena-bush-retreat': ('Hyena Bush Retreat/website', ['05_ea79e1b7.jpg', '01_39b1d551.jpg', '06_88c08d98.jpg', '07_395b4beb.jpg', '10_a8a749a8.jpg', '12_e05cad27.jpg', '25_90e5f798.jpg', '20_f6e57df2.jpg', '11_8310fbb9.jpg', '28_4fc21e3a.jpg', '29_c00619ce.jpg', '31_f687f821.jpg', '15_640856a2.jpg', '16_09ce9118.jpg', '13_20d6ad86.jpg', '08_a1a9f8a9.jpg', '18_e8c7b76c.jpg', '40_91b2ffbc.jpg', '38_e338cb41.jpg', '03_baeb5d7d.jpg', '02_4d6b896b.jpg'], None, '*', []),
   'indabush':         ('Indabush', 'IMG-20260313-WA0039.jpg', 'IMG-20260815-WA0090.jpg', ['IMG-20260815-WA0090(1).jpg'], []),
+  # Kruger @ Carpediem: photos from its Accommodation 4 SA listing (near-identical repeats and the owner's flyer left out)
+  'kruger-carpediem': ('Kruger at Carpediem',
+                       [
+'g31_104016.jpg', 'g29_104014.jpg', 'g32_104017.jpg', 'g01_103986.jpg',
+                        'g02_103987.jpg', 'g27_104012.jpg', 'g08_103993.jpg', 'g14_103999.jpg',
+                        'g15_104000.jpg', 'g13_103998.jpg', 'g04_103989.jpg', 'g05_103990.jpg',
+                        'g06_103991.jpg', 'g07_103992.jpg', 'g09_103994.jpg', 'g10_103995.jpg',
+                        'g11_103996.jpg', 'g12_103997.jpg', 'g16_104001.jpg', 'g17_104002.jpg',
+                        'g18_104003.jpg', 'g19_104004.jpg', 'g20_104005.jpg', 'g21_104006.jpg',
+                        'g22_104007.jpg', 'g24_104009.jpg', 'g25_104010.jpg', 'g23_104008.jpg',
+                        'g26_104011.jpg', 'g30_104015.jpg', 'g03_103988.jpg'], None, '*', []),
   'mamba-house':      ('Mamba house', 'IMG-20260924-WA0075.jpg', None,
                        ['IMG-20260924-WA0045.jpg', 'IMG-20260924-WA0046.jpg', 'IMG-20260924-WA0055.jpg',
                         'IMG-20260924-WA0058.jpg', 'IMG-20260924-WA0059.jpg', 'IMG-20260924-WA0068.jpg',
