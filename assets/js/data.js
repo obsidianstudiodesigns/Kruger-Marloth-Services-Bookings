@@ -740,25 +740,9 @@ const STAYS = [
   {
     id: 'onze-goede-plek',
     name: 'Onze Goede Plek',
-    unitLabel: 'unit',
-    tag: '2 units',
-    tagline: 'A main house for 8 and a cottage for 4 on Naboom Street',
-    description: 'Two self-catering thatched face-brick homes on one bushveld stand at 3168 Naboom Street, booked separately or together. The main house sleeps 8 in four bedrooms, with three bathrooms, a splash pool and covered stoeps, and an upstairs lounge looking out over the bush. The cottage sleeps 4 in two bedrooms, with an open-plan kitchen, a lounge in the loft, a covered stoep and its own braai. Zebras and mongooses wander through the garden.',
-    photos: 9, flyer: false,
-    filters: ['pool', 'groups', 'kids', 'couples'],
-    amenities: [
-      ['home', 'Main house (sleeps 8) & cottage (sleeps 4)'], ['pool', 'Splash pool at the main house'], ['deck', 'Covered stoeps'],
-      ['flame', 'Braai areas'], ['snow', 'Prepaid aircons & fans'], ['paw', 'Zebras & mongooses in the garden'],
-    ],
-    draft: ['rules'],
-  },
-  {
-    id: 'onze-goede-plek-house',
-    parent: 'onze-goede-plek',
-    name: 'Onze Goede Plek — Main House',
     tag: 'Sleeps 8',
     tagline: 'Four-bedroom thatched house with a splash pool',
-    description: 'The main house at Onze Goede Plek sleeps 8. Downstairs, the open-plan kitchen, lounge and dining room open onto a covered stoep with the splash pool and braai area beyond. The main bedroom has its own bathroom and a door straight outside, the second bedroom has a double bed, and a separate bathroom with a bath and shower is also downstairs. Upstairs are a bedroom with a queen-size bed, a bedroom with two single beds, a bathroom with a shower and a lounge that opens onto a covered stoep looking out over the bush. Prepaid air-conditioners and wall fans throughout.',
+    description: 'A thatched face-brick house on Naboom Street for up to 8 guests. Downstairs, the open-plan kitchen, lounge and dining room open onto a covered stoep with the splash pool and braai area beyond. The main bedroom has its own bathroom and a door straight outside, the second bedroom has a double bed, and a separate bathroom with a bath and shower is also downstairs. Upstairs are a bedroom with a queen-size bed, a bedroom with two single beds, a bathroom with a shower and a lounge that opens onto a covered stoep looking out over the bush. Prepaid air-conditioners and wall fans throughout.',
     sleeps: 8, bedrooms: 4, bathrooms: 3,
     price: 2200,
     priceNote: 'Peak-season rate (1 Nov – 1 Jan) · the rest-of-year rate is still to be confirmed',
@@ -774,8 +758,7 @@ const STAYS = [
   },
   {
     id: 'onze-goede-plek-cottage',
-    parent: 'onze-goede-plek',
-    name: 'Onze Goede Plek — Cottage',
+    name: 'Onze Goede Plek Cottage',
     tag: 'Sleeps 4',
     tagline: 'Cosy two-bedroom thatched cottage',
     description: 'A cosy thatched cottage for 4. Downstairs is a fully equipped open-plan kitchen with a dining table, a bedroom with a double bed, a bedroom with two single beds and a bathroom with a shower. Linen and fans are provided in the bedrooms. Upstairs, the loft lounge sits under the thatch. Outside there is a covered stoep and a braai area, often with zebras grazing nearby.',
@@ -1588,6 +1571,20 @@ const SERVICE_CATEGORIES = [
     blurb: 'Markets, events and bird walks in Marloth Park.',
     providers: [
       {
+        name: 'Senior Citizens’ Christmas Lunch — a Christmas gift of love', image: 'images/services/ratepayers-christmas-lunch.jpg',
+        description: 'Each year the Marloth Park Ratepayers Association gives the park’s senior citizens a special Christmas lunch, a little live entertainment, companionship and a lovingly prepared hamper. A hamper costs about R300 per senior citizen, and every donation helps, whether R20, R50, R100 or R300. Donate by EFT: Marloth Park Ratepayers Association NPC, FNB, account 62726375670, branch Komatipoort, reference “ChristL” and your name.',
+        tags: ['Hampers ≈ R300 each', 'Any amount helps · R20, R50, R100, R300', 'FNB · acc 62726375670', 'Branch · Komatipoort', 'Reference · ChristL / your name'],
+        phones: [],
+        area: 'Marloth Park Ratepayers Association NPC',
+      },
+      {
+        name: 'Crazy Catz Co. Christmas Market', image: 'images/services/crazy-catz-christmas-market.jpg',
+        description: 'A Christmas market in Malelane on Saturday 5 December 2026. Vendors set up from 10:00, then a dedication by Pastor Quintin at 15:30, Skinny Yes from the Rebound Centre at 16:00, a gift presentation to Uthandiwe House at 16:30, and live music from Lourens Jansen van Vuuren at 17:00 and Rhona van Zyl at 18:00. Zimri closes the evening as the main event at 19:30. Contact for more info.',
+        tags: ['Sat 5 Dec 2026', 'Vendors from 10:00', 'Live music from 16:00', 'Zimri · main event 19:30'],
+        phones: [],
+        address: 'Rotunda Circle, Station Street, Malelane',
+      },
+      {
         name: 'Henk van Rooyen Fun Xmas Market', image: 'images/services/xmas-market.jpg',
         description: 'A festive market open every day from 10 December to 10 January, with two night markets on 19 December and 2 January. Arts and crafts, unique gifts, food and drinks, clothing and baby goods. For stall bookings, WhatsApp Vanessa.',
         tags: ['10 Dec – 10 Jan · open daily', 'Night markets 19 Dec & 2 Jan', 'Arts, crafts & gifts', 'Food & drinks'],
@@ -1796,7 +1793,8 @@ const MAP = {
     { stay: 'wild-about-shawu', lat: -25.35753, lng: 31.76127, where: 'Hornbill Street' },
     { stay: 'kruger-carpediem', lat: -25.36269, lng: 31.80602, where: '3989 Olifant Drive' },
     { stay: 'noahs-ark', lat: -25.34519, lng: 31.80883, where: '3577 Raasblaar Street' },
-    { stay: 'onze-goede-plek', lat: -25.33592, lng: 31.80621, where: '3168 Naboom Street' },
+    { stay: 'onze-goede-plek', lat: -25.33592, lng: 31.80621, where: 'Naboom Street' },
+    { stay: 'onze-goede-plek-cottage', lat: -25.33605, lng: 31.80634, where: '3168 Naboom Street' },
   ],
   places: [
     { name: 'Giraffe Pub & Grill', lat: -25.34785, lng: 31.77908, where: 'Cnr Sekelbos & Olifant',

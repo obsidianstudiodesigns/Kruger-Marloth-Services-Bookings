@@ -119,10 +119,9 @@ STAYS = {
                         'IMG-20260904-WA0149.jpg', 'IMG-20260904-WA0148.jpg', 'IMG-20260904-WA0145.jpg', 'IMG-20260904-WA0152.jpg',
                         'crop-WA0135.jpg', 'crop-WA0134.jpg', 'crop-WA0139.jpg', 'crop-WA0136.jpg',
                         'crop-WA0138.jpg', 'crop-WA0140.jpg', 'IMG-20260904-WA0150.jpg'], None, '*', []),
-  # Onze Goede Plek: a main house and a cottage on one stand, booked separately. The cottage flyers (owner's
+  # Onze Goede Plek: the house and the cottage are separate stays. The cottage flyers (owner's
   # contact details), the WhatsApp group-icon screenshot and the info screenshots are left out
-  'onze-goede-plek':  ('Onze Goede plek', ['IMG-20261123-WA0271.jpg', 'IMG-20261123-WA0274.jpg', 'IMG-20261123-WA0279.jpg', 'IMG-20261123-WA0275.jpg', 'IMG-20261123-WA0290.jpg'], None, '*', [], ['Onze Goede Plek Cottage/IMG-20261123-WA0220.jpg', 'Onze Goede Plek Cottage/IMG-20261123-WA0217.jpg', 'Onze Goede Plek Cottage/IMG-20261123-WA0222.jpg', 'Onze Goede Plek Cottage/IMG-20261123-WA0211.jpg']),
-  'onze-goede-plek-house': ('Onze Goede plek', ['IMG-20261123-WA0271.jpg', 'IMG-20261123-WA0272.jpg', 'IMG-20261123-WA0274.jpg', 'IMG-20261123-WA0273.jpg', 'IMG-20261123-WA0279.jpg', 'IMG-20261123-WA0280.jpg', 'IMG-20261123-WA0281.jpg', 'IMG-20261123-WA0282.jpg', 'IMG-20261123-WA0275.jpg', 'IMG-20261123-WA0276.jpg', 'IMG-20261123-WA0277.jpg', 'IMG-20261123-WA0278.jpg', 'IMG-20261123-WA0290.jpg', 'IMG-20261123-WA0283.jpg', 'IMG-20261123-WA0284.jpg', 'IMG-20261123-WA0286.jpg', 'IMG-20261123-WA0285.jpg', 'IMG-20261123-WA0287.jpg', 'IMG-20261123-WA0288.jpg', 'IMG-20261123-WA0289.jpg', 'IMG-20261123-WA0291.jpg'], None, '*', []),
+  'onze-goede-plek': ('Onze Goede plek', ['IMG-20261123-WA0271.jpg', 'IMG-20261123-WA0272.jpg', 'IMG-20261123-WA0274.jpg', 'IMG-20261123-WA0273.jpg', 'IMG-20261123-WA0279.jpg', 'IMG-20261123-WA0280.jpg', 'IMG-20261123-WA0281.jpg', 'IMG-20261123-WA0282.jpg', 'IMG-20261123-WA0275.jpg', 'IMG-20261123-WA0276.jpg', 'IMG-20261123-WA0277.jpg', 'IMG-20261123-WA0278.jpg', 'IMG-20261123-WA0290.jpg', 'IMG-20261123-WA0283.jpg', 'IMG-20261123-WA0284.jpg', 'IMG-20261123-WA0286.jpg', 'IMG-20261123-WA0285.jpg', 'IMG-20261123-WA0287.jpg', 'IMG-20261123-WA0288.jpg', 'IMG-20261123-WA0289.jpg', 'IMG-20261123-WA0291.jpg'], None, '*', []),
   'onze-goede-plek-cottage': ('Onze Goede Plek Cottage', ['IMG-20261123-WA0220.jpg', 'IMG-20261123-WA0215.jpg', 'IMG-20261123-WA0217.jpg', 'IMG-20261123-WA0222.jpg', 'IMG-20261123-WA0216.jpg', 'IMG-20261123-WA0218.jpg', 'IMG-20261123-WA0214.jpg', 'IMG-20261123-WA0211.jpg', 'IMG-20261123-WA0219.jpg', 'IMG-20261123-WA0213.jpg'], None, '*', []),
   'old-hippo':        ('Old Hippo River House',
                        ['IMG-20261112-WA0182.jpg', 'IMG-20261112-WA0183.jpg', 'IMG-20260519-WA0158.jpg', 'IMG-20260519-WA0163.jpg',
@@ -232,6 +231,8 @@ SERVICES = {
   'bird-walk':            ('../Marloth Rules', 'FB_IMG_1795126904983.jpg', None),
   'birding-marloth':      ('../Marloth Rules', 'FB_IMG_1795126908168.jpg', None),
   'bird-checklist':       ('../Marloth Rules', 'FB_IMG_1795126910103.jpg', None),
+  'ratepayers-christmas-lunch': ('../Events', 'ratepayers-senior-citizens-christmas-lunch.png', None),   # sent in chat, small
+  'crazy-catz-christmas-market': ('../Events', 'FB_IMG_1795383647336.jpg', None),
   'xmas-market':          ('Henk van Rooyen', 'FB_IMG_1794436212404.jpg', None),
   'kruger-restaurants':   ('Kruger National Park', 'IMG-20261109-WA0044.jpg', None),
   'marloth-and-more':     ('Marloth and more', 'FB_IMG_1794436262189.jpg', None),
