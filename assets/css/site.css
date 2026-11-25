@@ -153,6 +153,9 @@ section{padding:96px 0}
 .stay-title h3{font-size:1.22rem}
 .stay-price{font-weight:700;white-space:nowrap;font-size:1rem}
 .stay-price small{font-weight:400;color:var(--muted);font-size:.8rem}
+.stay-notice{display:flex;align-items:center;gap:6px;margin:0 0 10px;color:#c62828;font-size:.85rem;font-weight:800}
+.stay-notice svg{width:16px;height:16px;flex:none}
+.stay-notice.big{margin:8px 0 0;font-size:1rem}
 .stay-tagline{color:var(--muted);font-size:.9rem;margin:2px 0 10px}
 .facts{display:flex;flex-wrap:wrap;gap:6px 16px;list-style:none;font-size:.85rem;color:var(--charcoal)}
 .facts li{display:inline-flex;align-items:center;gap:6px}

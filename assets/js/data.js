@@ -359,7 +359,9 @@ const STAYS = [
     tag: 'Splash pool',
     tagline: 'Thatched bush home with a loft and upstairs deck',
     description: 'A warm, thatched face-brick home with three air-conditioned bedrooms: a queen room with en-suite bathroom, a second queen room and a loft with two three-quarter beds. The open-plan kitchen is fully equipped, the upstairs deck seats six for sundowners, and the patio opens onto a small splash pool and fire pit. There’s no TV — just the sounds of the bush.',
-    sleeps: 6, bedrooms: 3, bathrooms: 2,
+    sleeps: 6, bedrooms: 3, bathrooms: 2, maxAdults: 4, maxKids: 2,
+    // notice: a short guest rule shown in red on the card, the stay page and beside the guest pickers
+    notice: '4 adults and 2 children only',
     price: 1500, peakPrice: 1700,
     photos: 23, flyer: false,
     filters: ['pool'],

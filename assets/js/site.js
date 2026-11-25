@@ -181,6 +181,7 @@ function renderStays() {
       <div class="stay-info">
         <div class="stay-title"><h3>${esc(s.name)}</h3>${sum.onRequest ? '<div class="stay-price por">Price on request</div>' : `<div class="stay-price">${sum.priceFrom ? '<small>from</small> ' : ''}${sum.was ? `<s class="was">${money(sum.was)}</s> ` : ''}${money(sum.price)} <small>/night</small>${sum.special ? `<span class="bn-tag">${esc(sum.special.label)}</span>` : sum.peak ? `<span class="peak-tag">${esc(SITE.peak.label)}</span>` : ''}</div>`}</div>
         <p class="stay-tagline">${esc(s.tagline)}</p>
+        ${s.notice ? `<p class="stay-notice">${icon('users')}${esc(s.notice)}</p>` : ''}
         <ul class="facts">${n ? `
           <li>${icon('home')}${n} ${unitWord}s</li>
           <li>${icon('users')}${sum.minSleeps}–${sum.sleeps} guests</li>` : `
@@ -258,6 +259,7 @@ function openStay(id, push = true) {
           <div class="detail-head">
             <h1>${esc(s.name)}</h1>
             <div class="detail-loc">${icon('pin')}${pin ? `${esc(pin.where)}, Marloth Park · <button class="link-btn" data-show-map>Show on map</button>` : 'Marloth Park, next to the Kruger National Park'}</div>
+            ${s.notice ? `<p class="stay-notice big">${icon('users')}${esc(s.notice)}</p>` : ''}
             ${parent ? `<button class="parent-link" data-parent>${icon('left')}Part of ${esc(parent.name)} · see all ${unitsOf(parent.id).length} ${unitWord}s</button>` : ''}
           </div>
           <div class="detail-facts">${units.length ? `
@@ -344,8 +346,9 @@ function openStay(id, push = true) {
               <div class="field"><label for="bAdults">Adults</label>
                 <select id="bAdults">${Array.from({ length: Math.min(s.maxAdults || s.sleeps, s.sleeps) }, (_, i) => `<option ${i === 1 ? 'selected' : ''}>${i + 1}</option>`).join('')}</select></div>
               <div class="field"><label for="bKids">Children</label>
-                <select id="bKids">${Array.from({ length: s.sleeps }, (_, i) => `<option>${i}</option>`).join('')}</select></div>
+                <select id="bKids">${Array.from({ length: s.maxKids != null ? s.maxKids + 1 : s.sleeps }, (_, i) => `<option>${i}</option>`).join('')}</select></div>
             </div>
+            ${s.notice ? `<p class="stay-notice">${icon('users')}${esc(s.notice)}</p>` : ''}
             <div class="field"><label for="bName">Full name</label><input id="bName" autocomplete="name" required /></div>
             <div class="field"><label for="bPhone">Phone / WhatsApp</label><input id="bPhone" type="tel" autocomplete="tel" required /></div>
             <div class="field"><label for="bEmail">Email <span class="opt">(optional)</span></label><input id="bEmail" type="email" autocomplete="email" placeholder="So ${SITE.contactName} can reply by email" /></div>
