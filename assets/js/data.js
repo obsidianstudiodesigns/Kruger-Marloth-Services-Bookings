@@ -849,6 +849,7 @@ const STAYS = [
     description: 'A charming self-catering home set deep in Marloth Park, where zebra, kudu and warthog roam freely. Perfect for couples, friends or a small family who want privacy, comfort and real bush vibes. There are two air-conditioned bedrooms, one with a queen bed and one with twin beds, each with its own en-suite bathroom. The open-plan kitchen and lounge are fully equipped. Outside is a private, secluded swimming pool, a covered patio and a boma for bush evenings. A JoJo water system means no water stress, and an alarm with armed response gives peace of mind. Linen and bath towels are included.',
     sleeps: 4, bedrooms: 2, bathrooms: 2,
     price: 1650,
+    rules: { deposit: '50% deposit secures the booking, balance due 7 days before arrival. A refundable R1 500 breakage deposit is also payable.' },
     photos: 18, flyer: false,
     filters: ['pool', 'couples', 'kids'],
     amenities: [
