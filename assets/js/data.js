@@ -926,12 +926,17 @@ const STAYS = [
     tagline: 'Two-bedroom home with a splash pool and jacuzzi',
     description: 'A TGCSA 4-star self-catering home on Olifant Drive, easy to reach on the tar road from Gate 2 and close to the Kruger’s Crocodile Bridge gate. There are two bedrooms and two bathrooms, with an open-plan kitchen and lounge. The kitchen is fully equipped with a gas stove and oven, microwave, toaster, kettle, a potjie, a fridge/freezer and a bar fridge. Outside is a big covered braai area, a splash pool and a jacuzzi, with kudu and impala wandering past. Aircons in the bedrooms and living area, a smart TV with Netflix and fibre Wi-Fi, plus inverter and water backup.',
     sleeps: 4, bedrooms: 2, bathrooms: 2,
-    price: 0, priceOnRequest: '2026-11-01',   // the owner emailed the rates to Nadia: no price on the site until we have them
+    price: 1210, priceFrom: true, peakPrice: 1980,
+    seasons: [
+      { label: 'Out of season', price: 1210 },
+      { label: 'Normal holidays', price: 1540 },
+    ],
+    holidayNote: 'Normal holiday nights are R1 540',
     rules: { notes: [['Air-conditioning', 'The aircons run on prepaid electricity, for the guests’ own account.']] },
     photos: 20, flyer: false,
     filters: ['pool', 'power', 'kids'],
     amenities: [
-      ['bed', '2 bedrooms'], ['bath', '2 bathrooms'], ['pool', 'Splash pool'], ['sparkle', 'Jacuzzi'],
+      ['bed', 'Queen bedroom & twin bedroom'], ['bath', '2 bathrooms'], ['pool', 'Splash pool'], ['sparkle', 'Jacuzzi'],
       ['flame', 'Big covered braai area'], ['dish', 'Fully equipped kitchen, gas stove & oven'], ['snow', 'Prepaid aircons'],
       ['star', 'TGCSA 4-star graded'], ['tv', 'Smart TV with Netflix'], ['wifi', 'Fibre Wi-Fi'],
       ['zap', 'Inverter backup'], ['shield', 'Backup water tank'], ['safe', 'Safe for valuables'], ['fan', 'Fans'], ['car', 'Carport'],
@@ -945,7 +950,12 @@ const STAYS = [
     tagline: 'Three-bedroom home surrounded by parkland',
     description: 'A TGCSA 4-star self-catering home on Hornbill Street, secluded and quiet and surrounded by parkland. Three bedrooms sleep 6 adults, with one and a half bathrooms. The kitchen is fully equipped with a gas stove and oven, toaster, kettle, fridge/freezer, a potjie and all the cutlery and glasses, plus a dishwasher and a washing machine. The living area opens onto the splash pool, with an indoor braai and a big outdoor braai and boma area. All bedding and bath towels are supplied. Aircons in every room, a smart TV with Netflix and fibre Wi-Fi, plus inverter and water backup.',
     sleeps: 6, bedrooms: 3, bathrooms: 1.5,
-    price: 0, priceOnRequest: '2026-11-01',   // the owner emailed the rates to Nadia: no price on the site until we have them
+    price: 1430, priceFrom: true, peakPrice: 2640,
+    seasons: [
+      { label: 'Out of season', price: 1430 },
+      { label: 'Normal holidays', price: 1870 },
+    ],
+    holidayNote: 'Normal holiday nights are R1 870',
     rules: { notes: [['Air-conditioning', 'The aircons run on prepaid electricity, for the guests’ own account.']] },
     photos: 22, flyer: false,
     filters: ['pool', 'groups', 'power', 'kids'],
@@ -965,7 +975,12 @@ const STAYS = [
     tagline: 'A couples’ retreat with its own jacuzzi',
     description: 'Tora Rona’s couples’ retreat: a TGCSA 4-star unit for 2 adults, with an open-plan bedroom and kitchen, an en-suite bathroom and a jacuzzi looking out into the bush. The kitchen is fully equipped, and outside there is a big braai area and a carport. A 5 kW inverter and water backup mean no load shedding, with a smart TV with Netflix and fibre Wi-Fi.',
     sleeps: 2, bedrooms: 1, bathrooms: 1,
-    price: 0, priceOnRequest: '2026-11-01',   // the owner emailed the rates to Nadia: no price on the site until we have them
+    price: 950, priceFrom: true, peakPrice: 1650,
+    seasons: [
+      { label: 'Out of season', price: 950 },
+      { label: 'Normal holidays', price: 1250 },
+    ],
+    holidayNote: 'Normal holiday nights are R1 250',
     photos: 9, flyer: false,
     filters: ['couples', 'power'],
     amenities: [
